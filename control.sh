@@ -9,7 +9,8 @@ if [ "$1" = "init" ]; then
     python -c"from minitwit import init_db;init_db()"
 elif [ "$1" = "start" ]; then
     echo "Starting minitwit..."
-    nohup python3 minitwit.py > /tmp/out.log 2>&1 &
+    echo "$PWD"
+    nohup python3 -u minitwit.py > ./tmp/out.log 2>&1 &
 elif [ "$1" = "stop" ]; then
     echo "Stopping minitwit..."
     pkill -f minitwit
