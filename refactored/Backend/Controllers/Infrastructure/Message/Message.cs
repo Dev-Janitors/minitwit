@@ -4,18 +4,18 @@ public class Message
 {
     public int Id {get;set;}
 
-    public int message_id {get; set;}
+    public int MessageId {get; set;}
 
-	public string text {get; set;}
+	public string Text {get; set;}
 
-	public int pub_date {get; set;}
+	public int PubDate {get; set;}
 
-	public int flagged {get; set;}
+	public int Flagged {get; set;}
 
-	public Message(int message_id, string text, int pub_date) {
-		this.message_id = message_id;
-		this.text = text;
-		this.pub_date = pub_date;
+	public Message(int MessageId, string Text, int PubDate) {
+		this.MessageId = MessageId;
+		this.Text = Text;
+		this.PubDate = PubDate;
 	}
 
 	public Message() {}

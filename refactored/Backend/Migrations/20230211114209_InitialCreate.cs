@@ -16,8 +16,8 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    whoid = table.Column<int>(name: "who_id", type: "INTEGER", nullable: false),
-                    whomid = table.Column<int>(name: "whom_id", type: "INTEGER", nullable: false)
+                    WhoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    WhomId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,10 +30,10 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    messageid = table.Column<int>(name: "message_id", type: "INTEGER", nullable: false),
-                    text = table.Column<string>(type: "TEXT", nullable: false),
-                    pubdate = table.Column<int>(name: "pub_date", type: "INTEGER", nullable: false),
-                    flagged = table.Column<int>(type: "INTEGER", nullable: false)
+                    MessageId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Text = table.Column<string>(type: "TEXT", nullable: false),
+                    PubDate = table.Column<int>(type: "INTEGER", nullable: false),
+                    Flagged = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

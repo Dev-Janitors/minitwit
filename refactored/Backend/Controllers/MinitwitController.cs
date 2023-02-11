@@ -17,7 +17,7 @@ public class MinitwitController : ControllerBase
         _messageRepo = messageRepo;
     }
 
-	  [HttpGet("public")]
+	[HttpGet("public")]
     public async Task<IActionResult> GetTimeline()
     {
         try {

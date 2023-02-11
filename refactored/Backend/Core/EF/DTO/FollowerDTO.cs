@@ -2,17 +2,17 @@ namespace Backend.Core.EF;
 
 public record FollowerDTO(
     int Id,
-    int who_id,
-    int whom_id
+    int WhoId,
+    int WhomId
 );
 
 public record FollowerCreateDTO{
 
     [Required]
-    public int who_id {get;set;}
+    public int WhoId {get;set;}
 
     [Required]
-    public int whom_id {get;set;}
+    public int WhomId {get;set;}
 
 }
 

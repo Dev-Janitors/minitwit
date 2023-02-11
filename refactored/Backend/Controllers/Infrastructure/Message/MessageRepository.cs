@@ -48,10 +48,10 @@ public class MessageRepository : IMessageRepository
     var messages = await _context.messages.Select(
         m => new MessageDTO(
             m.Id,
-            m.message_id,
-            m.text,
-            m.pub_date,
-            m.flagged
+            m.MessageId,
+            m.Text,
+            m.PubDate,
+            m.Flagged
         )
     ).ToListAsync();
     return messages.AsReadOnly();

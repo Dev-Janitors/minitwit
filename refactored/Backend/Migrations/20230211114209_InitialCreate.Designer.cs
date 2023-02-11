@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(MinitwitContext))]
-    [Migration("20230210152524_InitialCreate")]
+    [Migration("20230211114209_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,10 +25,10 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("who_id")
+                    b.Property<int>("WhoId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("whom_id")
+                    b.Property<int>("WhomId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -42,16 +42,16 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("flagged")
+                    b.Property<int>("Flagged")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("message_id")
+                    b.Property<int>("MessageId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("pub_date")
+                    b.Property<int>("PubDate")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("text")
+                    b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

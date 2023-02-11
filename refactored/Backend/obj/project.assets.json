@@ -6462,25 +6462,28 @@
     ]
   },
   "packageFolders": {
-    "/Users/lauritsbonde/.nuget/packages/": {}
+    "C:\\Users\\marku\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/lauritsbonde/Library/Mobile Documents/com~apple~CloudDocs/ITU SWU/6. semester/devOps/minitwit/refactored/Backend/Backend.csproj",
+      "projectUniqueName": "C:\\Users\\marku\\OneDrive\\Desktop\\6. Semester\\DevOps\\minitwit\\refactored\\Backend\\Backend.csproj",
       "projectName": "Backend",
-      "projectPath": "/Users/lauritsbonde/Library/Mobile Documents/com~apple~CloudDocs/ITU SWU/6. semester/devOps/minitwit/refactored/Backend/Backend.csproj",
-      "packagesPath": "/Users/lauritsbonde/.nuget/packages/",
-      "outputPath": "/Users/lauritsbonde/Library/Mobile Documents/com~apple~CloudDocs/ITU SWU/6. semester/devOps/minitwit/refactored/Backend/obj/",
+      "projectPath": "C:\\Users\\marku\\OneDrive\\Desktop\\6. Semester\\DevOps\\minitwit\\refactored\\Backend\\Backend.csproj",
+      "packagesPath": "C:\\Users\\marku\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\marku\\OneDrive\\Desktop\\6. Semester\\DevOps\\minitwit\\refactored\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/lauritsbonde/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\marku\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "https://api.nuget.org/v3/index.json": {}
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {},
+        "https://nuget.pkg.github.com/jesper-bengtson/index.json": {}
       },
       "frameworks": {
         "net7.0": {
@@ -6544,7 +6547,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.102/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   }

@@ -4,13 +4,13 @@ public class Follower
 {
     public int Id {get;set;}
 
-    public int who_id {get; set;}
+    public int WhoId {get; set;}
 
-    public int whom_id {get; set;}
+    public int WhomId {get; set;}
 
-    public Follower(int who_id, int whom_id)
+    public Follower(int WhoId, int WhomId)
     {
-        this.who_id = who_id;
-        this.whom_id = whom_id;
+        this.WhoId = WhoId;
+        this.WhomId = WhomId;
     }
 }

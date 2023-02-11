@@ -2,16 +2,16 @@ namespace Backend.Core.EF;
 
 public record MessageDTO(
 	int Id,
-	int message_id,
-	string text,
-	int pub_date,
-    int flagged
+	int MessageId,
+	string Text,
+	int PubDate,
+    int Flagged
 );
 
 public record MessageCreateDTO {
-	public int message_id {get; set;}
-	public string? text {get; set;}
-	public int pub_date {get; set;}
+	public int MessageId {get; set;}
+	public string? Text {get; set;}
+	public int PubDate {get; set;}
 }
 
 public record MessageUpdateDTO : MessageCreateDTO {
