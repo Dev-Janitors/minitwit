@@ -1,12 +1,16 @@
-version: "3"
+version: '3'
 services:
-  db:
-    image: dev_janitors/db
-    ports:
-      - "1433:1433"
+    db:
+        build: ./Database
+        container_name: Database
+        ports:
+            - '1433:1433'
 
-  api:
-    image: dev_janitors/backend
-    ports:
-      - "5000:80"
-      - "5001:443"
+    api:
+        build: ./Backend
+        container_name: Backend
+        ports:
+            - '2222:80'
+            - '2223:443'
+        depends_on:
+            - db
