@@ -17,7 +17,10 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFollowerRepository, FollowerRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
+
 var app = builder.Build();
+
+DatabaseManagementService.MigrationInitialisation(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -25,8 +28,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
