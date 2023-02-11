@@ -10,7 +10,7 @@ public class FollowerRepository : IFollowerRepository
 
     public FollowerRepository(MinitwitContext context)
     {
-        _context = context;
+      _context = context;
     }
 
   Task<(Response, FollowerDTO)> IFollowerRepository.CreateAsync(FollowerCreateDTO user)

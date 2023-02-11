@@ -18,15 +18,15 @@ public class MessageRepository : IMessageRepository
     {
         //create a list of messages
         var messages = new List<Message>(){
-          new Message("Hello World", 12903871),
-          new Message("Hi", 12903873),
-          new Message("Perle", 12903875),
-          new Message("Circus", 12903877),
-          new Message("Bordtennis", 12903879),
-          new Message("Vi skal på grillen", 12903881),
-          new Message("Fodbold", 12903883),
-          new Message("Ingenting", 12903885),
-          new Message("John", 12903887),
+          new Message(1, "Hello World", 12903871),
+          new Message(1, "Hi", 12903873),
+          new Message(1, "Perle", 12903875),
+          new Message(1, "Circus", 12903877),
+          new Message(1, "Bordtennis", 12903879),
+          new Message(1, "Vi skal på grillen", 12903881),
+          new Message(1, "Fodbold", 12903883),
+          new Message(1, "Ingenting", 12903885),
+          new Message(1, "John", 12903887),
         };
         
         foreach (var message in messages)
@@ -46,12 +46,13 @@ public class MessageRepository : IMessageRepository
   public async Task<IReadOnlyCollection<MessageDTO>> ReadAllAsync()
   {
     var messages = await _context.messages.Select(
-        m => new MessageDTO(
-            m.Id,
-            m.Text,
-            m.PubDate,
-            m.Flagged
-        )
+      m => new MessageDTO(
+        m.Id,
+        m.AuthorId,
+        m.Text,
+        m.PubDate,
+        m.Flagged
+      )
     ).ToListAsync();
     return messages.AsReadOnly();
   }

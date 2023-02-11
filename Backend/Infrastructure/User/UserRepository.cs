@@ -14,6 +14,22 @@ public UserRepository(MinitwitContext context)
     _dbcontext = context;
 }
 
+  public async Task<Response> Seed()
+  {
+    //create a list of messages
+    var users = new List<User>(){
+      new User("test@test.com", "robot"),
+      new User("bob@mail.com", "bob")
+    };
+    
+    foreach (var user in users)
+    {
+        await _dbcontext.users.AddAsync(user);
+    }
+    await _dbcontext.SaveChangesAsync();
+
+    return Response.Created;
+  }
   public async Task<(Response, UserDTO)> CreateAsync(UserCreateDTO user)
   {
     {

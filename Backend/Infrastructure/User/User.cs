@@ -15,6 +15,4 @@ public class User
         this.Username = Username;
         this.Email = Email;
     }
-
-    
 }
