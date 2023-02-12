@@ -1,14 +1,16 @@
-# minitwit
+# Minitwit
 
-Repository for the course devops 2023
+To start the app run ``docker-compose up``.
 
-## Features (checked if refactored)
+Currently there is no frontend for the refactored version of minitwit. Go to ``localhost:2222/swagger``, to see and test the endpoints.
+
+## Backend features (checked if refactored)
 
 - [ ] Register
 - [ ] Login
 - [ ] Logout
-- [ ] Get public timeline
+- [x] Get public timeline
 - [ ] Get my timeline (self and followed users)
-- [ ] Get users timeline (only User's posts)
-- [ ] Post message
+- [x] Get users timeline (only User's posts)
+- [x] Post message
 - [ ] Follow/Unfollow user
