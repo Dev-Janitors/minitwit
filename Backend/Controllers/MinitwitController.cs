@@ -42,6 +42,18 @@ public class MinitwitController : ControllerBase
             return StatusCode(504);
         }
     }
+
+    [HttpPost("new-message")]
+    public async Task<IActionResult> CreateMessage(MessageCreateDTO message)
+    {
+        try {
+            var result = await _messageRepo.CreateAsync(message);
+            return Ok(result);
+        } catch (Exception e) {
+            _logger.LogError(e, e.Message);
+            return StatusCode(504);
+        }
+    }
     
     [HttpGet("user/{userName}")]
     public async Task<IActionResult> GetUser(string userName)

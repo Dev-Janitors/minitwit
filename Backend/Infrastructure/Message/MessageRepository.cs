@@ -38,9 +38,12 @@ public class MessageRepository : IMessageRepository
         return Response.Created;
     }
 
-  public Task<(Response, MessageDTO)> CreateAsync(MessageCreateDTO user)
+  public async Task<(Response, MessageDTO)> CreateAsync(MessageCreateDTO message)
   {
-    throw new NotImplementedException();
+    var entity = new Message(message.AuthorId, message.Text, message.PubDate);
+    _context.messages.Add(entity);
+    await _context.SaveChangesAsync();
+    return (Response.Created, new MessageDTO(entity.Id, entity.AuthorId, entity.Text, entity.PubDate, entity.Flagged));
   }
 
   public async Task<IReadOnlyCollection<MessageDTO>> ReadAllAsync()
