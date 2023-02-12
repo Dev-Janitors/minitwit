@@ -1,6 +1,6 @@
 # Minitwit
 
-To start the app run ``docker-compose up``.
+To start the app run ``docker-compose up``. (Make sure the docker daemon is running)
 
 Currently there is no frontend for the refactored version of minitwit. Go to ``localhost:2222/swagger``, to see and test the endpoints.
 
