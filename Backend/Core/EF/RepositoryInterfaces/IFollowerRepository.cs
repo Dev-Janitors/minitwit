@@ -8,5 +8,5 @@ public interface IFollowerRepository
     Task<Response> DeleteByWhoAndWhomIds(int whoId, int whomId);
     Task<Option<FollowerDTO>> ReadById(int id);
     Task<Option<FollowerDTO>> ReadByWhoAndWhomId(int whoId, int whomId);
-    Task<IReadOnlyCollection<FollowerDTO>> ReadByWhomId(int whomId);
+    public Task<IReadOnlyCollection<FollowerDTO>> ReadAllByWhomId(int whomId);
 }
