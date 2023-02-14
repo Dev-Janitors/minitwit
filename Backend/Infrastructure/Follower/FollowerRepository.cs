@@ -42,4 +42,9 @@ public class FollowerRepository : IFollowerRepository
   {
     throw new NotImplementedException();
   }
+
+  public async Task<IReadOnlyCollection<FollowerDTO>>ReadAllByWhomId(int whomId)
+  {
+    throw new NotImplementedException();
+  }
 }

@@ -1,21 +1,25 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Core.EF;
+using Backend.Core;
+using Xunit.Sdk;
+
 namespace Backend.Controllers;
 
 [ApiController]
 [Route("")]
-
 public class MinitwitController : ControllerBase
 {
     private readonly ILogger<MinitwitController> _logger;
 
     private readonly IMessageRepository _messageRepo;
     private readonly IUserRepository _userRepo;
-    public MinitwitController(ILogger<MinitwitController> logger, IMessageRepository messageRepo, IUserRepository userRepo)
+    private readonly IFollowerRepository _followerRepo;
+    public MinitwitController(ILogger<MinitwitController> logger, IMessageRepository messageRepo, IUserRepository userRepo, IFollowerRepository followerRepo)
     {
         _logger = logger;
         _messageRepo = messageRepo;
         _userRepo = userRepo;
+        _followerRepo = followerRepo;
     }
 
 	[HttpGet("public")]
@@ -88,6 +92,33 @@ public class MinitwitController : ControllerBase
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
             return StatusCode(504);
+        }
+    }
+
+    [HttpGet("fllws/{username}")]
+    public async Task<IActionResult> GetFollowers(string username)
+    {
+        //Find user Id of user with username
+        Option<UserDTO> userResult;
+
+        try {
+            userResult = await _userRepo.ReadByUsernameAsync(username);
+            if (userResult.IsNone) throw new NullException(userResult);
+        } catch (Exception e) {
+            _logger.LogError(e, e.Message);
+            return NotFound($"Could not find user with name '{username}'.");
+        }
+
+        try {
+            var followersResult = (await _followerRepo.ReadByWhomId(userResult.Value.Id)).ToList();
+            var followers = new {
+                followers = followersResult
+            };
+            return Ok(followers);
+
+        } catch (Exception e) {
+            _logger.LogError(e, e.Message);
+            return StatusCode(500);
         }
     }
 }
