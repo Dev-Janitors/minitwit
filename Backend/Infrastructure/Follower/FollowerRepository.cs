@@ -77,9 +77,19 @@ public class FollowerRepository : IFollowerRepository
     throw new NotImplementedException();
   }
 
-  public Task<Option<FollowerDTO>> ReadByWhoAndWhomId(int whoId, int whomId)
+  public async Task<Option<FollowerDTO>> ReadByWhoAndWhomId(int whoId, int whomId)
   {
-    throw new NotImplementedException();
+    var follow = await _context.followers
+      .Where(f => f.WhoId == whoId && f.WhomId == whomId)
+      .Select(f => new FollowerDTO(
+          f.Id,
+          f.WhoId,
+          f.WhomId
+        )
+      )
+      .FirstAsync();
+    
+    return follow;
   }
 
   public Task<Response> UpdateAsync(FollowerUpdateDTO follower)
