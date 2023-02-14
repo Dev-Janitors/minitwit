@@ -110,7 +110,7 @@ public class MinitwitController : ControllerBase
         }
 
         try {
-            var followersResult = (await _followerRepo.ReadByWhomId(userResult.Value.Id)).ToList();
+            var followersResult = (await _followerRepo.ReadAllByWhomId(userResult.Value.Id)).ToList();
             var followers = new {
                 followers = followersResult
             };
