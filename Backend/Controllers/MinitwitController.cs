@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Core.EF;
 using Backend.Core;
 using Xunit.Sdk;
+using System.Dynamic;
 
 namespace Backend.Controllers;
 
@@ -109,8 +110,10 @@ public class MinitwitController : ControllerBase
             return NotFound($"Could not find user with name '{username}'.");
         }
 
+        //Find followers of user with userResult.Value.Id (whomId)
         try {
             var followersResult = (await _followerRepo.ReadAllByWhomId(userResult.Value.Id)).ToList();
+
             var followers = new {
                 followers = followersResult
             };
@@ -121,4 +124,68 @@ public class MinitwitController : ControllerBase
             return StatusCode(500);
         }
     }
+
+    [HttpPost("fllws/{username}")]
+    public async Task<IActionResult> Follow(string username, [FromBody] dynamic body)
+    {
+        //Find userId;
+        int userId;
+        try {
+            var userResult = await _userRepo.ReadByUsernameAsync(username);
+            if (userResult.IsNone) throw new NullException(userResult);
+            userId = userResult.Value.Id;
+        } catch (Exception e) {
+            _logger.LogError(e, e.Message);
+            return NotFound($"Could not find user with name '{username}'.");
+        }
+
+
+        //Handle request
+        if(PropertyExists(body, "follow")) //This is a follow request
+        {
+            try
+            {
+                var followCreate = new FollowerCreateDTO
+                    {
+                        WhoId = userId,
+                        WhomId = body.follow
+                    };
+                var result = await _followerRepo.CreateAsync(followCreate);
+                if (result.Item1 != Core.Response.Created) throw new Exception("Failed to follow");
+                return Ok("Successful follow");
+            } catch (Exception e) {
+                _logger.LogError(e, e.Message);
+                return StatusCode(500);
+            }
+        }
+        else if (PropertyExists(body, "unfollow")) //This is an unfollow request
+        {
+            try
+            {
+                Option<FollowerDTO> followResult = await _followerRepo.ReadByWhoAndWhomId(userId, body.unfollow);
+                if (followResult.IsNone) return NotFound("Could not find the follow relation.");
+
+                var unfollowResult = await _followerRepo.DeleteByIdAsync(followResult.Value.Id);
+                if (unfollowResult != Core.Response.Deleted) return StatusCode(500, "Internal Server Error. Could not unfollow");
+                return Ok("Succesful unfollow");
+            } catch (Exception e) {
+                _logger.LogError(e, e.Message);
+                return StatusCode(500);
+            }
+        }
+        else //Error in the request body
+        {
+            return BadRequest("Could not handle the request");
+        }
+    }
+
+
+    //Helper functions
+    public static bool PropertyExists(dynamic obj, string propertyName)
+    {
+        if (obj is ExpandoObject)
+            return ((IDictionary<string, object>) obj).ContainsKey(propertyName);
+
+        return obj.GetType().GetProperty(propertyName) != null;
+  }
 }
