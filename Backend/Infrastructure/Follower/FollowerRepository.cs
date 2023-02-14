@@ -3,42 +3,86 @@ namespace Backend.Infrastructure;
 using System.Threading.Tasks;
 using Backend.Core;
 using Backend.Core.EF;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 public class FollowerRepository : IFollowerRepository
 {
-    private readonly MinitwitContext _context;
+  private readonly MinitwitContext _context;
 
-    public FollowerRepository(MinitwitContext context)
-    {
-      _context = context;
-    }
+  public FollowerRepository(MinitwitContext context)
+  {
+    _context = context;
+  }
 
-  Task<(Response, FollowerDTO)> IFollowerRepository.CreateAsync(FollowerCreateDTO user)
+  public async Task<(Response, FollowerDTO)> CreateAsync(FollowerCreateDTO follow)
+  {
+    var conflict = await _context.followers
+      .Where(f => f.WhoId == follow.WhoId && f.WhomId == follow.WhomId)
+      .FirstAsync();
+    
+    //Return conflict if the follow already exists
+    if (conflict != null) return (Response.Conflict, new FollowerDTO(-1, follow.WhoId, follow.WhomId));
+
+    //Check if users exist
+    bool whoExists = await _context.users.AnyAsync(u => u.Id == follow.WhoId);
+    bool whomExists = await _context.users.AnyAsync(u => u.Id == follow.WhomId);
+    if (!whoExists || !whomExists) return (Response.NotFound, new FollowerDTO(-1, follow.WhoId, follow.WhomId));
+
+    var entity = new Follower 
+    (
+      follow.WhoId,
+      follow.WhomId
+    );
+
+    await _context.followers.AddAsync(entity);
+    await _context.SaveChangesAsync();
+
+    return (Response.Created, new FollowerDTO(entity.Id, entity.WhoId, entity.WhomId));
+  }
+
+  public async Task<Response> DeleteByIdAsync(int id)
+  {
+    Follower? follow = await (
+      _context.followers
+        .Where(f => f.Id == id)
+        .FirstOrDefaultAsync()
+    );
+    
+    if (follow == null) return Response.NotFound;
+
+    _context.Remove(follow);
+    await _context.SaveChangesAsync();
+
+    return Response.Deleted;
+  }
+
+  public async Task<Response> DeleteByWhoAndWhomIds(int whoId, int whomId)
+  {
+    Follower? follow = await (
+      _context.followers
+        .Where(f => f.WhoId == whoId && f.WhomId == whomId)
+        .FirstOrDefaultAsync()
+    );
+    
+    if (follow == null) return Response.NotFound;
+
+    _context.Remove(follow);
+    await _context.SaveChangesAsync();
+
+    return Response.Deleted;
+  }
+
+  public Task<Option<FollowerDTO>> ReadById(int id)
   {
     throw new NotImplementedException();
   }
 
-  Task<Response> IFollowerRepository.DeleteByIdAsync(int id)
+  public Task<Option<FollowerDTO>> ReadByWhoAndWhomId(int whoId, int whomId)
   {
     throw new NotImplementedException();
   }
 
-  Task<Response> IFollowerRepository.DeleteByWhoAndWhomIds(int whoId, int whomId)
-  {
-    throw new NotImplementedException();
-  }
-
-  Task<Option<FollowerDTO>> IFollowerRepository.ReadById(int id)
-  {
-    throw new NotImplementedException();
-  }
-
-  Task<Option<FollowerDTO>> IFollowerRepository.ReadByWhoAndWhomId(int whoId, int whomId)
-  {
-    throw new NotImplementedException();
-  }
-
-  Task<Response> IFollowerRepository.UpdateAsync(FollowerUpdateDTO follower)
+  public Task<Response> UpdateAsync(FollowerUpdateDTO follower)
   {
     throw new NotImplementedException();
   }
