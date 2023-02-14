@@ -45,6 +45,14 @@ public class FollowerRepository : IFollowerRepository
 
   public async Task<IReadOnlyCollection<FollowerDTO>>ReadAllByWhomId(int whomId)
   {
-    throw new NotImplementedException();
+    var followers = _context.followers
+      .Where(f => f.WhomId == whomId)
+      .Select(f => new FollowerDTO(
+          f.Id,
+          f.WhoId,
+          f.WhomId
+        )
+      );
+    return await followers.ToListAsync();
   }
 }
