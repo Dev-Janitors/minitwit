@@ -2,6 +2,18 @@ using Backend.Infrastructure;
 using Backend.Core.EF;
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Cors
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options => {
+    options.AddPolicy(name: MyAllowSpecificOrigins, policy => {
+        policy.WithOrigins("http://localhost:3000", "https://localhost:3000");
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+    });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -21,6 +33,9 @@ builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 var app = builder.Build();
 
 DatabaseManagementService.MigrationInitialisation(app);
+
+// Cors
+app.UseCors(MyAllowSpecificOrigins);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
