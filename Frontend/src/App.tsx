@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import Header from './Components/Global/Header';
+import Header from './Components/Global/Header/Header';
 import TimeLineContainer from './Components/PublicTimeline/TimeLineContainer';
 
 function App() {

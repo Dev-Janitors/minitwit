@@ -1,9 +1,11 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, Fragment, useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { Message } from '../../Types/Timeline';
 import { IsLoading } from '../../Types/Global';
-import { Box } from '@mui/material';
 import TimeLineMessage from './TimeLineMessage';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import { Typography } from '@mui/material';
 
 interface props {
 	user: string | null;
@@ -42,23 +44,21 @@ const TimeLineContainer: FC<props> = ({ user }) => {
 		return <div>Error: {isLoading.error}</div>;
 	}
 
-	const style = {
-		container: {
-			display: 'flex',
-			flexDirection: 'column',
-			alignItems: 'center',
-			justifyContent: 'center',
-			width: '70%',
-			margin: 'auto',
-		},
-	};
+	if (timeline.length === 0) {
+		return <Typography variant="h5">No messages</Typography>;
+	}
 
 	return (
-		<Box sx={style.container}>
-			{timeline.map((message) => {
-				return <TimeLineMessage message={message} key={message.id} />;
+		<List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+			{timeline.map((message, i) => {
+				return (
+					<Fragment key={i}>
+						<TimeLineMessage message={message} />
+						{/* {i !== timeline.length - 1 && <Divider variant="inset" component="li" />} */}
+					</Fragment>
+				);
 			})}
-		</Box>
+		</List>
 	);
 };
 
