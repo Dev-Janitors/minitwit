@@ -1,6 +1,6 @@
 import React, { FC, Fragment, useEffect, useState } from 'react';
 import { Message } from '../../Types/Timeline';
-import { Typography, ListItem, ListItemAvatar, Avatar, ListItemText, Box } from '@mui/material';
+import { Typography, ListItem, ListItemAvatar, Avatar, ListItemText, Box, Skeleton } from '@mui/material';
 import { IsLoading, User } from '../../Types/Global';
 import axios, { AxiosError } from 'axios';
 
@@ -32,6 +32,10 @@ const TimeLineMessage: FC<props> = ({ message }) => {
 			color: 'grey',
 			display: 'block',
 		},
+		skeletonBase: {
+			margin: '0',
+			padding: '0',
+		},
 	};
 
 	const date = new Date(message.pubDate);
@@ -61,7 +65,22 @@ const TimeLineMessage: FC<props> = ({ message }) => {
 	}, []);
 
 	if (isLoading.isLoading && isLoading.error === null) {
-		return <div>Loading...</div>;
+		return (
+			<ListItem alignItems="flex-start" sx={style.container}>
+				<ListItemAvatar>
+					<Skeleton variant="circular" width={40} height={40} animation="wave" sx={style.skeletonBase} />
+				</ListItemAvatar>
+				<ListItemText
+					primary={<Skeleton variant="text" width={100} sx={{ fontSize: '2rem', ...style.skeletonBase }} animation="wave" />}
+					secondary={
+						<Fragment>
+							<Skeleton variant="text" width={200} height={20} animation="wave" sx={style.skeletonBase} />
+							<Skeleton variant="text" width={100} height={20} sx={{ fontSize: '0.7rem', ...style.skeletonBase }} animation="wave" />
+						</Fragment>
+					}
+				/>
+			</ListItem>
+		);
 	} else if (isLoading.error !== null) {
 		return <div>Error: {isLoading.error}</div>;
 	}
