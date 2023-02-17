@@ -151,7 +151,6 @@ def test_register_c():
     response = requests.get(f'{BASE_URL}/latest', headers=HEADERS)
     assert response.json()['latest'] == 6
 
-
 def test_follow_user():
     username = 'a'
     url = f'{BASE_URL}/fllws/{username}'
@@ -171,7 +170,12 @@ def test_follow_user():
     response = requests.get(url, headers=HEADERS, params=query)
     assert response.ok
 
+    print ("response: ", response.json(), response.content);
+
     json_data = response.json()
+
+    print("response: ", json_data)
+
     assert "b" in json_data["follows"]
     assert "c" in json_data["follows"]
 

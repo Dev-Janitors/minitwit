@@ -18,8 +18,8 @@ public class FollowerRepository : IFollowerRepository
   {
     var conflict = await _context.followers
       .Where(f => f.WhoId == follow.WhoId && f.WhomId == follow.WhomId)
-      .FirstAsync();
-    
+      .FirstOrDefaultAsync();
+
     //Return conflict if the follow already exists
     if (conflict != null) return (Response.Conflict, new FollowerDTO(-1, follow.WhoId, follow.WhomId));
 
@@ -97,7 +97,7 @@ public class FollowerRepository : IFollowerRepository
     throw new NotImplementedException();
   }
 
-  public async Task<IReadOnlyCollection<FollowerDTO>>ReadAllByWhomId(int whomId)
+  public async Task<IReadOnlyCollection<FollowerDTO>> ReadAllByWhomId(int whomId)
   {
     var followers = _context.followers
       .Where(f => f.WhomId == whomId)

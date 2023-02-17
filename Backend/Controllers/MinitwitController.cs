@@ -52,13 +52,15 @@ public class MinitwitController : ControllerBase
     {
         updateLatest(latest);
         try {
-            var messages = (await _messageRepo.ReadAllAsync()).Select( async m => {
-                UserDTO user = await _userRepo.ReadByIDAsync(m.AuthorId);
+            var messages = (await _messageRepo.ReadAllAsync()).ToList().Select( m => {
+                UserDTO user = _userRepo.ReadByIDAsync(m.AuthorId).Result; //this is blocking the thread
+                // UserDTO user = await _userRepo.ReadByIDAsync(m.AuthorId); //This is non blocking but returns weird stuff
                 return new {
                     content = m.Text,
-                    username = user.Username
+                    user = user.Username
                 };
             });
+            _logger.LogInformation("123", messages);
             return Ok(messages);
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
@@ -211,7 +213,7 @@ public class MinitwitController : ControllerBase
     }
 
     [HttpPost("fllws/{username}")]
-    public async Task<IActionResult> Follow(string username, [FromBody] dynamic body, [FromQuery(Name = "latest")] int? latest)
+    public async Task<IActionResult> Follow(string username, [FromBody] FollowJSON body, [FromQuery(Name = "latest")] int? latest)
     {
         updateLatest(latest);
         //Find userId;
@@ -222,42 +224,67 @@ public class MinitwitController : ControllerBase
             userId = userResult.Value.Id;
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
-            return NotFound($"Could not find user with name '{username}'.");
+            return StatusCode(400, $"Could not find user with name '{username}'.");
         }
 
 
         //Handle request
-        if(PropertyExists(body, "follow")) //This is a follow request
+        if(body.follow != null) //This is a follow request
         {
             try
             {
+                var followUser = await _userRepo.ReadByUsernameAsync(body.follow);
+                if(followUser.IsNone){
+                    return StatusCode(400, "The user you are trying to follow was not found");
+                }
+                var user = followUser.Value;
                 var followCreate = new FollowerCreateDTO
                     {
                         WhoId = userId,
-                        WhomId = body.follow
+                        WhomId = user.Id
                     };
+                
                 var result = await _followerRepo.CreateAsync(followCreate);
                 if (result.Item1 == Core.Response.NotFound) return NotFound();
                 if (result.Item1 != Core.Response.Created) throw new Exception("Failed to follow");
-                return Ok("Successful follow");
+
+                var response = new FollowRes {
+                    follows = new string[]{user.Username}
+                };
+
+                _logger.LogInformation("testing: " + response.follows.Length , response.follows );
+
+                return Ok(response);
             } catch (Exception e) {
                 _logger.LogError(e, e.Message);
-                return StatusCode(500);
+                return StatusCode(500, "testing");
             }
         }
-        else if (PropertyExists(body, "unfollow")) //This is an unfollow request
+        else if (body.unfollow != null) //This is an unfollow request
         {
             try
             {
-                Option<FollowerDTO> followResult = await _followerRepo.ReadByWhoAndWhomId(userId, body.unfollow);
-                if (followResult.IsNone) return NotFound("Could not find the follow relation.");
+                var unfollowUser = await _userRepo.ReadByUsernameAsync(body.unfollow);
+                if(unfollowUser.IsNone){
+                    return StatusCode(400, "The user you are trying to unfollow was not found");
+                }
+
+                var foundUser = unfollowUser.Value;
+
+                Option<FollowerDTO> followResult = await _followerRepo.ReadByWhoAndWhomId(userId, foundUser.Id);
+                if (followResult.IsNone) return StatusCode(400, "Could not find the follow relation.");
 
                 var unfollowResult = await _followerRepo.DeleteByIdAsync(followResult.Value.Id);
                 if (unfollowResult != Core.Response.Deleted) return StatusCode(500, "Internal Server Error. Could not unfollow");
-                return Ok("Succesful unfollow");
+                
+                var response = new {follows = new string[]{foundUser.Username}};
+
+                _logger.LogInformation("LOGGGer", response);
+
+                return Ok(response);
             } catch (Exception e) {
                 _logger.LogError(e, e.Message);
-                return StatusCode(500);
+                return StatusCode(500, "Unfollow error");
             }
         }
         else //Error in the request body

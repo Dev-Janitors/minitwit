@@ -57,7 +57,7 @@ public class MessageRepository : IMessageRepository
         m.Flagged
       )
     ).ToListAsync();
-    return messages.AsReadOnly();
+    return messages;
   }
 
   public Task<IReadOnlyCollection<MessageDTO>> ReadAllByAuthorIDAsync(int userID)
