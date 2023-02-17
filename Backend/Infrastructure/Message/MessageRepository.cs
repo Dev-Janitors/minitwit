@@ -18,15 +18,15 @@ public class MessageRepository : IMessageRepository
     {
         //create a list of messages
         var messages = new List<Message>(){
-          new Message(1, "Hello World", 12903871),
-          new Message(1, "Hi", 12903873),
-          new Message(1, "Perle", 12903875),
-          new Message(1, "Circus", 12903877),
-          new Message(1, "Bordtennis", 12903879),
-          new Message(1, "Vi skal på grillen", 12903881),
-          new Message(1, "Fodbold", 12903883),
-          new Message(1, "Ingenting", 12903885),
-          new Message(1, "John", 12903887),
+          new Message(1, "Hello World", 1676552060),
+          new Message(2, "Hi", 1676552063),
+          new Message(1, "Perle", 1676552068),
+          new Message(2, "Circus", 1676552070),
+          new Message(1, "Bordtennis", 1676552080),
+          new Message(2, "Vi skal på grillen", 1676552090),
+          new Message(1, "Fodbold", 1676552100),
+          new Message(2, "Ingenting", 1676552130),
+          new Message(1, "John", 1676552180),
         };
         
         foreach (var message in messages)

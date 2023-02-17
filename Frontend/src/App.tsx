@@ -1,20 +1,22 @@
+import { Box } from '@mui/material';
+import Header from './Components/Global/Header/Header';
+import TimeLineContainer from './Components/PublicTimeline/TimeLineContainer';
+
 function App() {
-  return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "darkblue",
-        color: "white",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontSize: "xx-large",
-      }}
-    >
-      <h1>🚧WIP... Minitwit refactor coming soon!🚧</h1>
-    </div>
-  );
+	const style = {
+		container: {
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+	};
+	return (
+		<Box sx={style.container}>
+			<Header />
+			<TimeLineContainer user={null} />
+		</Box>
+	);
 }
 
 export default App;
