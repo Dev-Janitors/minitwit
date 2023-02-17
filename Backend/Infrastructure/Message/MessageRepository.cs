@@ -40,7 +40,7 @@ public class MessageRepository : IMessageRepository
 
   public async Task<(Response, MessageDTO)> CreateAsync(MessageCreateDTO message)
   {
-    var entity = new Message(message.AuthorId, message.Text, message.PubDate);
+    Message entity = new Message(message.AuthorId, message.Text!, message.PubDate);
     _context.messages.Add(entity);
     await _context.SaveChangesAsync();
     return (Response.Created, new MessageDTO(entity.Id, entity.AuthorId, entity.Text, entity.PubDate, entity.Flagged));
@@ -60,19 +60,26 @@ public class MessageRepository : IMessageRepository
     return messages.AsReadOnly();
   }
 
-  public Task<Option<MessageDTO>> ReadByAsync(string Email)
+  public Task<IReadOnlyCollection<MessageDTO>> ReadAllByAuthorIDAsync(int userID)
   {
+    // var messages = from m in _context.messages
+    //                   where m.AuthorId == userID
+    //                   select m.ToDto()
     throw new NotImplementedException();
   }
 
-  public Task<Option<MessageDTO>> ReadByAuthorIDAsync(int userID)
+  public async Task<IReadOnlyCollection<MessageDTO>> ReadAllByUsernameAsync(string username)
   {
-    throw new NotImplementedException();
-  }
-
-  public Task<Option<MessageDTO>> ReadByUsernameAsync(string Nickname)
-  {
-    throw new NotImplementedException();
+    var authorId = await _context.users
+      .Where(u => u.Username == username)
+      .Select(u => u.Id)
+      .FirstOrDefaultAsync();
+      
+    var messages = await _context.messages
+      .Where(m => m.AuthorId == authorId)
+      .Select(m => new MessageDTO(m.Id, m.AuthorId, m.Text, m.PubDate, m.Flagged))
+      .ToListAsync();
+    return messages;
   }
 
   public Task<Response> RemoveAsync(int id)

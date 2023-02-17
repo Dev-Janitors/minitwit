@@ -11,11 +11,9 @@ public interface IMessageRepository {
     //Delete
     Task<Response> RemoveAsync(int id);
     //Read
-    Task<Option<MessageDTO>> ReadByAuthorIDAsync(int userID);
+    Task<IReadOnlyCollection<MessageDTO>> ReadAllByAuthorIDAsync(int userID);
 
-    Task<Option<MessageDTO>> ReadByAsync(string Email);
-
-    Task<Option<MessageDTO>> ReadByUsernameAsync(string Nickname);
+    Task<IReadOnlyCollection<MessageDTO>> ReadAllByUsernameAsync(string Nickname);
 
     Task<Response> Seed();
 

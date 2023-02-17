@@ -15,6 +15,7 @@ public class MinitwitController : ControllerBase
     private readonly IMessageRepository _messageRepo;
     private readonly IUserRepository _userRepo;
     private readonly IFollowerRepository _followerRepo;
+
     public MinitwitController(ILogger<MinitwitController> logger, IMessageRepository messageRepo, IUserRepository userRepo, IFollowerRepository followerRepo)
     {
         _logger = logger;
@@ -23,16 +24,8 @@ public class MinitwitController : ControllerBase
         _followerRepo = followerRepo;
     }
 
-	[HttpGet("public")]
-    public async Task<IActionResult> GetTimeline()
-    {
-        try {
-            var messages = await _messageRepo.ReadAllAsync();
-            return Ok(messages);
-        } catch (Exception e) {
-            _logger.LogError(e, e.Message);
-            return StatusCode(504);
-        }
+    private void updateLatest(int? latest){
+        GlobalVariables.Latest = latest != null ? (int) latest : -1;
     }
 
     [HttpGet("seed")]
@@ -48,16 +41,86 @@ public class MinitwitController : ControllerBase
         }
     }
 
-    [HttpPost("new-message")]
-    public async Task<IActionResult> CreateMessage(MessageCreateDTO message)
+    [HttpGet("latest")]
+    public IActionResult GetLatest()
     {
+        return Ok(new {latest = GlobalVariables.Latest});
+    }
+
+	[HttpGet("msgs")]
+    public async Task<IActionResult> GetTimeline([FromQuery(Name = "latest")] int? latest)
+    {
+        updateLatest(latest);
         try {
-            var result = await _messageRepo.CreateAsync(message);
-            return Ok(result);
+            var messages = (await _messageRepo.ReadAllAsync()).Select( async m => {
+                UserDTO user = await _userRepo.ReadByIDAsync(m.AuthorId);
+                return new {
+                    content = m.Text,
+                    username = user.Username
+                };
+            });
+            return Ok(messages);
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
             return StatusCode(504);
         }
+    }
+
+    [HttpGet("msgs/{username}")]
+    public async Task<IActionResult> GetUserTimeline(string username, [FromQuery(Name = "latest")] int? latest)
+    {
+        updateLatest(latest);
+        try {
+            var messages = (await _messageRepo.ReadAllByUsernameAsync(username))
+            .Select(m => new {
+                content = m.Text,
+                user = username,
+            });
+            
+            return Ok(messages);
+        } catch (Exception e) {
+            _logger.LogError(e, e.Message);
+            return StatusCode(504);
+        }
+    }
+
+    [HttpPost("msgs/{username}")]
+    public async Task<IActionResult> PostNewMessage(string username, [FromBody] MessageCreateJson body, [FromQuery(Name = "latest")] int? latest)
+    {
+        updateLatest(latest);
+        try {
+            var authorResult = await _userRepo.ReadByUsernameAsync(username);
+            if (authorResult.IsNone) return NotFound($"Could not find the user with username {username}");
+            var authorId = authorResult.Value.Id;
+            var time = DateTime.UnixEpoch.Ticks;
+
+            var messageCreateDTO = new MessageCreateDTO 
+            {
+                AuthorId = authorId,
+                Text = body.content,
+                PubDate = time
+            };
+            
+            var result = await _messageRepo.CreateAsync(messageCreateDTO);  
+            return Ok("Succes");
+        } catch (Exception e) {
+            _logger.LogError(e, e.Message);
+            return StatusCode(504);
+        }
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] UserJSON body, [FromQuery(Name = "latest")] int? latest)
+    {
+        updateLatest(latest);
+        var userCreateDTO = new UserCreateDTO
+        {
+            Username = body.username,
+            Email = body.email
+        };
+        (Response response, UserDTO user) = await _userRepo.CreateAsync(userCreateDTO);
+        if (response == Core.Response.Conflict) return Conflict("User with same email or username already exists.");
+        return Ok("Success");
     }
     
     [HttpGet("user")]
@@ -118,8 +181,9 @@ public class MinitwitController : ControllerBase
     }
 
     [HttpGet("fllws/{username}")]
-    public async Task<IActionResult> GetFollowers(string username)
+    public async Task<IActionResult> GetFollowers(string username, [FromQuery(Name = "latest")] int? latest)
     {
+        updateLatest(latest);
         //Find user Id of user with username
         Option<UserDTO> userResult;
 
@@ -147,8 +211,9 @@ public class MinitwitController : ControllerBase
     }
 
     [HttpPost("fllws/{username}")]
-    public async Task<IActionResult> Follow(string username, [FromBody] dynamic body)
+    public async Task<IActionResult> Follow(string username, [FromBody] dynamic body, [FromQuery(Name = "latest")] int? latest)
     {
+        updateLatest(latest);
         //Find userId;
         int userId;
         try {
@@ -172,6 +237,7 @@ public class MinitwitController : ControllerBase
                         WhomId = body.follow
                     };
                 var result = await _followerRepo.CreateAsync(followCreate);
+                if (result.Item1 == Core.Response.NotFound) return NotFound();
                 if (result.Item1 != Core.Response.Created) throw new Exception("Failed to follow");
                 return Ok("Successful follow");
             } catch (Exception e) {
