@@ -4,7 +4,6 @@ import { Message } from '../../Types/Timeline';
 import { IsLoading } from '../../Types/Global';
 import TimeLineMessage from './TimeLineMessage';
 import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
 import { Typography } from '@mui/material';
 
 interface props {
@@ -18,11 +17,12 @@ const TimeLineContainer: FC<props> = ({ user }) => {
 	useEffect(() => {
 		const getTimeline = async () => {
 			try {
-				const response = await axios.get(`${process.env.REACT_APP_API_URL}/public`, {
+				const response = await axios.get(`${process.env.REACT_APP_API_URL}/msgs`, {
 					headers: {
 						'access-control-allow-origin': '*',
 					},
 				});
+				console.log(response.data);
 				setTimeline(response.data);
 				setIsLoading({ isLoading: false, error: null });
 			} catch (e: any) {
@@ -39,7 +39,16 @@ const TimeLineContainer: FC<props> = ({ user }) => {
 	}, []);
 
 	if (isLoading.isLoading && isLoading.error === null) {
-		return <div>Loading...</div>;
+		{
+			new Array(10).map((message, i) => {
+				return (
+					<Fragment key={i}>
+						<TimeLineMessage message={{} as Message} isSkeleton={true} />
+						{/* {i !== timeline.length - 1 && <Divider variant="inset" component="li" />} */}
+					</Fragment>
+				);
+			});
+		}
 	} else if (isLoading.error !== null) {
 		return <div>Error: {isLoading.error}</div>;
 	}

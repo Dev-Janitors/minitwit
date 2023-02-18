@@ -75,7 +75,6 @@ public class MinitwitController : ControllerBase
                     user = user.Username
                 };
             });
-            _logger.LogInformation("123", messages);
             return Ok(messages);
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
@@ -226,8 +225,6 @@ public class MinitwitController : ControllerBase
                 return user.Value.Username;
             }
             );
-            
-            _logger.LogInformation("testssss1: " + followersResult.Count, followersResult );
 
             var allFollows = await _followerRepo.ReadAll();
 
@@ -271,7 +268,6 @@ public class MinitwitController : ControllerBase
                     };
                 
                 var result = await _followerRepo.CreateAsync(followCreate);
-                _logger.LogInformation("testssss2: ", result, result.Item1, result.Item2);
                 if (result.Item1 == Core.Response.NotFound) return NotFound();
                 if (result.Item1 != Core.Response.Created) throw new Exception("Failed to follow");
 
@@ -280,7 +276,6 @@ public class MinitwitController : ControllerBase
 
                 return Ok( new {follows = responseList});
             } catch (Exception e) {
-                _logger.LogError("Fejl her" + e.Message, e.Message);
                 return StatusCode(500, e.Message);
             }
         }
@@ -303,8 +298,6 @@ public class MinitwitController : ControllerBase
                 
                 var response = new List<string>();
                 response.Add(foundUser.Username);
-
-                _logger.LogInformation("testssss3: " + response, response.Count);
 
                 return Ok( new {follows = response});
             } catch (Exception e) {
