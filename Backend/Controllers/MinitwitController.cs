@@ -28,6 +28,21 @@ public class MinitwitController : ControllerBase
         GlobalVariables.Latest = latest != null ? (int) latest : -1;
     }
 
+    [HttpGet("clear")]
+    public async Task<IActionResult> Clear()
+    {
+        try {
+            var messages = await _messageRepo.ClearMessages();
+            var users = await _userRepo.ClearUsers();
+            var followers = await _followerRepo.ClearFollowers();
+            GlobalVariables.Latest = 0;
+            return Ok(messages);
+        } catch (Exception e) {
+            _logger.LogError(e, e.Message);
+            return StatusCode(504);
+        }
+    }
+
     [HttpGet("seed")]
     public async Task<IActionResult> Seed()
     {
@@ -200,12 +215,10 @@ public class MinitwitController : ControllerBase
         //Find followers of user with userResult.Value.Id (whomId)
         try {
             var followersResult = (await _followerRepo.ReadAllByWhomId(userResult.Value.Id)).ToList();
+            
+            _logger.LogInformation("testssss1: " + followersResult.Count, followersResult );
 
-            var followers = new {
-                followers = followersResult
-            };
-            return Ok(followers);
-
+            return Ok(new {follows = followersResult});
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
             return StatusCode(500);
@@ -248,13 +261,12 @@ public class MinitwitController : ControllerBase
                 if (result.Item1 == Core.Response.NotFound) return NotFound();
                 if (result.Item1 != Core.Response.Created) throw new Exception("Failed to follow");
 
-                var response = new FollowRes {
-                    follows = new string[]{user.Username}
-                };
+                var responseList = new List<string>();
+                responseList.Add(user.Username);
 
-                _logger.LogInformation("testing: " + response.follows.Length , response.follows );
+                _logger.LogInformation("testssss2: " + responseList, responseList.Count);
 
-                return Ok(response);
+                return Ok( new {follows = responseList});
             } catch (Exception e) {
                 _logger.LogError(e, e.Message);
                 return StatusCode(500, "testing");
@@ -277,11 +289,12 @@ public class MinitwitController : ControllerBase
                 var unfollowResult = await _followerRepo.DeleteByIdAsync(followResult.Value.Id);
                 if (unfollowResult != Core.Response.Deleted) return StatusCode(500, "Internal Server Error. Could not unfollow");
                 
-                var response = new {follows = new string[]{foundUser.Username}};
+                var response = new List<string>();
+                response.Add(foundUser.Username);
 
-                _logger.LogInformation("LOGGGer", response);
+                _logger.LogInformation("testssss3: " + response, response.Count);
 
-                return Ok(response);
+                return Ok( new {follows = response});
             } catch (Exception e) {
                 _logger.LogError(e, e.Message);
                 return StatusCode(500, "Unfollow error");

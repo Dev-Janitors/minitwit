@@ -25,7 +25,3 @@ public record FollowJSON {
     public string? follow {get; init;}
     public string? unfollow {get; init;}
 }
-
-public record FollowRes {
-    public string[] follows {get; set;}
-}

@@ -14,6 +14,13 @@ public class FollowerRepository : IFollowerRepository
     _context = context;
   }
 
+  public async Task<Response> ClearFollowers()
+  {
+    _context.followers.RemoveRange(_context.followers);
+    await _context.SaveChangesAsync();
+    return Response.Deleted;
+  }
+
   public async Task<(Response, FollowerDTO)> CreateAsync(FollowerCreateDTO follow)
   {
     var conflict = await _context.followers

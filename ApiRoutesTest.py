@@ -25,9 +25,14 @@ def init_db():
         db.commit()
 
 
+def clear_db():
+    url = f"{BASE_URL}/clear"
+    response = requests.get(url, headers=HEADERS)
+
 # Empty the database and initialize the schema again
 os.system(f'rm {DATABASE}')
 init_db()
+clear_db()
 
 
 def test_latest():
@@ -37,13 +42,11 @@ def test_latest():
     params = {'latest': 1337}
     response = requests.post(url, data=json.dumps(data),
                              params=params, headers=HEADERS)
-    print("registerCode: ", response.status_code)
     assert response.ok
 
     # verify that latest was updated
     url = f'{BASE_URL}/latest'
     response = requests.get(url, headers=HEADERS)
-    print("Latest123: ")
     assert response.ok
     assert response.json()['latest'] == 1337
 
@@ -169,8 +172,6 @@ def test_follow_user():
     query = {'no': 20, 'latest': 9}
     response = requests.get(url, headers=HEADERS, params=query)
     assert response.ok
-
-    print ("response: ", response.json(), response.content);
 
     json_data = response.json()
 

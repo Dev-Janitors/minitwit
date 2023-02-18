@@ -14,6 +14,13 @@ public class MessageRepository : IMessageRepository
         _context = context;
     }
 
+    public async Task<Response> ClearMessages()
+    {
+        _context.messages.RemoveRange(_context.messages);
+        await _context.SaveChangesAsync();
+        return Response.Deleted;
+    }
+
     public async Task<Response> Seed()
     {
         //create a list of messages

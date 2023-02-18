@@ -5,6 +5,9 @@ public interface IMessageRepository {
     //Create
     Task<(Response, MessageDTO)> CreateAsync(MessageCreateDTO user);
 
+    //Delete
+    Task<Response> ClearMessages();
+
     //Update
     Task<Response> UpdateAsync(MessageUpdateDTO user);
 

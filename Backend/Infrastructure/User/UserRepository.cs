@@ -14,6 +14,12 @@ public UserRepository(MinitwitContext context)
     _dbcontext = context;
 }
 
+  public async Task<Response> ClearUsers(){
+    _dbcontext.users.RemoveRange(_dbcontext.users);
+    await _dbcontext.SaveChangesAsync();
+    return Response.Deleted;
+  }
+
   public async Task<Response> Seed()
   {
     //create a list of messages
