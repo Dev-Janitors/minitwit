@@ -198,7 +198,7 @@ public class MinitwitController : ControllerBase
     }
 
     [HttpGet("fllws/{username}")]
-    public async Task<IActionResult> GetFollowers(string username, [FromQuery(Name = "latest")] int? latest)
+    public async Task<IActionResult> GetFollowers(string username, [FromQuery(Name = "latest")] int? latest, [FromQuery(Name = "no")] int? no)
     {
         updateLatest(latest);
         //Find user Id of user with username
@@ -214,14 +214,27 @@ public class MinitwitController : ControllerBase
 
         //Find followers of user with userResult.Value.Id (whomId)
         try {
-            var followersResult = (await _followerRepo.ReadAllByWhomId(userResult.Value.Id)).ToList();
+            var followersResult = (await _followerRepo.ReadAllByWhoId(userResult.Value.Id)).ToList();
+
+            //make this better - maybe move it to the followerrepo?
+            var followers = followersResult.Select(f => {
+                var user = _userRepo.ReadByIDAsync(f.WhomId).Result; //This blocks the thread, which is not great but it returns the correct stuff
+                // var user = await _userRepo.ReadByIDAsync(f.WhomId); //This doesnt block the thread, but it gives all the async states and stuff which is annoying
+                if(user.IsNone){
+                    return "Error";
+                }
+                return user.Value.Username;
+            }
+            );
             
             _logger.LogInformation("testssss1: " + followersResult.Count, followersResult );
 
-            return Ok(new {follows = followersResult});
+            var allFollows = await _followerRepo.ReadAll();
+
+            return Ok(new {follows = followers});
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
-            return StatusCode(500);
+            return StatusCode(500, "something wen terribly wrong");
         }
     }
 
@@ -258,18 +271,17 @@ public class MinitwitController : ControllerBase
                     };
                 
                 var result = await _followerRepo.CreateAsync(followCreate);
+                _logger.LogInformation("testssss2: ", result, result.Item1, result.Item2);
                 if (result.Item1 == Core.Response.NotFound) return NotFound();
                 if (result.Item1 != Core.Response.Created) throw new Exception("Failed to follow");
 
                 var responseList = new List<string>();
                 responseList.Add(user.Username);
 
-                _logger.LogInformation("testssss2: " + responseList, responseList.Count);
-
                 return Ok( new {follows = responseList});
             } catch (Exception e) {
-                _logger.LogError(e, e.Message);
-                return StatusCode(500, "testing");
+                _logger.LogError("Fejl her" + e.Message, e.Message);
+                return StatusCode(500, e.Message);
             }
         }
         else if (body.unfollow != null) //This is an unfollow request

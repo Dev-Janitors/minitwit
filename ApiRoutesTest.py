@@ -74,7 +74,6 @@ def test_create_msg():
     params = {'latest': 2}
     response = requests.post(url, data=json.dumps(data),
                              headers=HEADERS, params=params)
-    print("response: ", response.status_code);
     assert response.ok
 
     # verify that latest was updated
@@ -110,8 +109,6 @@ def test_get_latest_msgs():
     assert response.status_code == 200
 
     got_it_earlier = False
-
-    print("response: ", response.json());
 
     for msg in response.json():
         if msg['content'] == 'Blub!' and msg['user'] == username:

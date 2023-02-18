@@ -44,6 +44,8 @@ public class FollowerRepository : IFollowerRepository
     await _context.followers.AddAsync(entity);
     await _context.SaveChangesAsync();
 
+    Console.WriteLine("Create async", entity.WhoId, entity.WhomId);
+
     return (Response.Created, new FollowerDTO(entity.Id, entity.WhoId, entity.WhomId));
   }
 
@@ -115,5 +117,27 @@ public class FollowerRepository : IFollowerRepository
         )
       );
     return await followers.ToListAsync();
+  }
+
+  public async Task<IReadOnlyCollection<FollowerDTO>> ReadAllByWhoId(int whoId)
+  {
+    var followers = _context.followers
+      .Where(f => f.WhoId == whoId)
+      .Select(f => new FollowerDTO(
+          f.Id,
+          f.WhoId,
+          f.WhomId
+        )
+      );
+    return await followers.ToListAsync();
+  }
+
+  public async Task<IList<FollowerDTO>> ReadAll(){
+    var all = _context.followers.Select(f => new FollowerDTO (
+      f.Id,
+      f.WhoId,
+      f.WhomId
+    ));
+    return await all.ToListAsync();
   }
 }
