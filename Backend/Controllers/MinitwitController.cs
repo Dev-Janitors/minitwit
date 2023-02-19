@@ -28,6 +28,13 @@ public class MinitwitController : ControllerBase
         GlobalVariables.Latest = latest != null ? (int) latest : -1;
     }
 
+    [HttpGet("")]
+    public IActionResult welcome()
+    {
+        return Ok("Welcome to DevJanitors api");
+    }
+
+
     [HttpGet("clear")]
     public async Task<IActionResult> Clear()
     {
