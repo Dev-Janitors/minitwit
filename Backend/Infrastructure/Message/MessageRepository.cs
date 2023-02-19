@@ -16,12 +16,12 @@ public class MessageRepository : IMessageRepository
 
     public async Task<Response> ClearMessages()
     {
-        _context.messages.RemoveRange(_context.messages);
+        await _context.messages.ExecuteDeleteAsync();
         await _context.SaveChangesAsync();
         return Response.Deleted;
     }
 
-    public async Task<Response> Seed()
+    public async Task<int> Seed()
     {
         //create a list of messages
         var messages = new List<Message>(){
@@ -40,9 +40,10 @@ public class MessageRepository : IMessageRepository
         {
             await _context.messages.AddAsync(message);
         }
-        await _context.SaveChangesAsync();
 
-        return Response.Created;
+        var writtenChanges = await _context.SaveChangesAsync();
+
+        return writtenChanges;
     }
 
   public async Task<(Response, MessageDTO)> CreateAsync(MessageCreateDTO message)
@@ -53,18 +54,19 @@ public class MessageRepository : IMessageRepository
     return (Response.Created, new MessageDTO(entity.Id, entity.AuthorId, entity.Text, entity.PubDate, entity.Flagged));
   }
 
-  public async Task<IReadOnlyCollection<MessageDTO>> ReadAllAsync()
+  public async Task<IReadOnlyCollection<AllMessages>> ReadAllAsync()
   {
-    var messages = await _context.messages.Select(
-      m => new MessageDTO(
-        m.Id,
-        m.AuthorId,
-        m.Text,
-        m.PubDate,
-        m.Flagged
-      )
-    ).ToListAsync();
-    return messages;
+    var query = from message in _context.messages
+    join user in _context.users on message.AuthorId equals user.Id
+    select new AllMessages
+    {
+        content = message.Text,
+        user = user.Username,
+        pubDate = message.PubDate
+    };
+
+
+    return await query.ToListAsync();
   }
 
   public Task<IReadOnlyCollection<MessageDTO>> ReadAllByAuthorIDAsync(int userID)

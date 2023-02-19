@@ -4,13 +4,4 @@ services:
         build: ./Database
         container_name: Database
         ports:
-            - '1433:1433'
-
-    api:
-        build: ./Backend
-        container_name: Backend
-        ports:
-            - '2222:80'
-            - '2223:443'
-        depends_on:
-            - db
+            - '1401:1433'

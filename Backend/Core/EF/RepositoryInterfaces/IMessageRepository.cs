@@ -18,9 +18,9 @@ public interface IMessageRepository {
 
     Task<IReadOnlyCollection<MessageDTO>> ReadAllByUsernameAsync(string Nickname);
 
-    Task<Response> Seed();
+    Task<int> Seed();
 
-    Task<IReadOnlyCollection<MessageDTO>> ReadAllAsync();
+    Task<IReadOnlyCollection<AllMessages>> ReadAllAsync();
 
 
 

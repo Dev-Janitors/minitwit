@@ -49,7 +49,7 @@ public class MinitwitController : ControllerBase
         try {
             var messages = await _messageRepo.Seed();
             var users = await _userRepo.Seed();
-            return Ok(messages);
+            return Ok("messages added: " + messages);
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
             return StatusCode(504);
@@ -67,14 +67,7 @@ public class MinitwitController : ControllerBase
     {
         updateLatest(latest);
         try {
-            var messages = (await _messageRepo.ReadAllAsync()).ToList().Select( m => {
-                UserDTO user = _userRepo.ReadByIDAsync(m.AuthorId).Result; //this is blocking the thread
-                // UserDTO user = await _userRepo.ReadByIDAsync(m.AuthorId); //This is non blocking but returns weird stuff
-                return new {
-                    content = m.Text,
-                    user = user.Username
-                };
-            });
+            var messages = (await _messageRepo.ReadAllAsync()).ToList();
             return Ok(messages);
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
@@ -215,20 +208,7 @@ public class MinitwitController : ControllerBase
         try {
             var followersResult = (await _followerRepo.ReadAllByWhoId(userResult.Value.Id)).ToList();
 
-            //make this better - maybe move it to the followerrepo?
-            var followers = followersResult.Select(f => {
-                var user = _userRepo.ReadByIDAsync(f.WhomId).Result; //This blocks the thread, which is not great but it returns the correct stuff
-                // var user = await _userRepo.ReadByIDAsync(f.WhomId); //This doesnt block the thread, but it gives all the async states and stuff which is annoying
-                if(user.IsNone){
-                    return "Error";
-                }
-                return user.Value.Username;
-            }
-            );
-
-            var allFollows = await _followerRepo.ReadAll();
-
-            return Ok(new {follows = followers});
+            return Ok(new {follows = followersResult});
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
             return StatusCode(500, "something wen terribly wrong");

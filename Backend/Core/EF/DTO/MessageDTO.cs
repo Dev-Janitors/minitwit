@@ -22,3 +22,9 @@ public record MessageUpdateDTO : MessageCreateDTO {
 public record MessageCreateJson {
 	public string content {get; set;}
 }
+
+public record AllMessages {
+	public string content {get; set;} //actual message
+	public string user {get; set;} //username
+	public long pubDate {get; set;}
+}

@@ -6,7 +6,7 @@ import requests
 from contextlib import closing
 
 
-BASE_URL = 'http://127.0.0.1:2222'
+BASE_URL = 'http://127.0.0.1:5243'
 DATABASE = "./Backend/minitwit.db"
 USERNAME = 'simulator'
 PWD = 'super_safe!'

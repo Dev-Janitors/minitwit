@@ -16,7 +16,7 @@ public class FollowerRepository : IFollowerRepository
 
   public async Task<Response> ClearFollowers()
   {
-    _context.followers.RemoveRange(_context.followers);
+    await _context.followers.ExecuteDeleteAsync();
     await _context.SaveChangesAsync();
     return Response.Deleted;
   }
@@ -119,17 +119,12 @@ public class FollowerRepository : IFollowerRepository
     return await followers.ToListAsync();
   }
 
-  public async Task<IReadOnlyCollection<FollowerDTO>> ReadAllByWhoId(int whoId)
+  public async Task<IReadOnlyCollection<string>> ReadAllByWhoId(int whoId)
   {
-    var followers = _context.followers
-      .Where(f => f.WhoId == whoId)
-      .Select(f => new FollowerDTO(
-          f.Id,
-          f.WhoId,
-          f.WhomId
-        )
-      );
-    return await followers.ToListAsync();
+    var query = from follower in _context.followers
+    join user in _context.users on follower.WhomId equals user.Id
+    select user.Username;
+    return await query.ToListAsync();
   }
 
   public async Task<IList<FollowerDTO>> ReadAll(){
