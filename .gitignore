@@ -744,6 +744,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 
+*.vagrant/
+
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 
