@@ -1,5 +1,8 @@
 Vagrant.configure('2') do |config|
 
+  require 'yaml'
+  settings = YAML.load_file 'vagrantSettings.yaml'
+
   config.vm.define "droplet1" do |config|
       config.vm.provider :digital_ocean do |provider, override|
         override.ssh.private_key_path = '~/.ssh/devops'
@@ -7,7 +10,7 @@ Vagrant.configure('2') do |config|
         override.vm.box_url = "https://github.com/devopsgroup-io/vagrant-digitalocean/raw/master/box/digital_ocean.box"
         override.nfs.functional = false
         override.vm.allowed_synced_folder_types = :rsync
-        provider.token = 'dop_v1_44993c70462fec5d7cdef8694644f7a6efd64e664b13dbf3adce912d7f157479'
+        provider.token = settings['provider_token']
         provider.image = 'ubuntu-18-04-x64'
         provider.region = 'fra1' # Frankfurt - physical location
         provider.size = 's-2vcpu-4gb' # 2 vCPU, 4GB RAM - mssql needs 2gb ram
@@ -35,14 +38,12 @@ Vagrant.configure('2') do |config|
       config.vm.provision "shell", inline: <<-SHELL
         echo "starting git clone"
         git clone https://github.com/Dev-Janitors/minitwit.git
-        git checkout vagrantfile #remove
-        git pull #remove
         echo "finished git clone"
 
         echo "starting docker-compose"
         cd minitwit
 
-        docker-compose up -d
+        docker-compose up -d --build
         echo "finished docker-compose"
       
       SHELL
