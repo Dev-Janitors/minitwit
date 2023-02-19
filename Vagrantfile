@@ -1,5 +1,8 @@
 Vagrant.configure('2') do |config|
 
+  require 'yaml'
+  settings = YAML.load_file 'vagrantSettings.yaml'
+
   config.vm.define "droplet1" do |config|
       config.vm.provider :digital_ocean do |provider, override|
         override.ssh.private_key_path = '~/.ssh/devops'
@@ -7,7 +10,7 @@ Vagrant.configure('2') do |config|
         override.vm.box_url = "https://github.com/devopsgroup-io/vagrant-digitalocean/raw/master/box/digital_ocean.box"
         override.nfs.functional = false
         override.vm.allowed_synced_folder_types = :rsync
-        provider.token = 'dop_v1_d7c18ed7f8dd2f4033e12b2b39f55aa0a70c4f963504cab39e7fcd53318dcd69'
+        provider.token = settings['provider_token']
         provider.image = 'ubuntu-18-04-x64'
         provider.region = 'fra1' # Frankfurt - physical location
         provider.size = 's-2vcpu-4gb' # 2 vCPU, 4GB RAM - mssql needs 2gb ram
