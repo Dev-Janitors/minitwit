@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(MinitwitContext))]
-    [Migration("20230217102525_InitialCreate")]
+    [Migration("20230219222750_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
