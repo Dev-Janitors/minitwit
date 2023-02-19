@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(MinitwitContext))]
-    [Migration("20230211222025_InitialCreate")]
+    [Migration("20230217102525_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -57,8 +57,8 @@ namespace Backend.Migrations
                     b.Property<int>("Flagged")
                         .HasColumnType("int");
 
-                    b.Property<int>("PubDate")
-                        .HasColumnType("int");
+                    b.Property<long>("PubDate")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Text")
                         .IsRequired()

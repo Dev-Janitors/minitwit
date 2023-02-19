@@ -14,12 +14,19 @@ public class FollowerRepository : IFollowerRepository
     _context = context;
   }
 
+  public async Task<Response> ClearFollowers()
+  {
+    await _context.followers.ExecuteDeleteAsync();
+    await _context.SaveChangesAsync();
+    return Response.Deleted;
+  }
+
   public async Task<(Response, FollowerDTO)> CreateAsync(FollowerCreateDTO follow)
   {
     var conflict = await _context.followers
       .Where(f => f.WhoId == follow.WhoId && f.WhomId == follow.WhomId)
-      .FirstAsync();
-    
+      .FirstOrDefaultAsync();
+
     //Return conflict if the follow already exists
     if (conflict != null) return (Response.Conflict, new FollowerDTO(-1, follow.WhoId, follow.WhomId));
 
@@ -36,6 +43,8 @@ public class FollowerRepository : IFollowerRepository
 
     await _context.followers.AddAsync(entity);
     await _context.SaveChangesAsync();
+
+    Console.WriteLine("Create async", entity.WhoId, entity.WhomId);
 
     return (Response.Created, new FollowerDTO(entity.Id, entity.WhoId, entity.WhomId));
   }
@@ -97,7 +106,7 @@ public class FollowerRepository : IFollowerRepository
     throw new NotImplementedException();
   }
 
-  public async Task<IReadOnlyCollection<FollowerDTO>>ReadAllByWhomId(int whomId)
+  public async Task<IReadOnlyCollection<FollowerDTO>> ReadAllByWhomId(int whomId)
   {
     var followers = _context.followers
       .Where(f => f.WhomId == whomId)
@@ -108,5 +117,22 @@ public class FollowerRepository : IFollowerRepository
         )
       );
     return await followers.ToListAsync();
+  }
+
+  public async Task<IReadOnlyCollection<string>> ReadAllByWhoId(int whoId)
+  {
+    var query = from follower in _context.followers
+    join user in _context.users on follower.WhomId equals user.Id
+    select user.Username;
+    return await query.ToListAsync();
+  }
+
+  public async Task<IList<FollowerDTO>> ReadAll(){
+    var all = _context.followers.Select(f => new FollowerDTO (
+      f.Id,
+      f.WhoId,
+      f.WhomId
+    ));
+    return await all.ToListAsync();
   }
 }

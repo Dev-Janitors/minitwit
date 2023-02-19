@@ -14,7 +14,14 @@ public class MessageRepository : IMessageRepository
         _context = context;
     }
 
-    public async Task<Response> Seed()
+    public async Task<Response> ClearMessages()
+    {
+        await _context.messages.ExecuteDeleteAsync();
+        await _context.SaveChangesAsync();
+        return Response.Deleted;
+    }
+
+    public async Task<int> Seed()
     {
         //create a list of messages
         var messages = new List<Message>(){
@@ -33,46 +40,55 @@ public class MessageRepository : IMessageRepository
         {
             await _context.messages.AddAsync(message);
         }
-        await _context.SaveChangesAsync();
 
-        return Response.Created;
+        var writtenChanges = await _context.SaveChangesAsync();
+
+        return writtenChanges;
     }
 
   public async Task<(Response, MessageDTO)> CreateAsync(MessageCreateDTO message)
   {
-    var entity = new Message(message.AuthorId, message.Text, message.PubDate);
+    Message entity = new Message(message.AuthorId, message.Text!, message.PubDate);
     _context.messages.Add(entity);
     await _context.SaveChangesAsync();
     return (Response.Created, new MessageDTO(entity.Id, entity.AuthorId, entity.Text, entity.PubDate, entity.Flagged));
   }
 
-  public async Task<IReadOnlyCollection<MessageDTO>> ReadAllAsync()
+  public async Task<IReadOnlyCollection<AllMessages>> ReadAllAsync()
   {
-    var messages = await _context.messages.Select(
-      m => new MessageDTO(
-        m.Id,
-        m.AuthorId,
-        m.Text,
-        m.PubDate,
-        m.Flagged
-      )
-    ).ToListAsync();
-    return messages.AsReadOnly();
+    var query = from message in _context.messages
+    join user in _context.users on message.AuthorId equals user.Id
+    select new AllMessages
+    {
+        content = message.Text,
+        user = user.Username,
+        pubDate = message.PubDate
+    };
+
+
+    return await query.ToListAsync();
   }
 
-  public Task<Option<MessageDTO>> ReadByAsync(string Email)
+  public Task<IReadOnlyCollection<MessageDTO>> ReadAllByAuthorIDAsync(int userID)
   {
+    // var messages = from m in _context.messages
+    //                   where m.AuthorId == userID
+    //                   select m.ToDto()
     throw new NotImplementedException();
   }
 
-  public Task<Option<MessageDTO>> ReadByAuthorIDAsync(int userID)
+  public async Task<IReadOnlyCollection<MessageDTO>> ReadAllByUsernameAsync(string username)
   {
-    throw new NotImplementedException();
-  }
-
-  public Task<Option<MessageDTO>> ReadByUsernameAsync(string Nickname)
-  {
-    throw new NotImplementedException();
+    var authorId = await _context.users
+      .Where(u => u.Username == username)
+      .Select(u => u.Id)
+      .FirstOrDefaultAsync();
+      
+    var messages = await _context.messages
+      .Where(m => m.AuthorId == authorId)
+      .Select(m => new MessageDTO(m.Id, m.AuthorId, m.Text, m.PubDate, m.Flagged))
+      .ToListAsync();
+    return messages;
   }
 
   public Task<Response> RemoveAsync(int id)

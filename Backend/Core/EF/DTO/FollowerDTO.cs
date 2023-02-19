@@ -20,3 +20,8 @@ public record FollowerUpdateDTO : FollowerCreateDTO
 {
     public int Id {get; set;}
 }
+
+public record FollowJSON {
+    public string? follow {get; init;}
+    public string? unfollow {get; init;}
+}

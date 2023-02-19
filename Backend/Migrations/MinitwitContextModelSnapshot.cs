@@ -54,8 +54,8 @@ namespace Backend.Migrations
                     b.Property<int>("Flagged")
                         .HasColumnType("int");
 
-                    b.Property<int>("PubDate")
-                        .HasColumnType("int");
+                    b.Property<long>("PubDate")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Text")
                         .IsRequired()

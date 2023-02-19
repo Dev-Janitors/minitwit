@@ -1,17 +1,13 @@
-import React, { FC, Fragment, useEffect, useState } from 'react';
+import React, { FC, Fragment } from 'react';
 import { Message } from '../../Types/Timeline';
-import { Typography, ListItem, ListItemAvatar, Avatar, ListItemText, Box, Skeleton } from '@mui/material';
-import { IsLoading, User } from '../../Types/Global';
-import axios, { AxiosError } from 'axios';
+import { Typography, ListItem, ListItemAvatar, Avatar, ListItemText, Skeleton } from '@mui/material';
 
 interface props {
 	message: Message;
+	isSkeleton?: boolean;
 }
 
-const TimeLineMessage: FC<props> = ({ message }) => {
-	const [user, setUser] = useState({} as User);
-	const [isLoading, setIsLoading] = useState({ isLoading: true, error: null } as IsLoading);
-
+const TimeLineMessage: FC<props> = ({ message, isSkeleton }) => {
 	const style = {
 		container: {
 			border: '1px solid grey',
@@ -40,31 +36,7 @@ const TimeLineMessage: FC<props> = ({ message }) => {
 
 	const date = new Date(message.pubDate);
 
-	useEffect(() => {
-		const getUser = async () => {
-			try {
-				const url = `${process.env.REACT_APP_API_URL}/user?id=${message.authorId}`;
-				const response = await axios.get(url, {
-					headers: {
-						'access-control-allow-origin': '*',
-					},
-				});
-				setUser(response.data.value);
-				setIsLoading({ isLoading: false, error: null });
-			} catch (e: any) {
-				if (e instanceof AxiosError) {
-					console.log(e);
-					setIsLoading({ isLoading: false, error: e.message });
-				} else {
-					console.log(e);
-					setIsLoading({ isLoading: false, error: 'Something went wrong!' });
-				}
-			}
-		};
-		getUser();
-	}, []);
-
-	if (isLoading.isLoading && isLoading.error === null) {
+	if (isSkeleton) {
 		return (
 			<ListItem alignItems="flex-start" sx={style.container}>
 				<ListItemAvatar>
@@ -81,8 +53,6 @@ const TimeLineMessage: FC<props> = ({ message }) => {
 				/>
 			</ListItem>
 		);
-	} else if (isLoading.error !== null) {
-		return <div>Error: {isLoading.error}</div>;
 	}
 
 	return (
@@ -91,11 +61,11 @@ const TimeLineMessage: FC<props> = ({ message }) => {
 				<Avatar alt="Kusmar00" src="" />
 			</ListItemAvatar>
 			<ListItemText
-				primary={<Typography variant="h6">{user.username}</Typography>}
+				primary={<Typography variant="h6">{message.user}</Typography>}
 				secondary={
 					<Fragment>
 						<Typography component="span" variant="body2" color="text.primary" sx={style.text}>
-							{message.text}
+							{message.content}
 						</Typography>
 						<Typography component="span" variant="body2" color="text.primary" sx={style.date}>
 							{date.toLocaleString()}

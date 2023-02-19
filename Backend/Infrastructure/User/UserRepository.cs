@@ -7,12 +7,18 @@ using Backend.Core.EF;
 
 public class UserRepository : IUserRepository
 {
-private readonly MinitwitContext _dbcontext;
+private readonly MinitwitContext _context;
 
 public UserRepository(MinitwitContext context)
 {
-    _dbcontext = context;
+    _context = context;
 }
+
+  public async Task<Response> ClearUsers(){
+    await _context.users.ExecuteDeleteAsync();
+    await _context.SaveChangesAsync();
+    return Response.Deleted;
+  }
 
   public async Task<Response> Seed()
   {
@@ -24,16 +30,16 @@ public UserRepository(MinitwitContext context)
     
     foreach (var user in users)
     {
-        await _dbcontext.users.AddAsync(user);
+        await _context.users.AddAsync(user);
     }
-    await _dbcontext.SaveChangesAsync();
+    await _context.SaveChangesAsync();
 
     return Response.Created;
   }
   public async Task<(Response, UserDTO)> CreateAsync(UserCreateDTO user)
   {
     {
-    var conflict = await _dbcontext.users
+    var conflict = await _context.users
         .Where(u => u.Email == user.Email || (u.Username != null && u.Username == user.Username))
         .Select(u => new UserDTO(u.Id, u.Email, u.Username))
         .FirstOrDefaultAsync();
@@ -46,9 +52,9 @@ public UserRepository(MinitwitContext context)
 
     var entity = new User(user.Email,user.Username);
 
-    _dbcontext.users.Add(entity);
+    _context.users.Add(entity);
 
-    await _dbcontext.SaveChangesAsync();
+    await _context.SaveChangesAsync();
 
     return (Response.Created, new UserDTO(entity.Id, entity.Email, entity.Username));
 }
@@ -57,7 +63,7 @@ public UserRepository(MinitwitContext context)
 
   public async Task<IReadOnlyCollection<UserDTO>> ReadAllAsync()
   {
-    return(await _dbcontext.users
+    return(await _context.users
                         .Select(u => new UserDTO(u.Id, u.Email, u.Username))
                         .ToListAsync())
                         .AsReadOnly();
@@ -66,7 +72,7 @@ public UserRepository(MinitwitContext context)
 
   public async Task<Option<UserDTO>> ReadByEmailAsync(string Email)
   {
-    var users = from u in _dbcontext.users
+    var users = from u in _context.users
                         where u.Email == Email
                         select new UserDTO(u.Id, u.Email, u.Username);
         
@@ -75,7 +81,7 @@ public UserRepository(MinitwitContext context)
 
   public async Task<Option<UserDTO>> ReadByIDAsync(int userID)
   {
-     var users = from u in _dbcontext.users
+     var users = from u in _context.users
                         where u.Id == userID
                         select new UserDTO(u.Id, u.Email, u.Username);
 
@@ -84,7 +90,7 @@ public UserRepository(MinitwitContext context)
 
   public async Task<Option<UserDTO>> ReadByUsernameAsync(string Username)
   {
-    var users = from u in _dbcontext.users
+    var users = from u in _context.users
                         where u.Username == Username
                         select new UserDTO(u.Id, u.Email, u.Username);
                         

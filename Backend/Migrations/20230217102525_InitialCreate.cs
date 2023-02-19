@@ -32,7 +32,7 @@ namespace Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AuthorId = table.Column<int>(type: "int", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PubDate = table.Column<int>(type: "int", nullable: false),
+                    PubDate = table.Column<long>(type: "bigint", nullable: false),
                     Flagged = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

@@ -5,6 +5,9 @@ public interface IUserRepository
     //Create
     Task<(Response, UserDTO)> CreateAsync(UserCreateDTO user);
 
+    //Delete
+    Task<Response> ClearUsers();
+
     //Update
     Task<Response> UpdateAsync(UserUpdateDTO user);
 
