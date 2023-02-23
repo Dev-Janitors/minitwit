@@ -65,16 +65,21 @@ const TimeLineContainer = () => {
   }
 
   return (
-    <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
-      {timeline.map((message, i) => {
-        return (
-          <Fragment key={i}>
-            <TimeLineMessage message={message} />
-            {/* {i !== timeline.length - 1 && <Divider variant="inset" component="li" />} */}
-          </Fragment>
-        );
-      })}
-    </List>
+    <>
+      <Typography variant="h3" sx={{ textTransform: "capitalize" }}>
+        {username ? `${username}'s messages` : "Public timeline"}
+      </Typography>
+      <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
+        {timeline.map((message, i) => {
+          return (
+            <Fragment key={i}>
+              <TimeLineMessage message={message} />
+              {/* {i !== timeline.length - 1 && <Divider variant="inset" component="li" />} */}
+            </Fragment>
+          );
+        })}
+      </List>
+    </>
   );
 };
 
