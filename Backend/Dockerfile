@@ -2,11 +2,11 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
 WORKDIR /App
 
 # Copy everything
-COPY . ./Backend
+COPY ./Backend ./Backend
 
 RUN ls -a
 
-WORKDIR /App/Backend
+WORKDIR ./Backend
 
 RUN ls -a
 
