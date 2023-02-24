@@ -4,15 +4,15 @@ Vagrant.configure("2") do |config|
 
   config.vm.box = 'digital_ocean'
   config.vm.box_url = "https://github.com/devopsgroup-io/vagrant-digitalocean/raw/master/box/digital_ocean.box"
-  config.ssh.private_key_path = '~/.ssh/do_ssh_key'
+  config.ssh.private_key_path = '~/.ssh/devops'
 
   config.vm.synced_folder "remote_files", "/minitwit", type: "rsync"
   config.vm.synced_folder '.', '/vagrant', disabled: true
   
-  config.vm.define "minitwit", primary: true do |server|
+  config.vm.define "droplet1", primary: true do |server|
 
     server.vm.provider :digital_ocean do |provider|
-      provider.ssh_key_name = "do_ssh_key"
+      provider.ssh_key_name = "devops"
       provider.token = settings["provider_token"]
       provider.image = 'ubuntu-20-04-x64'
       provider.region = 'fra1'
@@ -45,7 +45,7 @@ Vagrant.configure("2") do |config|
     docker rmi hello-world
 
     echo -e "\nOpening port for minitwit ...\n"
-    ufw allow 5000 && \
+    ufw allow 3000 && \
     ufw allow 22/tcp
 
     echo ". $HOME/.bashrc" >> $HOME/.bash_profile
@@ -60,7 +60,7 @@ Vagrant.configure("2") do |config|
     chmod +x /minitwit/deploy.sh
     
     echo -e "\nVagrant setup done ..."
-    echo -e "minitwit will later be accessible at http://$(hostname -I | awk '{print $1}'):5000"
+    echo -e "minitwit will later be accessible at http://$(hostname -I | awk '{print $1}'):3000"
     echo -e "The mysql database needs a minute to initialize, if the landing page is stack-trace ..."
     SHELL
   end

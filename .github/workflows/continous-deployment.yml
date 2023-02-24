@@ -44,8 +44,8 @@ jobs:
                   file: ./Frontend/Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKER_USERNAME }}/minitwitfrontend:latest
-                  cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/frontend:webbuildcache
-                  cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/frontend:webbuildcache,mode=max
+                  cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitfrontend:webbuildcache
+                  cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitfrontend:webbuildcache,mode=max
 
             - name: Build and push minitwitdb
               uses: docker/build-push-action@v2

@@ -20,7 +20,8 @@ services:
         networks:
             - main
         ports:
-            - '2222:2222'
+            - '2222:80'
+            - '2223:443'
         depends_on:
             - db
 
