@@ -1,8 +1,8 @@
 FROM node:16.14.2-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /Frontend
 
-COPY . ./
+COPY ./Frontend ./Frontend
 
 RUN yarn set version 1.22.19
 
