@@ -6,6 +6,8 @@ COPY . ./Backend
 
 WORKDIR /Backend
 
+RUN ls
+
 # Restore as distinct layers
 RUN dotnet restore Backend.sln
 
