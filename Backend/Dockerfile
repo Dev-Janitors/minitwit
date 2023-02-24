@@ -5,12 +5,12 @@ WORKDIR /App
 COPY *.sln .
 COPY *.csproj ./
 
+# Restore as distinct layers
+RUN dotnet restore Backend.sln
+
 COPY . ./
 
 RUN ls
-
-# Restore as distinct layers
-RUN dotnet restore Backend.sln
 
 
 
