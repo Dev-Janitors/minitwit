@@ -43,7 +43,7 @@ jobs:
                   context: .
                   file: ./Frontend/Dockerfile
                   push: true
-                  tags: ${{ secrets.DOCKER_USERNAME }}/minitwitimage:latest
+                  tags: ${{ secrets.DOCKER_USERNAME }}/minitwitfrontend:latest
                   cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/frontend:webbuildcache
                   cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/frontend:webbuildcache,mode=max
 
