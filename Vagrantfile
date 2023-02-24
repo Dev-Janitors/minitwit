@@ -1,70 +1,67 @@
-Vagrant.configure('2') do |config|
-
+Vagrant.configure("2") do |config|
   require 'yaml'
   settings = YAML.load_file 'vagrantSettings.yaml'
 
-  config.vm.define "droplet1" do |config|
-      config.vm.provider :digital_ocean do |provider, override|
-        override.ssh.private_key_path = '~/.ssh/devops'
-        override.vm.box = 'digital_ocean'
-        override.vm.box_url = "https://github.com/devopsgroup-io/vagrant-digitalocean/raw/master/box/digital_ocean.box"
-        override.nfs.functional = false
-        override.vm.allowed_synced_folder_types = :rsync
-        provider.token = settings['provider_token']
-        provider.image = 'ubuntu-18-04-x64'
-        provider.region = 'fra1' # Frankfurt - physical location
-        provider.size = 's-2vcpu-4gb' # 2 vCPU, 4GB RAM - mssql needs 2gb ram
-        provider.backups_enabled = false
-        provider.private_networking = false
-        provider.ipv6 = false
-        provider.monitoring = false
-      end
+  config.vm.box = 'digital_ocean'
+  config.vm.box_url = "https://github.com/devopsgroup-io/vagrant-digitalocean/raw/master/box/digital_ocean.box"
+  config.ssh.private_key_path = '~/.ssh/do_ssh_key'
 
-      config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.synced_folder "remote_files", "/minitwit", type: "rsync"
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+  
+  config.vm.define "minitwit", primary: true do |server|
 
-      config.vm.provision "shell", inline: <<-SHELL
-        sudo apt-get update -qq -y
-        echo "starting docker install"
-      SHELL
-      config.vagrant.plugins = "vagrant-docker-compose"
-      # install docker and docker-compose
-      config.vm.provision :docker
-      config.vm.provision :docker_compose
+    server.vm.provider :digital_ocean do |provider|
+      provider.ssh_key_name = "do_ssh_key"
+      provider.token = settings["provider_token"]
+      provider.image = 'ubuntu-20-04-x64'
+      provider.region = 'fra1'
+      provider.size = 's-1vcpu-1gb'
+    end
 
-      config.vm.provision "shell", inline: <<-SHELL
-        echo "finished docker install"
-      SHELL
+    server.vm.hostname = "minitwit-ci-server"
 
-      config.vm.provision "shell", inline: <<-SHELL
-        echo "starting git clone"
-        git clone https://github.com/Dev-Janitors/minitwit.git
-        echo "finished git clone"
+    server.vm.provision "shell", inline: 'echo "export DOCKER_USERNAME=' + "'" + settings["DOCKER_USERNAME"] + "'" + '" >> ~/.bash_profile'
+    server.vm.provision "shell", inline: 'echo "export DOCKER_PASSWORD=' + "'" + settings["DOCKER_PASSWORD"] + "'" + '" >> ~/.bash_profile'
+    
+    server.vm.provision "shell", inline: <<-SHELL
+    
+    # Install docker and docker-compose
+    sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+    apt-cache policy docker-ce
+    sudo apt install -y docker-ce
+    sudo systemctl status docker
+    sudo usermod -aG docker ${USER}
+    sudo apt install -y docker-compose
+    
 
-        echo "starting docker-compose"
-        cd minitwit
+    # Install make
+    sudo apt-get install -y make
+    
+    echo -e "\nVerifying that docker works ...\n"
+    docker run --rm hello-world
+    docker rmi hello-world
 
-        docker-compose up -d --build
-        echo "finished docker-compose"
-      
-      SHELL
+    echo -e "\nOpening port for minitwit ...\n"
+    ufw allow 5000 && \
+    ufw allow 22/tcp
 
-      #config.vm.provision "file", source: "./", destination: "$HOME/minitwit/"
+    echo ". $HOME/.bashrc" >> $HOME/.bash_profile
 
-      #config.vm.provision "file", source: "./Database", destination: "$HOME/minitwit/Database"
-      # config.vm.provision "shell", inline: <<-SHELL
-      #   echo "copied Database"
-      
-      #   SHELL
-      # config.vm.provision "file", source: "./Frontend", destination: "$HOME/minitwit/Frontend"
-      # config.vm.provision "shell", inline: <<-SHELL
-      #   echo "copied Frontend"
-      
-      #   SHELL
-      # config.vm.provision "file", source: "./Backend", destination: "$HOME/minitwit/Backend"
-      # config.vm.provision "shell", inline: <<-SHELL
-      #   echo "copied Backend"
-      
-      #   SHELL
+    echo -e "\nConfiguring credentials as environment variables...\n"
 
+    source $HOME/.bash_profile
+
+    echo -e "\nSelecting Minitwit Folder as default folder when you ssh into the server...\n"
+    echo "cd /minitwit" >> ~/.bash_profile
+
+    chmod +x /minitwit/deploy.sh
+    
+    echo -e "\nVagrant setup done ..."
+    echo -e "minitwit will later be accessible at http://$(hostname -I | awk '{print $1}'):5000"
+    echo -e "The mysql database needs a minute to initialize, if the landing page is stack-trace ..."
+    SHELL
   end
 end
