@@ -14,6 +14,8 @@ COPY . .
 
 EXPOSE 3000
 
+ENV REACT_APP_API_URL="165.232.115.211:2222"
+
 RUN yarn build
 
 RUN yarn global add serve
