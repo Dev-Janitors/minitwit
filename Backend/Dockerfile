@@ -2,13 +2,13 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
 WORKDIR /App
 
 # Copy everything
-COPY . ./
+COPY . ./Backend
 
-RUN ls
+RUN ls -a
 
-WORKDIR /Backend
+WORKDIR /App/Backend
 
-RUN ls
+RUN ls -a
 
 # Restore as distinct layers
 RUN dotnet restore Backend.sln
