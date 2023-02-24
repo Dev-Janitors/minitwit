@@ -3,8 +3,9 @@ WORKDIR /App
 
 # Copy everything
 COPY . ./
+
 # Restore as distinct layers
-RUN dotnet restore
+RUN dotnet restore Backend.sln
 
 
 
