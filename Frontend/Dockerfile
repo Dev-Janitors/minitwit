@@ -15,3 +15,7 @@ COPY . .
 EXPOSE 3000
 
 CMD ["yarn", "build"]
+
+RUN yarn global add serve
+
+RUN serve -s build
