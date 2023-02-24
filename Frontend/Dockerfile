@@ -2,7 +2,7 @@ FROM node:16.14.2-alpine
 
 WORKDIR /usr/src/app
 
-COPY ./package*.json ./
+COPY ./package*.json ./package.json
 
 RUN yarn set version 1.22.19
 

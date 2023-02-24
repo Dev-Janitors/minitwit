@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
       provider.token = settings["provider_token"]
       provider.image = 'ubuntu-20-04-x64'
       provider.region = 'fra1'
-      provider.size = 's-1vcpu-1gb'
+      provider.size = 's-2vcpu-4gb'
     end
 
     server.vm.hostname = "minitwit-ci-server"
