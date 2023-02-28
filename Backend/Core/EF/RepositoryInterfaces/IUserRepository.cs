@@ -18,7 +18,7 @@ public interface IUserRepository
 
     Task<Option<UserDTO>> ReadByEmailAsync(string Email);
 
-    Task<Option<UserDTO>> ReadByUsernameAsync(string Nickname);
+    Task<Option<UserDTO>> ReadByUsernameAsync(string Username);
     Task<Response> Seed();
 
     Task<IReadOnlyCollection<UserDTO>> ReadAllAsync();
