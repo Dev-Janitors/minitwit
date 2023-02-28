@@ -1,42 +1,64 @@
-import React, { FC, Fragment, useEffect, useState } from 'react';
-import axios, { AxiosError } from 'axios';
-import { Message } from '../../Types/Timeline';
-import { IsLoading } from '../../Types/Global';
-import TimeLineMessage from './TimeLineMessage';
-import List from '@mui/material/List';
-import { Typography } from '@mui/material';
+import React, { FC, Fragment, useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
+import { Message } from "../../Types/Timeline";
+import { IsLoading } from "../../Types/Global";
+import TimeLineMessage from "./TimeLineMessage";
+import List from "@mui/material/List";
+import { Typography } from "@mui/material";
+import { useParams } from "react-router-dom";
 
-interface props {
-	user: string | null;
-}
+const TimeLineContainer = () => {
+  const { username } = useParams();
+  const [timeline, setTimeline] = useState([] as Message[]);
+  const [isLoading, setIsLoading] = useState({
+    isLoading: true,
+    error: null,
+  } as IsLoading);
 
-const TimeLineContainer: FC<props> = ({ user }) => {
-	const [timeline, setTimeline] = useState([] as Message[]);
-	const [isLoading, setIsLoading] = useState({ isLoading: true, error: null } as IsLoading);
+  useEffect(() => {
+    const getTimeline = async () => {
+      try {
+        console.log(username);
+        const response = await axios.get(
+          username
+            ? `${process.env.REACT_APP_API_URL}/msgs/${username}`
+            : `${process.env.REACT_APP_API_URL}/msgs`,
+          {
+            headers: {
+              "access-control-allow-origin": "*",
+            },
+          }
+        );
+        console.log(response.data);
+        setTimeline(response.data);
+        setIsLoading({ isLoading: false, error: null });
+      } catch (e: any) {
+        if (e instanceof AxiosError) {
+          console.log(e);
+          setIsLoading({ isLoading: false, error: e.message });
+        } else {
+          console.log(e);
+          setIsLoading({ isLoading: false, error: "Something went wrong!" });
+        }
+      }
+    };
+    getTimeline();
+  }, []);
 
-	useEffect(() => {
-		const getTimeline = async () => {
-			try {
-				const response = await axios.get(`${process.env.REACT_APP_API_URL}/msgs`, {
-					headers: {
-						'access-control-allow-origin': '*',
-					},
-				});
-				console.log(response.data);
-				setTimeline(response.data);
-				setIsLoading({ isLoading: false, error: null });
-			} catch (e: any) {
-				if (e instanceof AxiosError) {
-					console.log(e);
-					setIsLoading({ isLoading: false, error: e.message });
-				} else {
-					console.log(e);
-					setIsLoading({ isLoading: false, error: 'Something went wrong!' });
-				}
-			}
-		};
-		getTimeline();
-	}, []);
+  if (isLoading.isLoading && isLoading.error === null) {
+    {
+      new Array(10).map((message, i) => {
+        return (
+          <Fragment key={i}>
+            <TimeLineMessage message={{} as Message} isSkeleton={true} />
+            {/* {i !== timeline.length - 1 && <Divider variant="inset" component="li" />} */}
+          </Fragment>
+        );
+      });
+    }
+  } else if (isLoading.error !== null) {
+    return <div>Error: {isLoading.error}</div>;
+  }
 
 	if (isLoading.isLoading && isLoading.error === null) {
 		new Array(10).map((message, i) => {
@@ -50,23 +72,27 @@ const TimeLineContainer: FC<props> = ({ user }) => {
 	} else if (isLoading.error !== null) {
 		return <div>Error: {isLoading.error}</div>;
 	}
+  if (timeline.length === 0) {
+    return <Typography variant="h5">No messages</Typography>;
+  }
 
-	if (timeline.length === 0) {
-		return <Typography variant="h5">No messages</Typography>;
-	}
-
-	return (
-		<List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-			{timeline.map((message, i) => {
-				return (
-					<Fragment key={i}>
-						<TimeLineMessage message={message} />
-						{/* {i !== timeline.length - 1 && <Divider variant="inset" component="li" />} */}
-					</Fragment>
-				);
-			})}
-		</List>
-	);
+  return (
+    <>
+      <Typography variant="h3" sx={{ textTransform: "capitalize" }}>
+        {username ? `${username}'s messages` : "Public timeline"}
+      </Typography>
+      <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
+        {timeline.map((message, i) => {
+          return (
+            <Fragment key={i}>
+              <TimeLineMessage message={message} />
+              {/* {i !== timeline.length - 1 && <Divider variant="inset" component="li" />} */}
+            </Fragment>
+          );
+        })}
+      </List>
+    </>
+  );
 };
 
 export default TimeLineContainer;
