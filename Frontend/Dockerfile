@@ -4,13 +4,11 @@ WORKDIR /App
 
 COPY ./Frontend ./Frontend
 
-WORKDIR ./Frontend
+WORKDIR /App/Frontend
 
 RUN yarn set version 1.22.19
 
 RUN yarn
-
-COPY . .
 
 EXPOSE 3000
 
