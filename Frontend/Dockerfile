@@ -1,8 +1,10 @@
 FROM node:16.14.2-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /App
 
-COPY ./package*.json ./
+COPY ./Frontend ./Frontend
+
+WORKDIR ./Frontend
 
 RUN yarn set version 1.22.19
 
@@ -10,6 +12,12 @@ RUN yarn
 
 COPY . .
 
-EXPOSE 3333
+EXPOSE 3000
 
-CMD ["yarn", "build"]
+ENV REACT_APP_API_URL="165.232.115.211:2222"
+
+RUN yarn build
+
+RUN yarn global add serve
+
+CMD [ "yarn","serve" ]

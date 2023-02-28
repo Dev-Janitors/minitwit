@@ -60,6 +60,18 @@ const TimeLineContainer = () => {
     return <div>Error: {isLoading.error}</div>;
   }
 
+	if (isLoading.isLoading && isLoading.error === null) {
+		new Array(10).map((message, i) => {
+			return (
+				<Fragment key={i}>
+					<TimeLineMessage message={{} as Message} isSkeleton={true} />
+					{/* {i !== timeline.length - 1 && <Divider variant="inset" component="li" />} */}
+				</Fragment>
+			);
+		});
+	} else if (isLoading.error !== null) {
+		return <div>Error: {isLoading.error}</div>;
+	}
   if (timeline.length === 0) {
     return <Typography variant="h5">No messages</Typography>;
   }
