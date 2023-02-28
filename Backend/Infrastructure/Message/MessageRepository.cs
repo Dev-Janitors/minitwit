@@ -48,6 +48,7 @@ public class MessageRepository : IMessageRepository
 
   public async Task<(Response, MessageDTO)> CreateAsync(MessageCreateDTO message)
   {
+    if (!_context.users.Any(u => u.Id == message.AuthorId)) return (Response.NotFound, new MessageDTO(-1, message.AuthorId, message.Text ?? "", message.PubDate, 0));
     Message entity = new Message(message.AuthorId, message.Text!, message.PubDate);
     _context.messages.Add(entity);
     await _context.SaveChangesAsync();

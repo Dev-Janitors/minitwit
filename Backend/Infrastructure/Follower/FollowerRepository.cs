@@ -3,7 +3,6 @@ namespace Backend.Infrastructure;
 using System.Threading.Tasks;
 using Backend.Core;
 using Backend.Core.EF;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 public class FollowerRepository : IFollowerRepository
 {
@@ -43,8 +42,6 @@ public class FollowerRepository : IFollowerRepository
 
     await _context.followers.AddAsync(entity);
     await _context.SaveChangesAsync();
-
-    Console.WriteLine("Create async", entity.WhoId, entity.WhomId);
 
     return (Response.Created, new FollowerDTO(entity.Id, entity.WhoId, entity.WhomId));
   }
@@ -96,7 +93,7 @@ public class FollowerRepository : IFollowerRepository
           f.WhomId
         )
       )
-      .FirstAsync();
+      .FirstOrDefaultAsync();
     
     return follow;
   }

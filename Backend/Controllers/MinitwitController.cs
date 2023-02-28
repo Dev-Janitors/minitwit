@@ -3,6 +3,7 @@ using Backend.Core.EF;
 using Backend.Core;
 using Xunit.Sdk;
 using System.Dynamic;
+using SQLitePCL;
 
 namespace Backend.Controllers;
 
@@ -277,10 +278,7 @@ public class MinitwitController : ControllerBase
 
                 var foundUser = unfollowUser.Value;
 
-                Option<FollowerDTO> followResult = await _followerRepo.ReadByWhoAndWhomId(userId, foundUser.Id);
-                if (followResult.IsNone) return StatusCode(400, "Could not find the follow relation.");
-
-                var unfollowResult = await _followerRepo.DeleteByIdAsync(followResult.Value.Id);
+                var unfollowResult = await _followerRepo.DeleteByWhoAndWhomIds(userId, foundUser.Id);
                 if (unfollowResult != Core.Response.Deleted) return StatusCode(500, "Internal Server Error. Could not unfollow");
                 
                 var response = new List<string>();
