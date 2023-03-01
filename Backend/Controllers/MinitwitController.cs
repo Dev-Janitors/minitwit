@@ -4,6 +4,7 @@ using Backend.Core;
 using Xunit.Sdk;
 using System.Dynamic;
 using SQLitePCL;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers;
 
@@ -84,6 +85,7 @@ public class MinitwitController : ControllerBase
     }
 
     [HttpGet("msgs/{username}")]
+    [Authorize]
     public async Task<IActionResult> GetUserTimeline(string username, [FromQuery(Name = "latest")] int? latest)
     {
         updateLatest(latest);

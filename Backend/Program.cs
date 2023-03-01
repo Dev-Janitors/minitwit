@@ -1,5 +1,6 @@
 using Backend.Infrastructure;
 using Backend.Core.EF;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -29,6 +30,17 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFollowerRepository, FollowerRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
+// Authentication - Auth0
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.Authority = "https://dev-m7wdzvfk.eu.auth0.com/";
+    options.Audience = "http://localhost:2222";
+});
+
 
 var app = builder.Build();
 
@@ -37,6 +49,16 @@ DatabaseManagementService.MigrationInitialisation(app);
 // Cors
 app.UseCors(MyAllowSpecificOrigins);
 
+// Authentication
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -44,6 +66,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -6,9 +6,11 @@ import TimeLineMessage from "./TimeLineMessage";
 import List from "@mui/material/List";
 import { Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
-const TimeLineContainer = () => {
+const TimeLineContainer: FC = () => {
   const { username } = useParams();
+  const {getAccessTokenSilently} = useAuth0();
   const [timeline, setTimeline] = useState([] as Message[]);
   const [isLoading, setIsLoading] = useState({
     isLoading: true,
@@ -18,20 +20,23 @@ const TimeLineContainer = () => {
   useEffect(() => {
     const getTimeline = async () => {
       try {
-        console.log(username);
-        const response = await axios.get(
-          username
-            ? `http://${process.env.REACT_APP_API_URL}/msgs/${username}`
-            : `http://${process.env.REACT_APP_API_URL}/msgs`,
-          {
-            headers: {
-              "access-control-allow-origin": "*",
-            },
-          }
-        );
-        console.log(response.data);
-        setTimeline(response.data);
-        setIsLoading({ isLoading: false, error: null });
+        const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`
+        const options = username ? {
+          headers: {
+            "access-control-allow-origin": `${process.env.REACT_APP_API_SERVER_URL}`,
+            Authorization: `Bearer ${await getAccessTokenSilently()}`
+          },
+        } : {
+          headers: {
+            "access-control-allow-origin": `${process.env.REACT_APP_API_SERVER_URL}`,
+          },
+        }
+
+        axios.get(username ? baseUrl + `/${username}` : baseUrl, options).then(res => {
+          console.log(res.data);
+          setTimeline(res.data);
+          setIsLoading({ isLoading: false, error: null });
+        })
       } catch (e: any) {
         if (e instanceof AxiosError) {
           console.log(e);
