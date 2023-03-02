@@ -19,7 +19,6 @@ const TimeLineContainer: FC = () => {
 
   useEffect(() => {
     const getTimeline = async () => {
-      try {
         const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`
         const options = username ? {
           headers: {
@@ -33,11 +32,9 @@ const TimeLineContainer: FC = () => {
         }
 
         axios.get(username ? baseUrl + `/${username}` : baseUrl, options).then(res => {
-          console.log(res.data);
           setTimeline(res.data);
           setIsLoading({ isLoading: false, error: null });
-        })
-      } catch (e: any) {
+        }).catch (e => {
         if (e instanceof AxiosError) {
           console.log(e);
           setIsLoading({ isLoading: false, error: e.message });
@@ -45,7 +42,7 @@ const TimeLineContainer: FC = () => {
           console.log(e);
           setIsLoading({ isLoading: false, error: "Something went wrong!" });
         }
-      }
+      })
     };
     getTimeline();
   }, []);

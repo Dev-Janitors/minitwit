@@ -2,9 +2,9 @@ import { Routes, Route } from "react-router-dom";
 import TimeLineContainer from "./Components/PublicTimeline/TimeLineContainer";
 import {useAuth0} from "@auth0/auth0-react"
 import AuthenticationGuard from "./Components/Authentication/AuthenticationGuard";
-import MainPage from "./Components/Pages/MainPage";
 import { PageLoader } from "./Components/Authentication/PageLoader";
 import NotFound from "./Components/Pages/NotFound";
+import TimelinePage from "./Components/Pages/TimelinePage";
 
 function App() {
   const {isLoading} = useAuth0();
@@ -20,12 +20,12 @@ function App() {
         <Route
           path="/"
           element={
-            <MainPage/>
+            <TimelinePage />
           }
         >
         </Route>
         <Route path="user/:username" element={
-            <AuthenticationGuard component={TimeLineContainer} />
+            <AuthenticationGuard component={TimelinePage} />
           } />
         <Route path="*" element={<NotFound/>}/>
       </Routes>
