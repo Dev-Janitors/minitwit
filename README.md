@@ -14,3 +14,6 @@ Currently there is no frontend for the refactored version of minitwit. Go to `lo
 -   [x] Get users timeline (only User's posts)
 -   [x] Post message
 -   [x] Follow/Unfollow user
+
+## Production Url
+104.248.101.163:3000
