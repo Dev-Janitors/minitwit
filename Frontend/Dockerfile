@@ -22,8 +22,6 @@ RUN --mount=type=secret,id=REACT_APP_AUTH0_DOMAIN \
     echo "REACT_APP_API_SERVER_URL=$REACT_APP_API_SERVER_URL" >> .env && \
     echo "REACT_APP_AUTH0_AUDIENCE=$REACT_APP_AUTH0_AUDIENCE" >> .env
 
-RUN --mount=type=secret,id=_env,dst=/etc/secrets/.env cat /etc/secrets/.env
-
 RUN yarn set version 1.22.19
 
 RUN yarn
