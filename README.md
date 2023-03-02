@@ -7,8 +7,8 @@ Currently there is no frontend for the refactored version of minitwit. Go to `lo
 ## Backend features (checked if refactored)
 
 -   [x] Register
--   [ ] Login
--   [ ] Logout
+-   [x] Login
+-   [x] Logout
 -   [x] Get public timeline
 -   [x] Get my timeline (self and followed users)
 -   [x] Get users timeline (only User's posts)
