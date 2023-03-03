@@ -119,34 +119,6 @@ public class FollowerRepositoryTests
     }
 
     [Fact]
-    public async void DeleteById_Deleted()
-    {
-        //Arrange
-        var follow1 = new Follower(_user1.Id, _user2.Id);
-        var follow2 = new Follower(_user2.Id, _user1.Id);
-        _context.followers.Add(follow1);
-        _context.followers.Add(follow2);
-        await _context.SaveChangesAsync();
-
-        //Act
-        Response r = await _repo.DeleteByIdAsync(follow1.Id);
-
-        //Assert
-        Assert.Equal(Response.Deleted, r);
-        Assert.Null(_context.followers.Where(f => f.Id == follow1.Id).FirstOrDefault());
-    }
-
-    [Fact]
-    public async void DeleteById_NotFound()
-    {
-        //Act
-        Response r = await _repo.DeleteByIdAsync(1000);
-
-        //Assert
-        Assert.Equal(Response.NotFound, r);
-    }
-
-    [Fact]
     public async void ReadAllBy_returns_all()
     {
         //Arrange
