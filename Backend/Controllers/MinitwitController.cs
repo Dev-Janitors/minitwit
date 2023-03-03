@@ -233,7 +233,7 @@ public class MinitwitController : ControllerBase
         int userId;
         try {
             var userResult = await _userRepo.ReadByUsernameAsync(username);
-            if (userResult.IsNone) throw new NullException(userResult);
+            if (userResult.IsNone) throw new Exception();
             userId = userResult.Value.Id;
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
