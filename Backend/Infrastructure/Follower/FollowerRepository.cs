@@ -46,22 +46,6 @@ public class FollowerRepository : IFollowerRepository
     return (Response.Created, new FollowerDTO(entity.Id, entity.WhoId, entity.WhomId));
   }
 
-  public async Task<Response> DeleteByIdAsync(int id)
-  {
-    Follower? follow = await (
-      _context.followers
-        .Where(f => f.Id == id)
-        .FirstOrDefaultAsync()
-    );
-    
-    if (follow == null) return Response.NotFound;
-
-    _context.Remove(follow);
-    await _context.SaveChangesAsync();
-
-    return Response.Deleted;
-  }
-
   public async Task<Response> DeleteByWhoAndWhomIds(int whoId, int whomId)
   {
     Follower? follow = await (
