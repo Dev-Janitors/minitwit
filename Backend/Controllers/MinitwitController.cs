@@ -233,11 +233,11 @@ public class MinitwitController : ControllerBase
         int userId;
         try {
             var userResult = await _userRepo.ReadByUsernameAsync(username);
-            if (userResult.IsNone) throw new Exception();
+            if (userResult.IsNone) return StatusCode(400, $"Could not find user with name '{username}'.");;
             userId = userResult.Value.Id;
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
-            return StatusCode(400, $"Could not find user with name '{username}'.");
+            return StatusCode(500, "Internal Server Error");
         }
 
 
