@@ -208,10 +208,10 @@ public class MinitwitController : ControllerBase
 
         try {
             userResult = await _userRepo.ReadByUsernameAsync(username);
-            if (userResult.IsNone) throw new NullException(userResult);
+            if (userResult.IsNone) return NotFound($"Could not find user with name '{username}'.");
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
-            return NotFound($"Could not find user with name '{username}'.");
+            return StatusCode(500, "something wen terribly wrong");
         }
 
         //Find followers of user with userResult.Value.Id (whomId)
@@ -259,7 +259,7 @@ public class MinitwitController : ControllerBase
                 
                 var result = await _followerRepo.CreateAsync(followCreate);
                 if (result.Item1 == Core.Response.NotFound) return NotFound();
-                if (result.Item1 != Core.Response.Created) throw new Exception("Failed to follow");
+                if (result.Item1 != Core.Response.Created) return StatusCode(500, "Could not follow");
 
                 var responseList = new List<string>();
                 responseList.Add(user.Username);
