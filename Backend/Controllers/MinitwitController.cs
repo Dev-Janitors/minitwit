@@ -121,7 +121,7 @@ public class MinitwitController : ControllerBase
             };
             
             var result = await _messageRepo.CreateAsync(messageCreateDTO);  
-            return Ok(result);
+            return NoContent();
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
             return StatusCode(504);
