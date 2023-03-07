@@ -2,6 +2,7 @@ FROM node:16.14.2-alpine
 
 WORKDIR /App
 
+
 # COPY ${frontendCopySrc} ./Frontend
 COPY ./Frontend ./Frontend
 

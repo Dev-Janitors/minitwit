@@ -5,7 +5,6 @@ WORKDIR /App
 # COPY ${backendCopySrc} ./Backend
 COPY ./Backend ./Backend
 
-
 WORKDIR ./Backend
 
 # Restore as distinct layers

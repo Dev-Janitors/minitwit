@@ -138,7 +138,7 @@ public class MinitwitController : ControllerBase
             Email = body.email
         };
         (Response response, UserDTO user) = await _userRepo.CreateAsync(userCreateDTO);
-        if (response == Core.Response.Conflict) return Conflict("User with same email or username already exists.");
+        if (response == Core.Response.Conflict) return BadRequest();
         return NoContent();
     }
     
