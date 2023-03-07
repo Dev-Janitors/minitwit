@@ -89,6 +89,9 @@ public class MinitwitController : ControllerBase
     public async Task<IActionResult> GetUserTimeline(string username, [FromQuery(Name = "latest")] int? latest)
     {
         updateLatest(latest);
+        //THIS COULD SHOW THE HEADER
+        var header = Request.Headers["Authorization"];
+        _logger.LogInformation("header: " + header, header);
         try {
             var messages = (await _messageRepo.ReadAllByUsernameAsync(username))
             .Select(m => new {
