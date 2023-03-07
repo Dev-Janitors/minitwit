@@ -65,7 +65,7 @@ builder.Services.AddAuthentication(options =>
 }).AddJwtBearer(options =>
 {
     options.Authority = "https://dev-m7wdzvfk.eu.auth0.com/";
-    options.Audience = "https://146.190.206.71/api";
+    options.Audience = builder.Configuration.GetConnectionString("AUTH0_AUDIENCE");
 });
 
 
