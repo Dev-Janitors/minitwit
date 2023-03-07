@@ -24,7 +24,13 @@ Vagrant.configure("2") do |config|
     server.vm.provision "shell", inline: 'echo "export DOCKER_USERNAME=' + "'" + settings["DOCKER_USERNAME"] + "'" + '" >> ~/.bash_profile'
     server.vm.provision "shell", inline: 'echo "export DOCKER_PASSWORD=' + "'" + settings["DOCKER_PASSWORD"] + "'" + '" >> ~/.bash_profile'
     
-    server.vm.provision "shell", inline: <<-SHELL
+    server.vm.provision "shell",env:{"BASEURL" => settings["BASEURL"]}, inline: <<-SHELL
+    echo -e "Setting up environment variables ...\n"
+    cd /minitwit
+    echo "BASEURL=$BASEURL" >> .env
+    echo "CERT_RESOLVER=production" >> .env
+    cd ~
+    echo -e "Done setting up environment variables ...\n"
     
     # Install docker and docker-compose
     sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
@@ -58,7 +64,7 @@ Vagrant.configure("2") do |config|
     echo "cd /minitwit" >> ~/.bash_profile
 
     chmod +x /minitwit/deploy.sh
-    
+
     echo -e "\nVagrant setup done ..."
     echo -e "minitwit will later be accessible at http://$(hostname -I | awk '{print $1}'):3000"
     echo -e "The mysql database needs a minute to initialize, if the landing page is stack-trace ..."

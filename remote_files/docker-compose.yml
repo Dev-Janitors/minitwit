@@ -4,6 +4,19 @@ networks:
     main:
 
 services:
+    reverse-proxy:
+        # The official v2 Traefik docker image
+        image: traefik:v2.9
+        container_name: 'traefik'
+        ports:
+            - 80:80
+            - 443:443
+            - 8080:8080
+        volumes:
+            - '/var/run/docker.sock:/var/run/docker.sock:ro'
+            - './etc/traefik/:/etc/traefik/:ro'
+            - './traefik-ssl-certs:/ssl-certs'
+
     minitwitfrontend:
         image: ${DOCKER_USERNAME}/minitwitfrontend
         container_name: minitwitfrontend
@@ -11,19 +24,49 @@ services:
             - main
         depends_on:
             - backend
-        ports:
-            - '3000:3000'
+
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.minitwitfrontend.rule=Host(`${BASEURL}`)
+            - traefik.http.routers.minitwitfrontend.entrypoints=websecure
+
+            - 'traefik.http.middlewares.testheader.headers.accesscontrolallowmethods=GET,OPTIONS,PUT'
+            - 'traefik.http.middlewares.testheader.headers.accesscontrolalloworiginlist=https://api.localhost,http://api.localhost, https://104.248.101.163/api, http://104.248.101.163/api'
+            - 'traefik.http.middlewares.testheader.headers.accesscontrolmaxage=100'
+            - 'traefik.http.middlewares.testheader.headers.addvaryheader=true'
+
+            - traefik.http.routers.minitwitfrontend.tls=true
+            - traefik.http.routers.minitwitfrontend.tls.certresolver=production
 
     backend:
         image: ${DOCKER_USERNAME}/minitwitbackend
         container_name: minitwitbackend
         networks:
             - main
-        ports:
-            - '2222:80'
-            - '2223:443'
         depends_on:
             - db
+        labels:
+            - traefik.enable=true
+
+            # Define the router for HTTPS
+            - traefik.http.routers.minitwitbackend.rule=Host(`${BASEURL}`) && PathPrefix(`/api`)
+            - traefik.http.routers.minitwitbackend.entrypoints=websecure
+
+            # Create a middleware to strip the /api prefix
+            - 'traefik.http.middlewares.myservice-strip.stripprefix.prefixes=/api'
+            - 'traefik.http.middlewares.myservice-strip.stripprefix.forceslash=false'
+            # Add the middleware to the router (backend)
+            - 'traefik.http.routers.minitwitbackend.middlewares=myservice-strip'
+
+            - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto = https
+
+            - 'traefik.http.middlewares.minitwitbackend.headers.accesscontrolallowmethods=GET,OPTIONS,PUT'
+            - 'traefik.http.middlewares.minitwitbackend.headers.accesscontrolalloworiginlist=https://localhost,https://104.248.101.163,http://104.248.101.163/'
+            - 'traefik.http.middlewares.minitwitbackend.headers.accesscontrolmaxage=100'
+            - 'traefik.http.middlewares.minitwitbackend.headers.addvaryheader=true'
+
+            - traefik.http.routers.minitwitbackend.tls=true
+            - traefik.http.routers.minitwitbackend.tls.certresolver=production
 
     db:
         image: ${DOCKER_USERNAME}/minitwitdb
