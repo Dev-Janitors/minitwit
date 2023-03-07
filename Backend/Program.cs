@@ -2,6 +2,7 @@ using Backend.Infrastructure;
 using Backend.Core.EF;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using System.Collections;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,7 +58,6 @@ builder.Services.AddScoped<IFollowerRepository, FollowerRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 // Authentication - Auth0
-var envAudience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -65,7 +65,7 @@ builder.Services.AddAuthentication(options =>
 }).AddJwtBearer(options =>
 {
     options.Authority = "https://dev-m7wdzvfk.eu.auth0.com/";
-    options.Audience = envAudience;
+    options.Audience = "https://146.190.206.71/api";
 });
 
 
