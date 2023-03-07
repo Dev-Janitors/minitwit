@@ -1,7 +1,7 @@
 """
 Call me for example like:
 
-$ python3 minitwit_simulator.py "http://165.232.115.211:2222"
+$ python3 minitwit_simulator.py "https://104.248.101.163/api"
 """
 
 import traceback
