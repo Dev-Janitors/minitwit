@@ -1,3 +1,5 @@
+![build](https://github.com/Dev-Janitors/minitwit/actions/workflows/continous-deployment.yml/badge.svg)
+
 # Minitwit
 
 To start the app run `docker-compose up`. (Make sure the docker daemon is running)
