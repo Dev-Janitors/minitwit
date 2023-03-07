@@ -1,12 +1,11 @@
 ---
-name: Continuous Deployment
+name: Continuous Deployment Staging
 
 on:
     push:
         # Run workflow every time something is pushed to the main branch
         branches:
-            - main
-            - master
+            - feat/auth
     # allow manual triggers for now too
     workflow_dispatch:
         manual: true
@@ -48,11 +47,11 @@ jobs:
                   secrets: |
                       "REACT_APP_API_URL=${{secrets.REACT_APP_API_URL}}"
 
-                      "REACT_APP_AUTH0_DOMAIN=${{secrets.REACT_APP_AUTH0_DOMAIN}}"
-                      "REACT_APP_AUTH0_CLIENT_ID=${{secrets.REACT_APP_AUTH0_CLIENT_ID}}"
-                      "REACT_APP_AUTH0_CALLBACK_URL=${{secrets.REACT_APP_AUTH0_CALLBACK_URL}}"
-                      "REACT_APP_API_SERVER_URL=${{secrets.REACT_APP_API_SERVER_URL}}"
-                      "REACT_APP_AUTH0_AUDIENCE=${{secrets.REACT_APP_AUTH0_AUDIENCE}}"
+                      "REACT_APP_AUTH0_DOMAIN=${{secrets.REACT_APP_AUTH0_DOMAIN_STAGING}}"
+                      "REACT_APP_AUTH0_CLIENT_ID=${{secrets.REACT_APP_AUTH0_CLIENT_ID_STAGING}}"
+                      "REACT_APP_AUTH0_CALLBACK_URL=${{secrets.REACT_APP_AUTH0_CALLBACK_URL_STAGING}}"
+                      "REACT_APP_API_SERVER_URL=${{secrets.REACT_APP_API_SERVER_URL_STAGING}}"
+                      "REACT_APP_AUTH0_AUDIENCE=${{secrets.REACT_APP_AUTH0_AUDIENCE_STAGING}}"
 
             - name: Build and push minitwitdb
               uses: docker/build-push-action@v2
@@ -98,4 +97,4 @@ jobs:
                   '/minitwit/deploy.sh'
               env:
                   SSH_USER: ${{ secrets.SSH_USER }}
-                  SSH_HOST: ${{ secrets.SSH_HOST }}
+                  SSH_HOST: ${{ secrets.SSH_HOST_STAGING }}
