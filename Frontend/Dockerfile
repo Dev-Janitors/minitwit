@@ -6,7 +6,7 @@ COPY ${frontendCopySrc} ./Frontend
 
 WORKDIR /App/Frontend
 
-RUN ls
+RUN echo -e ${frontendCopySrc}
 
 RUN --mount=type=secret,id=REACT_APP_AUTH0_DOMAIN \
     --mount=type=secret,id=REACT_APP_AUTH0_CLIENT_ID \
