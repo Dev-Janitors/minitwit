@@ -5,8 +5,7 @@ on:
     push:
         # Run workflow every time something is pushed to the main branch
         branches:
-            - main
-            - master
+            - feat/auth
     # allow manual triggers for now too
     workflow_dispatch:
         manual: true
@@ -98,4 +97,4 @@ jobs:
                   '/minitwit/deploy.sh'
               env:
                   SSH_USER: ${{ secrets.SSH_USER }}
-                  SSH_HOST: ${{ secrets.SSH_HOST }}
+                  SSH_HOST: ${{ secrets.SSH_HOST_STAGING }}

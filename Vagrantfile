@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "remote_files", "/minitwit", type: "rsync"
   config.vm.synced_folder '.', '/vagrant', disabled: true
   
-  config.vm.define "droplet1", primary: true do |server|
+  config.vm.define "droplet1-staging", primary: true do |server|
 
     server.vm.provider :digital_ocean do |provider|
       provider.ssh_key_name = "devops"
@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
       provider.size = 's-2vcpu-4gb'
     end
 
-    server.vm.hostname = "minitwit-ci-server"
+    server.vm.hostname = "minitwit-staging"
 
     server.vm.provision "shell", inline: 'echo "export DOCKER_USERNAME=' + "'" + settings["DOCKER_USERNAME"] + "'" + '" >> ~/.bash_profile'
     server.vm.provision "shell", inline: 'echo "export DOCKER_PASSWORD=' + "'" + settings["DOCKER_PASSWORD"] + "'" + '" >> ~/.bash_profile'
