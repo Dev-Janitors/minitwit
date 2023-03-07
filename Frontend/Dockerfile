@@ -21,7 +21,8 @@ RUN --mount=type=secret,id=REACT_APP_AUTH0_DOMAIN \
     echo "REACT_APP_AUTH0_AUDIENCE=$REACT_APP_AUTH0_AUDIENCE" >> .env && \
     echo "frontendCopySrc=$frontendCopySrc" >> .env
 
-COPY ${frontendCopySrc} ./Frontend
+# COPY ${frontendCopySrc} ./Frontend
+COPY ./Frontend ./Frontend
 
 WORKDIR /App/Frontend
 
