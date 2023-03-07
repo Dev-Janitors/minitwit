@@ -6,6 +6,8 @@ COPY ${frontendCopySrc} ./Frontend
 
 WORKDIR /App/Frontend
 
+RUN ls
+
 RUN --mount=type=secret,id=REACT_APP_AUTH0_DOMAIN \
     --mount=type=secret,id=REACT_APP_AUTH0_CLIENT_ID \
     --mount=type=secret,id=REACT_APP_AUTH0_CALLBACK_URL \

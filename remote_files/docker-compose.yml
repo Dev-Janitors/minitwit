@@ -20,8 +20,6 @@ services:
     minitwitfrontend:
         image: ${DOCKER_USERNAME}/minitwitfrontend
         container_name: minitwitfrontend
-        networks:
-            - main
         depends_on:
             - backend
 
@@ -41,8 +39,6 @@ services:
     backend:
         image: ${DOCKER_USERNAME}/minitwitbackend
         container_name: minitwitbackend
-        networks:
-            - main
         depends_on:
             - db
         labels:
@@ -71,7 +67,5 @@ services:
     db:
         image: ${DOCKER_USERNAME}/minitwitdb
         container_name: minitwitdb
-        networks:
-            - main
         ports:
             - '1433:1433'
