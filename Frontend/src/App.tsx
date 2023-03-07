@@ -17,6 +17,11 @@ function App() {
 		);
 	}
 
+	console.log('server url: ', process.env.REACT_APP_API_SERVER_URL);
+	console.log('auth0 domain: ', process.env.REACT_APP_AUTH0_DOMAIN);
+	console.log('auth0 client id: ', process.env.REACT_APP_AUTH0_CLIENT_ID);
+	console.log('auth0 audience: ', process.env.REACT_APP_AUTH0_AUDIENCE);
+
 	return (
 		<Routes>
 			<Route path="/" element={<TimelinePage />}></Route>
