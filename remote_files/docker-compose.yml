@@ -69,3 +69,8 @@ services:
         container_name: minitwitdb
         ports:
             - '1433:1433'
+        volumes:
+            - dbvolume:/var/opt/mssql/data
+
+volumes:
+    dbvolume:
