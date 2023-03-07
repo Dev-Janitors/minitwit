@@ -101,7 +101,7 @@ const Header = () => {
 		>
 			<MenuItem onClick={handleMenuClose}>Profile</MenuItem>
 			<MenuItem onClick={handleMenuClose}>My account</MenuItem>
-			<MenuItem onClick={() => logout()}>Logout</MenuItem>
+			<MenuItem onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>Logout</MenuItem>
 		</Menu>
 	);
 

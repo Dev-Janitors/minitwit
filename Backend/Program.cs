@@ -11,7 +11,7 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 builder.Services.AddCors(options => {
     options.AddPolicy(name: MyAllowSpecificOrigins, policy => {
-        policy.WithOrigins("http://localhost:3000", "https://localhost:3000", "http://104.248.101.163:3000");
+        policy.WithOrigins("http://localhost:3000", "https://localhost:3000", "http://104.248.101.163:3000", "https://146.190.206.71/", "http://146.190.206.71/", "https://104.248.101.163");
         policy.AllowAnyHeader();
         policy.AllowAnyMethod();
     });
@@ -64,7 +64,7 @@ builder.Services.AddAuthentication(options =>
 }).AddJwtBearer(options =>
 {
     options.Authority = "https://dev-m7wdzvfk.eu.auth0.com/";
-    options.Audience = "http://localhost:2222";
+    options.Audience = builder.Configuration.GetConnectionString("AUTH0_AUDIENCE");
 });
 
 
