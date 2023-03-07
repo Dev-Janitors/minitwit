@@ -8,6 +8,10 @@ COPY ./Backend ./Backend
 
 WORKDIR ./Backend
 
+RUN --mount=type=secret,id=AUTH0_AUDIENCE \
+    export AUTH0_AUDIENCE=$(cat /run/secrets/AUTH0_AUDIENCE) && \
+    echo "AUTH0_AUDIENCE=$AUTH0_AUDIENCE" >> .env
+
 # Restore as distinct layers
 RUN dotnet restore Backend.sln
 

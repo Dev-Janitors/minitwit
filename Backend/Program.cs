@@ -57,6 +57,7 @@ builder.Services.AddScoped<IFollowerRepository, FollowerRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 // Authentication - Auth0
+var envAudience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -64,7 +65,7 @@ builder.Services.AddAuthentication(options =>
 }).AddJwtBearer(options =>
 {
     options.Authority = "https://dev-m7wdzvfk.eu.auth0.com/";
-    options.Audience = "http://localhost:2222";
+    options.Audience = envAudience;
 });
 
 
