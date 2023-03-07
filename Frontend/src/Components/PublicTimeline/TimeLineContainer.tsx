@@ -20,8 +20,6 @@ const TimeLineContainer: FC = () => {
 	useEffect(() => {
 		const getTimeline = async () => {
 			const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`;
-			console.log('Secret: ' + process.env.REACT_APP_API_SERVER_URL);
-			console.log('Username: ' + username);
 			const options = username
 				? {
 						headers: {

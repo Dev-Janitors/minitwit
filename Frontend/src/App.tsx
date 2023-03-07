@@ -17,12 +17,6 @@ function App() {
 		);
 	}
 
-	console.log('auth0 domain: ' + process.env.REACT_APP_AUTH0_DOMAIN);
-	console.log('auth0 clientId: ' + process.env.REACT_APP_AUTH0_CLIENT_ID);
-	console.log('auth0 callbackUrl: ' + process.env.REACT_APP_AUTH0_CALLBACK_URL);
-	console.log('apiserver url: ' + process.env.REACT_APP_API_SERVER_URL);
-	console.log('auth0 audience: ' + process.env.REACT_APP_AUTH0_AUDIENCE);
-
 	return (
 		<Routes>
 			<Route path="/" element={<TimelinePage />}></Route>
