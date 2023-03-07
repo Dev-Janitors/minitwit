@@ -121,7 +121,7 @@ public class MinitwitController : ControllerBase
             };
             
             var result = await _messageRepo.CreateAsync(messageCreateDTO);  
-            return Ok("Succes");
+            return NoContent();
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
             return StatusCode(504);
@@ -139,7 +139,7 @@ public class MinitwitController : ControllerBase
         };
         (Response response, UserDTO user) = await _userRepo.CreateAsync(userCreateDTO);
         if (response == Core.Response.Conflict) return Conflict("User with same email or username already exists.");
-        return Ok("Success");
+        return NoContent();
     }
     
     [HttpGet("user")]
@@ -261,10 +261,7 @@ public class MinitwitController : ControllerBase
                 if (result.Item1 == Core.Response.NotFound) return NotFound();
                 if (result.Item1 != Core.Response.Created) return StatusCode(500, "Could not follow");
 
-                var responseList = new List<string>();
-                responseList.Add(user.Username);
-
-                return Ok( new {follows = responseList});
+                return NoContent();
             } catch (Exception e) {
                 return StatusCode(500, e.Message);
             }
@@ -282,11 +279,8 @@ public class MinitwitController : ControllerBase
 
                 var unfollowResult = await _followerRepo.DeleteByWhoAndWhomIds(userId, foundUser.Id);
                 if (unfollowResult != Core.Response.Deleted) return StatusCode(500, "Internal Server Error. Could not unfollow");
-                
-                var response = new List<string>();
-                response.Add(foundUser.Username);
 
-                return Ok( new {follows = response});
+                return NoContent();
             } catch (Exception e) {
                 _logger.LogError(e, e.Message);
                 return StatusCode(500, "Unfollow error");
