@@ -72,8 +72,6 @@ jobs:
                   tags: ${{ secrets.DOCKER_USERNAME }}/minitwitbackend:latest
                   cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitbackend:backendbuildcachce
                   cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitbackend:backendbuildcachce,mode=max
-                  secrets: |
-                      "AUTH0_AUDIENCE"=${{secrets.AUTH0_AUDIENCE_STAGING}}"
 
             #- name: Test minitwit
             # run: |
