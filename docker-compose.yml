@@ -77,7 +77,7 @@ services:
             - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto = https
 
             - 'traefik.http.middlewares.minitwitbackend.headers.accesscontrolallowmethods=GET,OPTIONS,PUT'
-            - 'traefik.http.middlewares.minitwitbackend.headers.accesscontrolalloworiginlist=https://localhost,https://104.248.101.163,http://104.248.101.163/'
+            - 'traefik.http.middlewares.minitwitbackend.headers.accesscontrolalloworiginlist=https://localhost,http://host.docker.internal, https://host.docker.internal, http://localhost, https://104.248.101.163,http://104.248.101.163/'
             - 'traefik.http.middlewares.minitwitbackend.headers.accesscontrolmaxage=100'
             - 'traefik.http.middlewares.minitwitbackend.headers.addvaryheader=true'
 
@@ -90,3 +90,19 @@ services:
         container_name: minitwitdb
         ports:
             - '1433:1433'
+    prometheus:
+        image: ubuntu/prometheus
+        container_name: dev_prometheus_test
+        ports:
+        - "30090:9090"
+        environment:
+        - TZ=Europe/Copenhagen
+        volumes:
+        - ./prom/prometheus.yml:/etc/prometheus/prometheus.yml
+    grafana:
+        image: grafana/grafana
+        container_name: dev_grafana_test
+        ports:
+        - "30091:3000"
+        volumes:
+        - ./grafana-data/data:/var/lib/grafana
