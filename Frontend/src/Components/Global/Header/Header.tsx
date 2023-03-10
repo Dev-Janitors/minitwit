@@ -12,6 +12,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { Link } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
+import SelfAuthentication from '../../Authentication/SelfAuthentication';
 
 const Search = styled('div')(({ theme }) => ({
 	position: 'relative',
@@ -105,36 +106,38 @@ const Header = () => {
 		</Menu>
 	);
 
-	const renderNoAuthMenu = (
-		<Menu
-			anchorEl={anchorEl}
-			anchorOrigin={{
-				vertical: 'top',
-				horizontal: 'right',
-			}}
-			id={menuId}
-			keepMounted
-			transformOrigin={{
-				vertical: 'top',
-				horizontal: 'right',
-			}}
-			open={isMenuOpen}
-			onClose={handleMenuClose}
-		>
-			<MenuItem onClick={() => loginWithRedirect()}>Login</MenuItem>
-			<MenuItem
-				onClick={() =>
-					loginWithRedirect({
-						authorizationParams: {
-							screen_hint: 'signup',
-						},
-					})
-				}
-			>
-				Signup
-			</MenuItem>
-		</Menu>
-	);
+	// const renderNoAuthMenu = (
+	// 	<Menu
+	// 		anchorEl={anchorEl}
+	// 		anchorOrigin={{
+	// 			vertical: 'top',
+	// 			horizontal: 'right',
+	// 		}}
+	// 		id={menuId}
+	// 		keepMounted
+	// 		transformOrigin={{
+	// 			vertical: 'top',
+	// 			horizontal: 'right',
+	// 		}}
+	// 		open={isMenuOpen}
+	// 		onClose={handleMenuClose}
+	// 	>
+	// 		<MenuItem onClick={() => loginWithRedirect()}>Login</MenuItem>
+	// 		<MenuItem
+	// 			onClick={() =>
+	// 				loginWithRedirect({
+	// 					authorizationParams: {
+	// 						screen_hint: 'signup',
+	// 					},
+	// 				})
+	// 			}
+	// 		>
+	// 			Signup
+	// 		</MenuItem>
+	// 	</Menu>
+	// );
+
+	const renderNoAuthMenu = <SelfAuthentication />;
 
 	const mobileMenuId = 'primary-search-account-menu-mobile';
 	const renderMobileAuthMenu = (
@@ -200,26 +203,29 @@ const Header = () => {
 			open={isMobileMenuOpen}
 			onClose={handleMobileMenuClose}
 		>
-			<MenuItem onClick={() => loginWithRedirect()}>
-				<IconButton size="large" aria-label="show 4 new mails" color="inherit">
-					<LoginIcon />
-				</IconButton>
-				<p>Login</p>
-			</MenuItem>
-			<MenuItem
-				onClick={() =>
-					loginWithRedirect({
-						authorizationParams: {
-							screen_hint: 'signup',
-						},
-					})
-				}
-			>
-				<IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-					<AssignmentIndIcon />
-				</IconButton>
-				<p>Signup</p>
-			</MenuItem>
+			{
+				// 	<MenuItem onClick={() => loginWithRedirect()}>
+				// 	<IconButton size="large" aria-label="show 4 new mails" color="inherit">
+				// 		<LoginIcon />
+				// 	</IconButton>
+				// 	<p>Login</p>
+				// </MenuItem>
+				// <MenuItem
+				// 	onClick={() =>
+				// 		loginWithRedirect({
+				// 			authorizationParams: {
+				// 				screen_hint: 'signup',
+				// 			},
+				// 		})
+				// 	}
+				// >
+				// 	<IconButton size="large" aria-label="show 17 new notifications" color="inherit">
+				// 		<AssignmentIndIcon />
+				// 	</IconButton>
+				// 	<p>Signup</p>
+				// </MenuItem>
+			}
+			<SelfAuthentication />
 		</Menu>
 	);
 

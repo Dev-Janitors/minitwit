@@ -20,7 +20,7 @@ function App() {
 	return (
 		<Routes>
 			<Route path="/" element={<TimelinePage />}></Route>
-			<Route path="user/:username" element={<AuthenticationGuard component={TimelinePage} />} />
+			<Route path="user/:username" element={<TimelinePage />} />
 			<Route path="*" element={<NotFound />} />
 		</Routes>
 	);
