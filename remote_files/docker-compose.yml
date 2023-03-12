@@ -107,4 +107,4 @@ services:
 
 volumes:
     dbvolume:
-    promvolume
+    promvolume:
