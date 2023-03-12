@@ -113,13 +113,13 @@ services:
         
         labels:
             - 'traefik.enable=true'
-            - 'traefik.http.routers.prometheus.rule=Host(`prometheus.example.com`)'
+            - 'traefik.http.routers.prometheus.rule=Host(`${BASEURL}`)'
             - 'traefik.http.middlewares.prometheus-https.redirectscheme.scheme=https'
             - 'traefik.http.routers.prometheus.middlewares=prometheus-https'
-            - 'traefik.http.routers.prometheus-https.rule=Host(`prometheus.example.com`)'
+            - 'traefik.http.routers.prometheus-https.rule=Host(`${BASEURL}`)'
             - 'traefik.http.routers.prometheus-https.tls=true'
             - 'traefik.http.routers.prometheus-https.tls.certresolver=myresolver'
-            - 'traefik.docker.network=my_network'
+            - 'traefik.docker.network=minitwit_default'
             - 'traefik.http.services.prometheus.loadbalancer.server.port=9090'
             - 'traefik.http.services.prometheus.loadbalancer.passhostheader=true'
             - 'traefik.http.services.prometheus.loadbalancer.server.scheme=http'
@@ -132,7 +132,7 @@ services:
             - ./grafana-data/data:/var/lib/grafana
         labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.grafana.rule=Host(`grafana.example.com`)"
+        - "traefik.http.routers.grafana.rule=Host(`${BASEURL}`)"
         - "traefik.http.routers.grafana.tls=true"
         - "traefik.http.routers.grafana.tls.certresolver=le"
         - "traefik.http.services.grafana.loadbalancer.server.port=3000"
