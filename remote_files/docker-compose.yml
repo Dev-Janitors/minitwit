@@ -50,8 +50,9 @@ services:
         container_name: minitwitbackend
         depends_on:
             - db
-            - prometheus
-            - grafana
+        ports:
+            - '2222:80'
+            - '2223:443'
         labels:
             - traefik.enable=true
 
@@ -82,41 +83,28 @@ services:
             - '1433:1433'
         volumes:
             - dbvolume:/var/opt/mssql/data
+            
     prometheus:
         image: prom/prometheus
         container_name: prometheus
+        depends_on:
+            - backend
         volumes:
-        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+            - promvolume:/prometheus
+            - ./prometheus.yml:/etc/prometheus/prometheus.yml
         ports:
-        - "9090:9090"
+            - "9090:9090"
         
-        labels:
-            - 'traefik.enable=true'
-            - 'traefik.http.routers.prometheus.rule=Host(`${BASEURL}`)'
-            - 'traefik.http.middlewares.prometheus-https.redirectscheme.scheme=https'
-            - 'traefik.http.routers.prometheus.middlewares=prometheus-https'
-            - 'traefik.http.routers.prometheus-https.rule=Host(`${BASEURL}`)'
-            - 'traefik.http.routers.prometheus-https.tls=true'
-            - 'traefik.http.routers.prometheus-https.tls.certresolver=myresolver'
-            - 'traefik.docker.network=minitwit_default'
-            - 'traefik.http.services.prometheus.loadbalancer.server.port=9090'
-            - 'traefik.http.services.prometheus.loadbalancer.passhostheader=true'
-            - 'traefik.http.services.prometheus.loadbalancer.server.scheme=http'
-            - 'traefik.http.routers.prometheus.service=prometheus'
-            - 'traefik.http.routers.prometheus.entrypoints=http'
     grafana:
         image: grafana/grafana:latest
         container_name: grafana
+        depends_on:
+            - prometheus
         volumes:
             - ./grafana-data/data:/var/lib/grafana
-        labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.grafana.rule=Host(`${BASEURL}`)"
-        - "traefik.http.routers.grafana.tls=true"
-        - "traefik.http.routers.grafana.tls.certresolver=le"
-        - "traefik.http.services.grafana.loadbalancer.server.port=3000"
         ports:
             - "3333:3000"
 
 volumes:
     dbvolume:
+    promvolume
