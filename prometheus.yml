@@ -19,7 +19,7 @@ scrape_configs:
       - targets: ['prometheus:9090']
 
 
-  - job_name:       'itu-minitwit-app'
+  - job_name:       'minitwit'
 
   
 
@@ -30,5 +30,3 @@ scrape_configs:
     scheme: 'http'
     static_configs:
       - targets: ['minitwitbackend:80']
-        labels:
-          group: 'production'
