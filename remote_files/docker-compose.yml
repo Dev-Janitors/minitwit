@@ -7,6 +7,13 @@ services:
     reverse-proxy:
         # The official v2 Traefik docker image
         image: traefik:v2.9
+        command:
+            - "--log.level=DEBUG"
+            - "--api.dashboard=true"
+            - "--metrics.prometheus=true"
+            - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
+            - "--providers.docker=true"
+            - "--providers.docker.watch"
         container_name: 'traefik'
         ports:
             - 80:80
@@ -22,6 +29,8 @@ services:
         container_name: minitwitfrontend
         depends_on:
             - backend
+            - prometheus
+            - grafana
 
         labels:
             - traefik.enable=true
@@ -41,6 +50,8 @@ services:
         container_name: minitwitbackend
         depends_on:
             - db
+            - prometheus
+            - grafana
         labels:
             - traefik.enable=true
 
@@ -71,6 +82,41 @@ services:
             - '1433:1433'
         volumes:
             - dbvolume:/var/opt/mssql/data
+    prometheus:
+        image: prom/prometheus
+        container_name: prometheus
+        volumes:
+        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+        ports:
+        - "9090:9090"
+        
+        labels:
+            - 'traefik.enable=true'
+            - 'traefik.http.routers.prometheus.rule=Host(`${BASEURL}`)'
+            - 'traefik.http.middlewares.prometheus-https.redirectscheme.scheme=https'
+            - 'traefik.http.routers.prometheus.middlewares=prometheus-https'
+            - 'traefik.http.routers.prometheus-https.rule=Host(`${BASEURL}`)'
+            - 'traefik.http.routers.prometheus-https.tls=true'
+            - 'traefik.http.routers.prometheus-https.tls.certresolver=myresolver'
+            - 'traefik.docker.network=minitwit_default'
+            - 'traefik.http.services.prometheus.loadbalancer.server.port=9090'
+            - 'traefik.http.services.prometheus.loadbalancer.passhostheader=true'
+            - 'traefik.http.services.prometheus.loadbalancer.server.scheme=http'
+            - 'traefik.http.routers.prometheus.service=prometheus'
+            - 'traefik.http.routers.prometheus.entrypoints=http'
+    grafana:
+        image: grafana/grafana:latest
+        container_name: grafana
+        volumes:
+            - ./grafana-data/data:/var/lib/grafana
+        labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.grafana.rule=Host(`${BASEURL}`)"
+        - "traefik.http.routers.grafana.tls=true"
+        - "traefik.http.routers.grafana.tls.certresolver=le"
+        - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+        ports:
+            - "3333:3000"
 
 volumes:
     dbvolume:
