@@ -4,7 +4,7 @@ WORKDIR /App
 
 
 # COPY ${frontendCopySrc} ./Frontend
-COPY . ./Frontend
+COPY ./Frontend ./Frontend
 
 WORKDIR /App/Frontend
 
