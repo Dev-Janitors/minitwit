@@ -29,4 +29,4 @@ scrape_configs:
     metrics_path: '/metrics'
     scheme: 'http'
     static_configs:
-      - targets: ['minitwitbackend:80']
+      - targets: ['104.248.101.163:2222']
