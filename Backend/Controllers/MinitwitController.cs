@@ -85,7 +85,6 @@ public class MinitwitController : ControllerBase
     }
 
     [HttpGet("msgs/{username}")]
-    [Authorize]
     public async Task<IActionResult> GetUserTimeline(string username, [FromQuery(Name = "latest")] int? latest)
     {
         updateLatest(latest);
@@ -140,6 +139,18 @@ public class MinitwitController : ControllerBase
         (Response response, UserDTO user) = await _userRepo.CreateAsync(userCreateDTO);
         if (response == Core.Response.Conflict) return BadRequest();
         return NoContent();
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] UserJSON body, [FromQuery(Name = "latest")] int? latest)
+    {
+        updateLatest(latest);
+        var username = body.username;
+
+        var user = await _userRepo.ReadByUsernameAsync(username);
+        if (user.IsNone) return NotFound($"Could not find the user with username {username}");
+
+        return Ok(new {username = username});
     }
     
     [HttpGet("user")]

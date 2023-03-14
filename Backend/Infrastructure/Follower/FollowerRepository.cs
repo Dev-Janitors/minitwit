@@ -102,10 +102,17 @@ public class FollowerRepository : IFollowerRepository
 
   public async Task<IReadOnlyCollection<string>> ReadAllByWhoId(int whoId)
   {
-    var query = from follower in _context.followers
-    join user in _context.users on follower.WhomId equals user.Id
-    select user.Username;
-    return await query.ToListAsync();
+    var ids = await _context.followers
+      .Where(f => f.WhoId == whoId)
+      .Select(f => f.WhomId)
+      .ToListAsync();
+    
+    var users = new List<string>();
+    foreach (var id in ids)
+    {
+      users.Add(_context.users.Where(u => u.Id == id).Select(u => u.Username).FirstOrDefault()!);
+    }
+    return users.AsReadOnly();
   }
 
   public async Task<IList<FollowerDTO>> ReadAll(){

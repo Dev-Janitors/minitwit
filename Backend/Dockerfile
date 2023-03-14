@@ -2,8 +2,8 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
 WORKDIR /App
 
 # Copy everything
-# COPY ${backendCopySrc} ./Backend
-COPY ./Backend ./Backend
+COPY ${backendCopySrc} ./Backend
+# COPY ./Backend ./Backend
 
 WORKDIR ./Backend
 
