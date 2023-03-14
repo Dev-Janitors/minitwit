@@ -237,7 +237,7 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 				}
 			>
 				{timeline.map((message, i) => {
-					return <TimeLineMessage message={message} key={i} />;
+					return <TimeLineMessage message={message} key={message.id} />;
 				})}
 			</InfiniteScroll>
 		</>
