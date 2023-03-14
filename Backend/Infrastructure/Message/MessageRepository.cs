@@ -82,7 +82,7 @@ public class MessageRepository : IMessageRepository
     throw new NotImplementedException();
   }
 
-  public async Task<IReadOnlyCollection<MessageDTO>> ReadAllByUsernameAsync(string username)
+  public async Task<IReadOnlyCollection<MessageDTO>> ReadAllByUsernameAsync(string username, int? startIndex, int? endIndex)
   {
     var authorId = await _context.users
       .Where(u => u.Username == username)
@@ -91,8 +91,14 @@ public class MessageRepository : IMessageRepository
       
     var messages = await _context.messages
       .Where(m => m.AuthorId == authorId)
+      .OrderByDescending(m => m.Id)
       .Select(m => new MessageDTO(m.Id, m.AuthorId, m.Text, m.PubDate, m.Flagged))
       .ToListAsync();
+
+    if(startIndex != null) messages = messages.Skip(startIndex.Value).ToList();
+    if(endIndex != null && startIndex != null) messages = messages.Take(endIndex.Value - startIndex.Value).ToList();
+    if(endIndex != null) messages = messages.Take(endIndex.Value).ToList();
+
     return messages;
   }
 
