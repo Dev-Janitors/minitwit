@@ -3,11 +3,11 @@ import axios, { AxiosError } from 'axios';
 import { Message } from '../../Types/Timeline';
 import { IsLoading } from '../../Types/Global';
 import TimeLineMessage from './TimeLineMessage';
-import List from '@mui/material/List';
 import { Typography, Box, Button } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { isLoggedIn } from '../Authentication/cookieHandler';
 import Tweet from '../Tweet/Tweet';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 interface TimeLineContainerProps {
 	children?: ReactNode;
@@ -16,6 +16,9 @@ interface TimeLineContainerProps {
 const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 	const { username } = useParams();
 	const [timeline, setTimeline] = useState([] as Message[]);
+
+	const [hasMore, setHasMore] = useState(true);
+
 	const [isLoading, setIsLoading] = useState({
 		isLoading: true,
 		error: null,
@@ -24,8 +27,10 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 	const [user] = useState(isLoggedIn());
 	const [userIsFollowed, setUserIsFollowed] = useState(false);
 
-	const getTimeline = async () => {
+	const getTimeline = async (startIndex?: number, endIndex?: number) => {
 		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`;
+		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
+
 		const options = username
 			? {
 					headers: {
@@ -38,8 +43,10 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 					},
 			  };
 
+		const fullUrl = username ? baseUrl + `/${username}` : baseUrl + queryParams;
+
 		axios
-			.get(username ? baseUrl + `/${username}` : baseUrl, options)
+			.get(fullUrl, options)
 			.then((res) => {
 				setTimeline(res.data);
 				setIsLoading({ isLoading: false, error: null });
@@ -55,8 +62,46 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 			});
 	};
 
+	const fetchMoreData = () => {
+		const startIndex = timeline.length;
+		const endIndex = startIndex + 40;
+
+		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`;
+		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
+
+		const options = username
+			? {
+					headers: {
+						'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+					},
+			  }
+			: {
+					headers: {
+						'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+					},
+			  };
+
+		const fullUrl = username ? baseUrl + `/${username}` : baseUrl + queryParams;
+
+		axios
+			.get(fullUrl, options)
+			.then((res) => {
+				if (res.data.length === 0) {
+					setHasMore(false);
+				}
+				setTimeline([...timeline, ...res.data]);
+			})
+			.catch((e) => {
+				if (e instanceof AxiosError) {
+					console.log(e);
+				} else {
+					console.log(e);
+				}
+			});
+	};
+
 	useEffect(() => {
-		getTimeline();
+		getTimeline(0, 40);
 
 		if (user.isLoggedIn && username) {
 			axios
@@ -127,16 +172,14 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 	};
 
 	if (isLoading.isLoading && isLoading.error === null) {
-		{
-			new Array(10).map((message, i) => {
-				return (
-					<Fragment key={i}>
-						<TimeLineMessage message={{} as Message} isSkeleton={true} />
-						{/* {i !== timeline.length - 1 && <Divider variant="inset" component="li" />} */}
-					</Fragment>
-				);
-			});
-		}
+		new Array(10).map((message, i) => {
+			return (
+				<Fragment key={i}>
+					<TimeLineMessage message={{} as Message} isSkeleton={true} />
+					{/* {i !== timeline.length - 1 && <Divider variant="inset" component="li" />} */}
+				</Fragment>
+			);
+		});
 	} else if (isLoading.error !== null) {
 		return <div>Error: {isLoading.error}</div>;
 	}
@@ -153,8 +196,13 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 	} else if (isLoading.error !== null) {
 		return <div>Error: {isLoading.error}</div>;
 	}
-	if (timeline.length === 0) {
-		return <Typography variant="h5">No messages</Typography>;
+	if (!isLoading.isLoading && timeline.length === 0) {
+		return (
+			<>
+				<Typography variant="h5">No messages</Typography>
+				<Tweet updateTweetsCallback={getTimeline} />
+			</>
+		);
 	}
 
 	const userTimelineHeader = (
@@ -177,16 +225,21 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 		<>
 			{username ? userTimelineHeader : <Typography variant="h3">Public timeline</Typography>}
 			{username === user.username || !username ? <Tweet updateTweetsCallback={getTimeline} /> : null}
-			<List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+			<InfiniteScroll
+				dataLength={timeline.length} //This is important field to render the next data
+				next={fetchMoreData}
+				hasMore={hasMore}
+				loader={<Typography variant="h6">Loading...</Typography>}
+				endMessage={
+					<p style={{ textAlign: 'center' }}>
+						<b>Yay! You have seen it all</b>
+					</p>
+				}
+			>
 				{timeline.map((message, i) => {
-					return (
-						<Fragment key={i}>
-							<TimeLineMessage message={message} />
-							{/* {i !== timeline.length - 1 && <Divider variant="inset" component="li" />} */}
-						</Fragment>
-					);
+					return <TimeLineMessage message={message} key={message.id} />;
 				})}
-			</List>
+			</InfiniteScroll>
 		</>
 	);
 };

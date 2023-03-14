@@ -72,11 +72,11 @@ public class MinitwitController : ControllerBase
     }
 
 	[HttpGet("msgs")]
-    public async Task<IActionResult> GetTimeline([FromQuery(Name = "latest")] int? latest)
+    public async Task<IActionResult> GetTimeline([FromQuery(Name = "latest")] int? latest, [FromQuery(Name = "startIndex")] int? start, [FromQuery(Name = "endIndex")] int? end)
     {
         updateLatest(latest);
         try {
-            var messages = (await _messageRepo.ReadAllAsync()).ToList();
+            var messages = (await _messageRepo.ReadAllAsync(start, end)).ToList();
             return Ok(messages);
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
@@ -110,13 +110,16 @@ public class MinitwitController : ControllerBase
             var authorResult = await _userRepo.ReadByUsernameAsync(username);
             if (authorResult.IsNone) return NotFound($"Could not find the user with username {username}");
             var authorId = authorResult.Value.Id;
-            var time = DateTime.UnixEpoch.Ticks;
+            DateTime currentTime = DateTime.UtcNow;
+            long unixTime = ((DateTimeOffset)currentTime).ToUnixTimeMilliseconds();
+
+            _logger.LogInformation("time: " + unixTime);
 
             var messageCreateDTO = new MessageCreateDTO 
             {
                 AuthorId = authorId,
                 Text = body.content,
-                PubDate = time
+                PubDate = unixTime
             };
             
             var result = await _messageRepo.CreateAsync(messageCreateDTO);  

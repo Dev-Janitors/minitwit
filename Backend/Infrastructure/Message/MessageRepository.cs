@@ -55,7 +55,7 @@ public class MessageRepository : IMessageRepository
     return (Response.Created, new MessageDTO(entity.Id, entity.AuthorId, entity.Text, entity.PubDate, entity.Flagged));
   }
 
-  public async Task<IReadOnlyCollection<AllMessages>> ReadAllAsync()
+  public async Task<IReadOnlyCollection<AllMessages>> ReadAllAsync(int? start, int? end)
   {
     var query = from message in _context.messages
     join user in _context.users on message.AuthorId equals user.Id
@@ -66,6 +66,9 @@ public class MessageRepository : IMessageRepository
         pubDate = message.PubDate
     };
 
+    if(start != null) query = query.Skip(start.Value);
+    if(end != null && start != null) query = query.Take(end.Value - start.Value);
+    if(end != null) query = query.Take(end.Value);
 
     return await query.ToListAsync();
   }
