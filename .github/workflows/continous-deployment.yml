@@ -89,7 +89,7 @@ jobs:
                   chmod 600 ~/.ssh/minitwit.key
               env:
                   SSH_KEY: ${{ secrets.SSH_KEY }}
-
+            
             - name: Deploy to server
               # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
               run: >
@@ -100,13 +100,13 @@ jobs:
                   SSH_USER: ${{ secrets.SSH_USER }}
                   SSH_HOST: ${{ secrets.SSH_HOST }}
               
-              - name: Release
-                run: |
-                    echo "creating release!"
+            - name: Release
+              run: |
+                  echo "creating release!"
               
-              - uses: "marvinpinto/action-automatic-releases@latest"
-                with:
-                  repo_token: "${{ secrets.GITHUB_TOKEN }}"
-                  automatic_release_tag: "latest"
-                  prerelease: true
-                  title: "Production Build"
+            - uses: "marvinpinto/action-automatic-releases@latest"
+              with:
+                repo_token: "${{ secrets.GITHUB_TOKEN }}"
+                automatic_release_tag: "latest"
+                prerelease: true
+                title: "Production Build"
