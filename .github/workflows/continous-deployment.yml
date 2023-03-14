@@ -43,6 +43,7 @@ jobs:
                   file: ./Frontend/Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKER_USERNAME }}/minitwitfrontend:latest
+                  no-cache: true
                   cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitfrontend:webbuildcache
                   cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitfrontend:webbuildcache,mode=max
                   secrets: |
