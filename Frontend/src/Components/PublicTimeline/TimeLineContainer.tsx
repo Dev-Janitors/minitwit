@@ -67,6 +67,7 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 		const endIndex = startIndex + 40;
 
 		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`;
+
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 
 		const options = username
@@ -81,11 +82,12 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 					},
 			  };
 
-		const fullUrl = username ? baseUrl + `/${username}` : baseUrl + queryParams;
+		const fullUrl = (username ? baseUrl + `/${username}` : baseUrl) + queryParams;
 
 		axios
 			.get(fullUrl, options)
 			.then((res) => {
+				console.log(res.data);
 				if (res.data.length === 0) {
 					setHasMore(false);
 				}

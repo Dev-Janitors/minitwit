@@ -130,7 +130,7 @@ public class MessageRepositoryTests
     {
         
         //Act
-        var res = await _repo.ReadAllByUsernameAsync(_user1.Username);
+        var res = await _repo.ReadAllByUsernameAsync(_user1.Username, null, null);
 
         //Assert
         Assert.NotNull(res);
