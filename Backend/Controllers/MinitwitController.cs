@@ -75,8 +75,6 @@ public class MinitwitController : ControllerBase
     public async Task<IActionResult> GetTimeline([FromQuery(Name = "latest")] int? latest, [FromQuery(Name = "startIndex")] int? start, [FromQuery(Name = "endIndex")] int? end)
     {
         updateLatest(latest);
-        _logger.LogInformation("Start: " + start);
-            _logger.LogInformation("End: " + end);
         try {
             var messages = (await _messageRepo.ReadAllAsync(start, end)).ToList();
             return Ok(messages);
@@ -91,11 +89,6 @@ public class MinitwitController : ControllerBase
     {
         updateLatest(latest);
         try {
-
-            _logger.LogInformation("Getting messages for user: " + username);
-            _logger.LogInformation("Start: " + start);
-            _logger.LogInformation("End: " + end);
-
             var messages = (await _messageRepo.ReadAllByUsernameAsync(username, start, end))
             .Select(m => new {
                 content = m.Text,
