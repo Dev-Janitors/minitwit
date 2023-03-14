@@ -59,6 +59,7 @@ public class MessageRepository : IMessageRepository
   {
     var query = from message in _context.messages
     join user in _context.users on message.AuthorId equals user.Id
+    orderby message.Id descending
     select new AllMessages
     {
         content = message.Text,

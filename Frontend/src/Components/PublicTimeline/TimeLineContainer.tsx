@@ -64,7 +64,7 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 
 	const fetchMoreData = () => {
 		const startIndex = timeline.length;
-		const endIndex = startIndex + 40;
+		const endIndex = startIndex + 10;
 
 		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`;
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
@@ -101,7 +101,7 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 	};
 
 	useEffect(() => {
-		getTimeline(0, 40);
+		getTimeline(0, 10);
 
 		if (user.isLoggedIn && username) {
 			axios
@@ -237,7 +237,7 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 				}
 			>
 				{timeline.map((message, i) => {
-					return <TimeLineMessage message={message} key={message.id} />;
+					return <TimeLineMessage message={message} key={i} />;
 				})}
 			</InfiniteScroll>
 		</>
