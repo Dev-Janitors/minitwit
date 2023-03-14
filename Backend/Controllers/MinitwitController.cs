@@ -113,8 +113,6 @@ public class MinitwitController : ControllerBase
             DateTime currentTime = DateTime.UtcNow;
             long unixTime = ((DateTimeOffset)currentTime).ToUnixTimeMilliseconds();
 
-            _logger.LogInformation("time: " + unixTime);
-
             var messageCreateDTO = new MessageCreateDTO 
             {
                 AuthorId = authorId,

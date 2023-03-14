@@ -110,16 +110,16 @@ public class MessageRepositoryTests
             res,
             item =>
             {
-                Assert.Equal(_user1.Username, item.user);
-                Assert.Equal(_message1.PubDate, item.pubDate);
-                Assert.Equal(_message1.Text, item.content);
+                Assert.Equal(_user2.Username, item.user);
+                Assert.Equal(_message2.PubDate, item.pubDate);
+                Assert.Equal(_message2.Text, item.content);
             },
 
             item =>
             {
-                Assert.Equal(_user2.Username, item.user);
-                Assert.Equal(_message2.PubDate, item.pubDate);
-                Assert.Equal(_message2.Text, item.content);
+                Assert.Equal(_user1.Username, item.user);
+                Assert.Equal(_message1.PubDate, item.pubDate);
+                Assert.Equal(_message1.Text, item.content);
             }
 
         );
