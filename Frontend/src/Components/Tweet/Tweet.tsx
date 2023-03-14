@@ -1,11 +1,19 @@
 import { Box, Button, TextField } from '@mui/material';
-import React, { useState, ChangeEvent } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import React, { useState, ChangeEvent, FC, useContext } from 'react';
 import axios from 'axios';
 import { isLoggedIn } from '../Authentication/cookieHandler';
+import { SnackbarContext } from '../SnackBar/SnackbarContextProvider';
 
-const Tweet = () => {
+interface TweetProps {
+	updateTweetsCallback?: () => void;
+}
+
+const Tweet: FC<TweetProps> = ({ updateTweetsCallback }) => {
 	const [tweet, setTweet] = useState('');
+
+	const {
+		actions: { openSnackbar },
+	} = useContext(SnackbarContext);
 
 	const style = {
 		container: {
@@ -22,20 +30,20 @@ const Tweet = () => {
 		if (event.target.value.length <= 280) {
 			setTweet(event.target.value);
 		} else {
-			console.log('tweet is too long');
+			openSnackbar('warning', 'Tweet is too long!');
 		}
 	};
 
 	const handleSubmit = async () => {
-		// if (user === undefined) {
-		// 	console.log('not logged in');
-		// 	return;
-		// }
-		//TODO: we have to know the username somehow, maybe just save it on the frontend?
+		if (tweet === '') {
+			openSnackbar('error', 'Tweet is empty!');
+			return;
+		}
+
 		const user = isLoggedIn();
 
 		if (user.isLoggedIn === false) {
-			console.log('not logged in');
+			openSnackbar('error', 'You are not logged in!');
 			return;
 		}
 
@@ -49,10 +57,16 @@ const Tweet = () => {
 
 		axios
 			.post(baseUrl, { content: tweet }, options)
-			.then((res) => {
-				console.log(res);
+			.then(() => {
+				if (updateTweetsCallback) {
+					updateTweetsCallback();
+					openSnackbar('success', 'Tweeted successfully!');
+				} else {
+					openSnackbar('success', 'Tweeted successfully! Refresh to see your tweet.');
+				}
 			})
-			.then((err) => {
+			.catch((err) => {
+				openSnackbar('error', 'Something went wrong!');
 				console.log(err);
 			});
 	};

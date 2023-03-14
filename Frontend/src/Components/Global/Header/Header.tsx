@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, MouseEvent, useContext } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import { AppBar, Box, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -8,11 +8,10 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import LogoutIcon from '@mui/icons-material/Logout';
-import LoginIcon from '@mui/icons-material/Login';
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { Link } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
 import SelfAuthentication from '../../Authentication/SelfAuthentication';
+import { isLoggedIn, logout } from '../../Authentication/cookieHandler';
+import { SnackbarContext } from '../../SnackBar/SnackbarContextProvider';
 
 const Search = styled('div')(({ theme }) => ({
 	position: 'relative',
@@ -55,18 +54,20 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Header = () => {
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-	const { isLoading, isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
-	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	// const { isLoading, isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
+	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+
+	const [user, setUser] = useState(isLoggedIn());
 
 	const isMenuOpen = Boolean(anchorEl);
 	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-	if (isLoading) {
-		<div>Loading...</div>;
-	}
+	const {
+		actions: { openSnackbar },
+	} = useContext(SnackbarContext);
 
-	const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+	const handleProfileMenuOpen = (event: MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
 
@@ -81,6 +82,14 @@ const Header = () => {
 
 	const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
 		setMobileMoreAnchorEl(event.currentTarget);
+	};
+
+	const handleLogout = () => {
+		logout();
+		if (isMenuOpen) handleMenuClose();
+		if (isMobileMenuOpen) handleMobileMenuClose();
+		setUser({ isLoggedIn: false, username: '' });
+		openSnackbar('success', 'You have been logged out');
 	};
 
 	const menuId = 'primary-search-account-menu';
@@ -102,7 +111,7 @@ const Header = () => {
 		>
 			<MenuItem onClick={handleMenuClose}>Profile</MenuItem>
 			<MenuItem onClick={handleMenuClose}>My account</MenuItem>
-			<MenuItem onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>Logout</MenuItem>
+			<MenuItem onClick={handleLogout}>Logout</MenuItem>
 		</Menu>
 	);
 
@@ -137,7 +146,7 @@ const Header = () => {
 	// 	</Menu>
 	// );
 
-	const renderNoAuthMenu = <SelfAuthentication />;
+	const renderNoAuthMenu = <SelfAuthentication modalOpen={isMenuOpen} handleMenuClose={handleMenuClose} loginCallback={setUser} />;
 
 	const mobileMenuId = 'primary-search-account-menu-mobile';
 	const renderMobileAuthMenu = (
@@ -178,7 +187,7 @@ const Header = () => {
 				</IconButton>
 				<p>Profile</p>
 			</MenuItem>
-			<MenuItem onClick={() => logout}>
+			<MenuItem onClick={handleLogout}>
 				<IconButton size="large" aria-label="account of current user" aria-controls="primary-search-account-menu" aria-haspopup="true" color="inherit">
 					<LogoutIcon />
 				</IconButton>
@@ -187,47 +196,48 @@ const Header = () => {
 		</Menu>
 	);
 
-	const renderMobileNoAuthMenu = (
-		<Menu
-			anchorEl={mobileMoreAnchorEl}
-			anchorOrigin={{
-				vertical: 'top',
-				horizontal: 'right',
-			}}
-			id={mobileMenuId}
-			keepMounted
-			transformOrigin={{
-				vertical: 'top',
-				horizontal: 'right',
-			}}
-			open={isMobileMenuOpen}
-			onClose={handleMobileMenuClose}
-		>
-			{
-				// 	<MenuItem onClick={() => loginWithRedirect()}>
-				// 	<IconButton size="large" aria-label="show 4 new mails" color="inherit">
-				// 		<LoginIcon />
-				// 	</IconButton>
-				// 	<p>Login</p>
-				// </MenuItem>
-				// <MenuItem
-				// 	onClick={() =>
-				// 		loginWithRedirect({
-				// 			authorizationParams: {
-				// 				screen_hint: 'signup',
-				// 			},
-				// 		})
-				// 	}
-				// >
-				// 	<IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-				// 		<AssignmentIndIcon />
-				// 	</IconButton>
-				// 	<p>Signup</p>
-				// </MenuItem>
-			}
-			<SelfAuthentication />
-		</Menu>
-	);
+	// const renderMobileNoAuthMenu = (
+	// 	<Menu
+	// 		anchorEl={mobileMoreAnchorEl}
+	// 		anchorOrigin={{
+	// 			vertical: 'top',
+	// 			horizontal: 'right',
+	// 		}}
+	// 		id={mobileMenuId}
+	// 		keepMounted
+	// 		transformOrigin={{
+	// 			vertical: 'top',
+	// 			horizontal: 'right',
+	// 		}}
+	// 		open={isMobileMenuOpen}
+	// 		onClose={handleMobileMenuClose}
+	// 	>
+	// 		{
+	// 			// 	<MenuItem onClick={() => loginWithRedirect()}>
+	// 			// 	<IconButton size="large" aria-label="show 4 new mails" color="inherit">
+	// 			// 		<LoginIcon />
+	// 			// 	</IconButton>
+	// 			// 	<p>Login</p>
+	// 			// </MenuItem>
+	// 			// <MenuItem
+	// 			// 	onClick={() =>
+	// 			// 		loginWithRedirect({
+	// 			// 			authorizationParams: {
+	// 			// 				screen_hint: 'signup',
+	// 			// 			},
+	// 			// 		})
+	// 			// 	}
+	// 			// >
+	// 			// 	<IconButton size="large" aria-label="show 17 new notifications" color="inherit">
+	// 			// 		<AssignmentIndIcon />
+	// 			// 	</IconButton>
+	// 			// 	<p>Signup</p>
+	// 			// </MenuItem>
+	// 		}
+	// 	</Menu>
+	// );
+
+	const renderMobileNoAuthMenu = <SelfAuthentication modalOpen={isMobileMenuOpen} handleMenuClose={handleMobileMenuClose} loginCallback={setUser} />;
 
 	return (
 		<Box sx={{ flexGrow: 1, width: '100%', marginBottom: '10px' }}>
@@ -249,7 +259,7 @@ const Header = () => {
 					</Search>
 					<Box sx={{ flexGrow: 1 }} />
 					<Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-						{isAuthenticated && (
+						{user.isLoggedIn && (
 							<>
 								<IconButton size="large" aria-label="show 4 new mails" color="inherit">
 									<Badge badgeContent={4} color="error">
@@ -274,8 +284,8 @@ const Header = () => {
 					</Box>
 				</Toolbar>
 			</AppBar>
-			{isAuthenticated ? renderMobileAuthMenu : renderMobileNoAuthMenu}
-			{isAuthenticated ? renderAuthMenu : renderNoAuthMenu}
+			{user.isLoggedIn ? renderMobileAuthMenu : renderMobileNoAuthMenu}
+			{user.isLoggedIn ? renderAuthMenu : renderNoAuthMenu}
 		</Box>
 	);
 };

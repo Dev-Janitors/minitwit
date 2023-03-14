@@ -7,6 +7,7 @@ import List from '@mui/material/List';
 import { Typography, Box, Button } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { isLoggedIn } from '../Authentication/cookieHandler';
+import Tweet from '../Tweet/Tweet';
 
 interface TimeLineContainerProps {
 	children?: ReactNode;
@@ -23,37 +24,38 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 	const [user] = useState(isLoggedIn());
 	const [userIsFollowed, setUserIsFollowed] = useState(false);
 
-	useEffect(() => {
-		const getTimeline = async () => {
-			const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`;
-			const options = username
-				? {
-						headers: {
-							'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
-						},
-				  }
-				: {
-						headers: {
-							'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
-						},
-				  };
+	const getTimeline = async () => {
+		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`;
+		const options = username
+			? {
+					headers: {
+						'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+					},
+			  }
+			: {
+					headers: {
+						'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+					},
+			  };
 
-			axios
-				.get(username ? baseUrl + `/${username}` : baseUrl, options)
-				.then((res) => {
-					setTimeline(res.data);
-					setIsLoading({ isLoading: false, error: null });
-				})
-				.catch((e) => {
-					if (e instanceof AxiosError) {
-						console.log(e);
-						setIsLoading({ isLoading: false, error: e.message });
-					} else {
-						console.log(e);
-						setIsLoading({ isLoading: false, error: 'Something went wrong!' });
-					}
-				});
-		};
+		axios
+			.get(username ? baseUrl + `/${username}` : baseUrl, options)
+			.then((res) => {
+				setTimeline(res.data);
+				setIsLoading({ isLoading: false, error: null });
+			})
+			.catch((e) => {
+				if (e instanceof AxiosError) {
+					console.log(e);
+					setIsLoading({ isLoading: false, error: e.message });
+				} else {
+					console.log(e);
+					setIsLoading({ isLoading: false, error: 'Something went wrong!' });
+				}
+			});
+	};
+
+	useEffect(() => {
 		getTimeline();
 
 		if (user.isLoggedIn && username) {
@@ -77,11 +79,51 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 	}, []);
 
 	const handleFollow = () => {
-		console.log('Not implemented yet!');
+		if (!user.isLoggedIn) {
+			return;
+		}
+		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/fllws/${user.username}`;
+		const options = {
+			headers: {
+				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+			},
+		};
+		axios
+			.post(baseUrl, { follow: username }, options)
+			.then((res) => {
+				if (res.status === 204) {
+					setUserIsFollowed(true);
+				} else {
+					console.log(res);
+				}
+			})
+			.catch((e) => {
+				console.log(e);
+			});
 	};
 
 	const handleUnfollow = () => {
-		console.log('Not implemented yet!');
+		if (!user.isLoggedIn) {
+			return;
+		}
+		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/fllws/${user.username}`;
+		const options = {
+			headers: {
+				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+			},
+		};
+		axios
+			.post(baseUrl, { unfollow: username }, options)
+			.then((res) => {
+				if (res.status === 204) {
+					setUserIsFollowed(false);
+				} else {
+					console.log(res);
+				}
+			})
+			.catch((e) => {
+				console.log(e);
+			});
 	};
 
 	if (isLoading.isLoading && isLoading.error === null) {
@@ -120,7 +162,7 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 			<Typography variant="h3" sx={{ textTransform: 'capitalize' }}>
 				{username}'s messages
 			</Typography>
-			{userIsFollowed ? (
+			{user.isLoggedIn && user.username !== username && userIsFollowed ? (
 				<>
 					<Typography variant="h5">You are following this user</Typography>
 					<Button onClick={handleUnfollow}>Unfollow</Button>
@@ -134,7 +176,7 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 	return (
 		<>
 			{username ? userTimelineHeader : <Typography variant="h3">Public timeline</Typography>}
-			{children}
+			{username === user.username || !username ? <Tweet updateTweetsCallback={getTimeline} /> : null}
 			<List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
 				{timeline.map((message, i) => {
 					return (

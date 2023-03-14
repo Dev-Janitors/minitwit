@@ -1,20 +1,51 @@
-import React, { useState } from 'react';
+import React, { FC, useState, useContext } from 'react';
 import { Box, Input, Typography, Button } from '@mui/material';
 import axios from 'axios';
-import { setCookie } from './cookieHandler';
+import { UserData, isLoggedIn, setCookie } from './cookieHandler';
+import CloseIcon from '@mui/icons-material/Close';
+import { SnackbarContext } from '../SnackBar/SnackbarContextProvider';
 
-const SelfAuthentication = () => {
+interface SelfAuthenticationProps {
+	modalOpen: boolean;
+	handleMenuClose: () => void;
+	loginCallback?: (userData: UserData) => void;
+}
+
+const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenuClose, loginCallback }) => {
 	const [login, setLogin] = useState('login');
 
 	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 
+	const {
+		actions: { openSnackbar },
+	} = useContext(SnackbarContext);
+
 	const style = {
-		container: {
+		containerOpen: {
+			position: 'absolute',
+			top: '10%',
+			right: '4px',
 			display: 'flex',
 			flexDirection: 'column',
 			justifyContent: 'center',
 			alignItems: 'center',
+			transition: 'all 0.5s ease-out',
+			zIndex: 100,
+			backgroundColor: 'white',
+			padding: '10px',
+			boxSizing: 'border-box',
+			border: '1px solid black',
+			backdropFilter: 'blur(5px)',
+		},
+		containerClosed: {
+			position: 'absolute',
+			top: '0',
+			left: '50%',
+			transform: 'translateX(-50%)',
+			display: 'none',
+			transition: 'all 0.5s ease-out',
+			zIndex: 100,
 		},
 		button: {
 			margin: '10px',
@@ -48,8 +79,16 @@ const SelfAuthentication = () => {
 			.post(baseUrl, { Username: username, Email: email }, options)
 			.then((res) => {
 				setCookie('username', res.data.username);
+				if (loginCallback) {
+					loginCallback(isLoggedIn());
+					openSnackbar('success', 'Logged in successfully!');
+				} else {
+					openSnackbar('success', 'Refresh the page to see your profile!');
+				}
+				handleMenuClose();
 			})
-			.then((err) => {
+			.catch((err) => {
+				openSnackbar('error', 'Login failed!');
 				console.log(err);
 			});
 	};
@@ -67,14 +106,24 @@ const SelfAuthentication = () => {
 			.post(baseUrl, { Username: username, Email: email }, options)
 			.then((res) => {
 				console.log(res);
+				setCookie('username', username);
+				if (loginCallback) {
+					loginCallback(isLoggedIn());
+					openSnackbar('success', 'Registered successfully!');
+				} else {
+					openSnackbar('success', 'Refresh the page to see your profile!');
+				}
+				handleMenuClose();
 			})
-			.then((err) => {
+			.catch((err) => {
+				openSnackbar('error', 'Registration failed!');
 				console.log(err);
 			});
 	};
 
 	return (
-		<Box sx={style.container}>
+		<Box sx={modalOpen ? style.containerOpen : style.containerClosed}>
+			<CloseIcon onClick={handleMenuClose} />
 			<Box>
 				<Button onClick={() => changeScreen('login')} variant="contained" sx={login === 'login' ? style.activeButton : style.disabledButton}>
 					Login
