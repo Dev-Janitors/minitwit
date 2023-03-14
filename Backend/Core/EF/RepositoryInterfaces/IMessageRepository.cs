@@ -20,7 +20,7 @@ public interface IMessageRepository {
 
     Task<int> Seed();
 
-    Task<IReadOnlyCollection<AllMessages>> ReadAllAsync();
+    Task<IReadOnlyCollection<AllMessages>> ReadAllAsync(int? start, int? end);
 
 
 

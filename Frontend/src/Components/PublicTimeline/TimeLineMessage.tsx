@@ -35,7 +35,7 @@ const TimeLineMessage: FC<props> = ({ message, isSkeleton }) => {
 		},
 	};
 
-	const date = new Date(message.pubDate);
+	const time = new Date(message.pubDate);
 
 	if (isSkeleton) {
 		return (
@@ -75,7 +75,7 @@ const TimeLineMessage: FC<props> = ({ message, isSkeleton }) => {
 							{message.content}
 						</Typography>
 						<Typography component="span" variant="body2" color="text.primary" sx={style.date}>
-							{date.toLocaleString()}
+							{time.toLocaleString()}
 						</Typography>
 					</Fragment>
 				}
