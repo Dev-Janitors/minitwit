@@ -22,4 +22,4 @@ Go to `localhost:2222/swagger`, to see and test the endpoints.
 
 ##Static analysis
 
-Code climate
+Code climatedfdfd
