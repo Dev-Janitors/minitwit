@@ -103,6 +103,7 @@ public class MinitwitController : ControllerBase
     }
 
     [HttpPost("msgs/{username}")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> PostNewMessage(string username, [FromBody] MessageCreateJson body, [FromQuery(Name = "latest")] int? latest)
     {
         updateLatest(latest);
@@ -129,6 +130,7 @@ public class MinitwitController : ControllerBase
     }
 
     [HttpPost("register")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register([FromBody] UserJSON body, [FromQuery(Name = "latest")] int? latest)
     {
         updateLatest(latest);
@@ -143,6 +145,7 @@ public class MinitwitController : ControllerBase
     }
 
     [HttpPost("login")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login([FromBody] UserJSON body, [FromQuery(Name = "latest")] int? latest)
     {
         updateLatest(latest);
@@ -200,6 +203,7 @@ public class MinitwitController : ControllerBase
     }
 
     [HttpPost("new-user")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> NewUser(UserCreateDTO user)
     {
         try {
@@ -238,6 +242,7 @@ public class MinitwitController : ControllerBase
     }
 
     [HttpPost("fllws/{username}")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Follow(string username, [FromBody] FollowJSON body, [FromQuery(Name = "latest")] int? latest)
     {
         updateLatest(latest);
