@@ -105,7 +105,7 @@ jobs:
                 GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
               with:
                 tag_name: v1.0.${{ github.run_number }}
-                release_name: v1.0.${{ github.run_number }}
+                release_name: Release v1.0.${{ github.run_number }}
                 body: |
                   Release Notes for v1.0.${{ github.run_number }}:
                   - Commit 1
