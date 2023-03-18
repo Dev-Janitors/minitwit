@@ -19,7 +19,7 @@ const Tweet: FC<TweetProps> = ({ updateTweetsCallback }) => {
 	const style = {
 		container: {
 			marginTop: '10px',
-			marginBottom: '10px',
+			marginBottom: '50px',
 			width: '30vw',
 			height: '175px',
 			paddingLeft: '50px',

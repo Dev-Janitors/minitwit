@@ -86,8 +86,10 @@ const Header: FC<HeaderProps> = ({title}) => {
 			open={isMenuOpen}
 			onClose={handleMenuClose}
 		>
-			<MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-			<MenuItem onClick={handleMenuClose}>My account</MenuItem>
+
+			<Link reloadDocument={true} to={user.username + '/my-timeline'} style={{ textDecoration: 'none', color: 'black' }}>
+				<MenuItem onClick={handleMenuClose}>My Timeline</MenuItem>
+			</Link>
 			<MenuItem onClick={handleLogout}>Logout</MenuItem>
 		</Menu>
 	);
@@ -204,23 +206,16 @@ const Header: FC<HeaderProps> = ({title}) => {
 		<Box sx={{ flexGrow: 1, width: '100%', marginBottom: '10px' }}>
 			<AppBar position="static">
 				<Toolbar>
-					<IconButton
-            			size="large"
-            			edge="start"
-            			color="inherit"
-            			aria-label="menu"
-            			sx={{ mr: 2 }}
-          			>
-            			<MenuIcon />
-          			</IconButton>
 					<Link to="/" style={{ textDecoration: 'none', color: 'white' }} reloadDocument={true}>
-						<Typography variant="h4" noWrap component="div" sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}>
+						<Typography variant="h4" noWrap component="div" sx={{display: { xs: 'none', sm: 'block' } }}>
 							MiniTwit
 						</Typography>
 					</Link>
+					<Box sx={{flexGrow: 0.75}}/>
 					{title && 
-						<Typography variant="h5" noWrap sx={{mx:4, flexGrow: 1}}>{title}</Typography>
+						<Typography variant="h5" noWrap sx={{mx:4}}>{title}</Typography>
 					}
+					<Box sx={{flexGrow: 1}}/>
 					<IconButton size="large" edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
 						<AccountCircle />
 					</IconButton>

@@ -16,6 +16,7 @@ const TimeLineMessage: FC<props> = ({ message, isSkeleton }) => {
 			margin: '4px 0',
 			boxSizing: 'border-box',
 			boxShadow: '0 0 3px 0px #888888aa',
+			width: '25vw',
 		},
 		content: {
 			display: 'flex',
