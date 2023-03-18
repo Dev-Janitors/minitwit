@@ -201,8 +201,8 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 	if (!isLoading.isLoading && timeline.length === 0) {
 		return (
 			<>
-				<Typography variant="h5">No messages</Typography>
 				<Tweet updateTweetsCallback={getTimeline} />
+				<Typography variant="h5">No messages</Typography>
 			</>
 		);
 	}
@@ -225,7 +225,6 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children }) => {
 
 	return (
 		<>
-			{username ? userTimelineHeader : <Typography variant="h3">Public timeline</Typography>}
 			{username === user.username || !username ? <Tweet updateTweetsCallback={getTimeline} /> : null}
 			<InfiniteScroll
 				dataLength={timeline.length} //This is important field to render the next data

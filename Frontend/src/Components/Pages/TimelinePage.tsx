@@ -14,7 +14,7 @@ const TimelinePage: FC = () => {
 	};
 	return (
 		<Box sx={style.container}>
-			<Header />
+			<Header title="Public Timeline"/>
 			<TimeLineContainer />
 		</Box>
 	);
