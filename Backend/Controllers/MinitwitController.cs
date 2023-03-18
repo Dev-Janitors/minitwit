@@ -26,8 +26,9 @@ public class MinitwitController : ControllerBase
         _followerRepo = followerRepo;
     }
 
-    private void updateLatest(int? latest){
-        GlobalVariables.Latest = latest != null ? (int) latest : -1;
+    private void updateLatest(int? latest)
+    {
+        GlobalVariables.Latest = latest != null ? (int)latest : -1;
     }
 
     [HttpGet("")]
@@ -40,13 +41,16 @@ public class MinitwitController : ControllerBase
     [HttpGet("clear")]
     public async Task<IActionResult> Clear()
     {
-        try {
+        try
+        {
             var messages = await _messageRepo.ClearMessages();
             var users = await _userRepo.ClearUsers();
             var followers = await _followerRepo.ClearFollowers();
             GlobalVariables.Latest = 0;
             return Ok(messages);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             _logger.LogError(e, e.Message);
             return StatusCode(504);
         }
@@ -55,11 +59,14 @@ public class MinitwitController : ControllerBase
     [HttpGet("seed")]
     public async Task<IActionResult> Seed()
     {
-        try {
+        try
+        {
             var messages = await _messageRepo.Seed();
             var users = await _userRepo.Seed();
             return Ok("messages added: " + messages);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             _logger.LogError(e, e.Message);
             return StatusCode(504);
         }
@@ -68,17 +75,42 @@ public class MinitwitController : ControllerBase
     [HttpGet("latest")]
     public IActionResult GetLatest()
     {
-        return Ok(new {latest = GlobalVariables.Latest});
+        return Ok(new { latest = GlobalVariables.Latest });
     }
 
-	[HttpGet("msgs")]
+    [HttpGet("msgs")]
     public async Task<IActionResult> GetTimeline([FromQuery(Name = "latest")] int? latest, [FromQuery(Name = "startIndex")] int? start, [FromQuery(Name = "endIndex")] int? end)
     {
         updateLatest(latest);
-        try {
+        try
+        {
             var messages = (await _messageRepo.ReadAllAsync(start, end)).ToList();
             return Ok(messages);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return StatusCode(504);
+        }
+    }
+
+    [HttpGet("my-timeline/{username}")]
+    public async Task<IActionResult> GetMyTimeline(string username)
+    {
+        try
+        {
+            var userId = (await _userRepo.ReadByUsernameAsync(username)).Value.Id;
+            var usersFollowed = (await _followerRepo.ReadAllWhomIdByWhoId(userId)).ToList().Append(userId);
+            var messages = (await _messageRepo.ReadAllByAuthorIDListAsync(usersFollowed))
+            .Select(m => new
+            {
+                content = m.Text,
+                user = username
+            });
+            return Ok(messages);
+        }
+        catch (Exception e)
+        {
             _logger.LogError(e, e.Message);
             return StatusCode(504);
         }
@@ -88,15 +120,19 @@ public class MinitwitController : ControllerBase
     public async Task<IActionResult> GetUserTimeline(string username, [FromQuery(Name = "latest")] int? latest, [FromQuery(Name = "startIndex")] int? start, [FromQuery(Name = "endIndex")] int? end)
     {
         updateLatest(latest);
-        try {
+        try
+        {
             var messages = (await _messageRepo.ReadAllByUsernameAsync(username, start, end))
-            .Select(m => new {
+            .Select(m => new
+            {
                 content = m.Text,
                 user = username,
             });
-            
+
             return Ok(messages);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             _logger.LogError(e, e.Message);
             return StatusCode(504);
         }
@@ -106,23 +142,26 @@ public class MinitwitController : ControllerBase
     public async Task<IActionResult> PostNewMessage(string username, [FromBody] MessageCreateJson body, [FromQuery(Name = "latest")] int? latest)
     {
         updateLatest(latest);
-        try {
+        try
+        {
             var authorResult = await _userRepo.ReadByUsernameAsync(username);
             if (authorResult.IsNone) return NotFound($"Could not find the user with username {username}");
             var authorId = authorResult.Value.Id;
             DateTime currentTime = DateTime.UtcNow;
             long unixTime = ((DateTimeOffset)currentTime).ToUnixTimeMilliseconds();
 
-            var messageCreateDTO = new MessageCreateDTO 
+            var messageCreateDTO = new MessageCreateDTO
             {
                 AuthorId = authorId,
                 Text = body.content,
                 PubDate = unixTime
             };
-            
-            var result = await _messageRepo.CreateAsync(messageCreateDTO);  
+
+            var result = await _messageRepo.CreateAsync(messageCreateDTO);
             return NoContent();
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             _logger.LogError(e, e.Message);
             return StatusCode(504);
         }
@@ -151,38 +190,54 @@ public class MinitwitController : ControllerBase
         var user = await _userRepo.ReadByUsernameAsync(username);
         if (user.IsNone) return NotFound($"Could not find the user with username {username}");
 
-        return Ok(new {username = username});
+        return Ok(new { username = username });
     }
-    
+
     [HttpGet("user")]
     public async Task<IActionResult> GetUser(int? id, string? userName)
     {
-        if(id != null && userName != null){
+        if (id != null && userName != null)
+        {
             //get both -- currently just id
-            try {
+            try
+            {
                 var user = await _userRepo.ReadByIDAsync((int)id);
                 return Ok(user);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 _logger.LogError(e, e.Message);
                 return StatusCode(504); //504 = Gateway timeout
             }
-        } else if (id != null){
-            try {
-                var user = await _userRepo.ReadByIDAsync((int)id);
-                return Ok(user);
-            } catch (Exception e) {
-                _logger.LogError(e, e.Message);
-                return StatusCode(504); //504 = Gateway timeout
-            }
-        } else if(userName != null){
-        try {
-            var user = await _userRepo.ReadByUsernameAsync(userName);
-            return Ok(user);
-        } catch (Exception e) {
-            _logger.LogError(e, e.Message);
-            return StatusCode(504); //504 = Gateway timeout
         }
-        } else {
+        else if (id != null)
+        {
+            try
+            {
+                var user = await _userRepo.ReadByIDAsync((int)id);
+                return Ok(user);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(504); //504 = Gateway timeout
+            }
+        }
+        else if (userName != null)
+        {
+            try
+            {
+                var user = await _userRepo.ReadByUsernameAsync(userName);
+                return Ok(user);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(504); //504 = Gateway timeout
+            }
+        }
+        else
+        {
             return StatusCode(502); //502 = Bad gateway
         }
     }
@@ -190,10 +245,13 @@ public class MinitwitController : ControllerBase
     [HttpGet("users")]
     public async Task<IActionResult> GetUsers()
     {
-        try {
+        try
+        {
             var users = await _userRepo.ReadAllAsync();
             return Ok(users);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             _logger.LogError(e, e.Message);
             return StatusCode(504);
         }
@@ -202,10 +260,13 @@ public class MinitwitController : ControllerBase
     [HttpPost("new-user")]
     public async Task<IActionResult> NewUser(UserCreateDTO user)
     {
-        try {
+        try
+        {
             var result = await _userRepo.CreateAsync(user);
             return Ok(result);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             _logger.LogError(e, e.Message);
             return StatusCode(504);
         }
@@ -218,20 +279,26 @@ public class MinitwitController : ControllerBase
         //Find user Id of user with username
         Option<UserDTO> userResult;
 
-        try {
+        try
+        {
             userResult = await _userRepo.ReadByUsernameAsync(username);
             if (userResult.IsNone) return NotFound($"Could not find user with name '{username}'.");
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             _logger.LogError(e, e.Message);
             return StatusCode(500, "something wen terribly wrong");
         }
 
         //Find followers of user with userResult.Value.Id (whomId)
-        try {
+        try
+        {
             var followersResult = (await _followerRepo.ReadAllByWhoId(userResult.Value.Id)).ToList();
 
-            return Ok(new {follows = followersResult});
-        } catch (Exception e) {
+            return Ok(new { follows = followersResult });
+        }
+        catch (Exception e)
+        {
             _logger.LogError(e, e.Message);
             return StatusCode(500, "something wen terribly wrong");
         }
@@ -243,38 +310,44 @@ public class MinitwitController : ControllerBase
         updateLatest(latest);
         //Find userId;
         int userId;
-        try {
+        try
+        {
             var userResult = await _userRepo.ReadByUsernameAsync(username);
             if (userResult.IsNone) return StatusCode(400, $"Could not find user with name '{username}'.");
             userId = userResult.Value.Id;
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             _logger.LogError(e, e.Message);
             return StatusCode(500, "Internal Server Error");
         }
 
 
         //Handle request
-        if(body.follow != null) //This is a follow request
+        if (body.follow != null) //This is a follow request
         {
             try
             {
                 var followUser = await _userRepo.ReadByUsernameAsync(body.follow);
-                if(followUser.IsNone){
+                if (followUser.IsNone)
+                {
                     return StatusCode(400, "The user you are trying to follow was not found");
                 }
                 var user = followUser.Value;
                 var followCreate = new FollowerCreateDTO
-                    {
-                        WhoId = userId,
-                        WhomId = user.Id
-                    };
-                
+                {
+                    WhoId = userId,
+                    WhomId = user.Id
+                };
+
                 var result = await _followerRepo.CreateAsync(followCreate);
                 if (result.Item1 == Core.Response.NotFound) return NotFound();
                 if (result.Item1 != Core.Response.Created) return StatusCode(500, "Could not follow");
 
                 return NoContent();
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 return StatusCode(500, e.Message);
             }
         }
@@ -283,7 +356,8 @@ public class MinitwitController : ControllerBase
             try
             {
                 var unfollowUser = await _userRepo.ReadByUsernameAsync(body.unfollow);
-                if(unfollowUser.IsNone){
+                if (unfollowUser.IsNone)
+                {
                     return StatusCode(400, "The user you are trying to unfollow was not found");
                 }
 
@@ -293,7 +367,9 @@ public class MinitwitController : ControllerBase
                 if (unfollowResult != Core.Response.Deleted) return StatusCode(500, "Internal Server Error. Could not unfollow");
 
                 return NoContent();
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 _logger.LogError(e, e.Message);
                 return StatusCode(500, "Unfollow error");
             }
@@ -309,8 +385,8 @@ public class MinitwitController : ControllerBase
     public static bool PropertyExists(dynamic obj, string propertyName)
     {
         if (obj is ExpandoObject)
-            return ((IDictionary<string, object>) obj).ContainsKey(propertyName);
+            return ((IDictionary<string, object>)obj).ContainsKey(propertyName);
 
         return obj.GetType().GetProperty(propertyName) != null;
-  }
+    }
 }

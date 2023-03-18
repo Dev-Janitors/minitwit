@@ -35,7 +35,7 @@ public class MessageRepository : IMessageRepository
           new Message(2, "Ingenting", 1676552130),
           new Message(1, "John", 1676552180),
         };
-        
+
         foreach (var message in messages)
         {
             await _context.messages.AddAsync(message);
@@ -46,69 +46,80 @@ public class MessageRepository : IMessageRepository
         return writtenChanges;
     }
 
-  public async Task<(Response, MessageDTO)> CreateAsync(MessageCreateDTO message)
-  {
-    if (!_context.users.Any(u => u.Id == message.AuthorId)) return (Response.NotFound, new MessageDTO(-1, message.AuthorId, message.Text ?? "", message.PubDate, 0));
-    Message entity = new Message(message.AuthorId, message.Text!, message.PubDate);
-    _context.messages.Add(entity);
-    await _context.SaveChangesAsync();
-    return (Response.Created, new MessageDTO(entity.Id, entity.AuthorId, entity.Text, entity.PubDate, entity.Flagged));
-  }
-
-  public async Task<IReadOnlyCollection<AllMessages>> ReadAllAsync(int? start, int? end)
-  {
-    var query = from message in _context.messages
-    join user in _context.users on message.AuthorId equals user.Id
-    orderby message.Id descending
-    select new AllMessages
+    public async Task<(Response, MessageDTO)> CreateAsync(MessageCreateDTO message)
     {
-        content = message.Text,
-        user = user.Username,
-        pubDate = message.PubDate
-    };
+        if (!_context.users.Any(u => u.Id == message.AuthorId)) return (Response.NotFound, new MessageDTO(-1, message.AuthorId, message.Text ?? "", message.PubDate, 0));
+        Message entity = new Message(message.AuthorId, message.Text!, message.PubDate);
+        _context.messages.Add(entity);
+        await _context.SaveChangesAsync();
+        return (Response.Created, new MessageDTO(entity.Id, entity.AuthorId, entity.Text, entity.PubDate, entity.Flagged));
+    }
 
-    if(start != null) query = query.Skip(start.Value);
-    if(end != null && start != null) query = query.Take(end.Value - start.Value);
-    if(end != null) query = query.Take(end.Value);
+    public async Task<IReadOnlyCollection<AllMessages>> ReadAllAsync(int? start, int? end)
+    {
+        var query = from message in _context.messages
+                    join user in _context.users on message.AuthorId equals user.Id
+                    orderby message.Id descending
+                    select new AllMessages
+                    {
+                        content = message.Text,
+                        user = user.Username,
+                        pubDate = message.PubDate
+                    };
 
-    return await query.ToListAsync();
-  }
+        if (start != null) query = query.Skip(start.Value);
+        if (end != null && start != null) query = query.Take(end.Value - start.Value);
+        if (end != null) query = query.Take(end.Value);
 
-  public Task<IReadOnlyCollection<MessageDTO>> ReadAllByAuthorIDAsync(int userID)
-  {
-    // var messages = from m in _context.messages
-    //                   where m.AuthorId == userID
-    //                   select m.ToDto()
-    throw new NotImplementedException();
-  }
+        return await query.ToListAsync();
+    }
 
-  public async Task<IReadOnlyCollection<MessageDTO>> ReadAllByUsernameAsync(string username, int? startIndex, int? endIndex)
-  {
-    var authorId = await _context.users
-      .Where(u => u.Username == username)
-      .Select(u => u.Id)
-      .FirstOrDefaultAsync();
-      
-    var messages = await _context.messages
-      .Where(m => m.AuthorId == authorId)
-      .OrderByDescending(m => m.Id)
-      .Select(m => new MessageDTO(m.Id, m.AuthorId, m.Text, m.PubDate, m.Flagged))
-      .ToListAsync();
+    public Task<IReadOnlyCollection<MessageDTO>> ReadAllByAuthorIDAsync(int userID)
+    {
+        // var messages = from m in _context.messages
+        //                   where m.AuthorId == userID
+        //                   select m.ToDto()
+        throw new NotImplementedException();
+    }
 
-    if(startIndex != null) messages = messages.Skip(startIndex.Value).ToList();
-    if(endIndex != null && startIndex != null) messages = messages.Take(endIndex.Value - startIndex.Value).ToList();
-    if(endIndex != null) messages = messages.Take(endIndex.Value).ToList();
+    public async Task<IReadOnlyCollection<MessageDTO>> ReadAllByAuthorIDListAsync(IEnumerable<int> authorIDList)
+    {
+        var messages = await _context.messages
+          .Where(m => authorIDList.Contains(m.AuthorId))
+          .OrderByDescending(m => m.Id)
+          .Select(m => new MessageDTO(m.Id, m.AuthorId, m.Text, m.PubDate, m.Flagged))
+          .ToListAsync();
 
-    return messages;
-  }
+        return messages;
+    }
 
-  public Task<Response> RemoveAsync(int id)
-  {
-    throw new NotImplementedException();
-  }
+    public async Task<IReadOnlyCollection<MessageDTO>> ReadAllByUsernameAsync(string username, int? startIndex, int? endIndex)
+    {
+        var authorId = await _context.users
+          .Where(u => u.Username == username)
+          .Select(u => u.Id)
+          .FirstOrDefaultAsync();
 
-  public Task<Response> UpdateAsync(MessageUpdateDTO user)
-  {
-    throw new NotImplementedException();
-  }
+        var messages = await _context.messages
+          .Where(m => m.AuthorId == authorId)
+          .OrderByDescending(m => m.Id)
+          .Select(m => new MessageDTO(m.Id, m.AuthorId, m.Text, m.PubDate, m.Flagged))
+          .ToListAsync();
+
+        if (startIndex != null) messages = messages.Skip(startIndex.Value).ToList();
+        if (endIndex != null && startIndex != null) messages = messages.Take(endIndex.Value - startIndex.Value).ToList();
+        if (endIndex != null) messages = messages.Take(endIndex.Value).ToList();
+
+        return messages;
+    }
+
+    public Task<Response> RemoveAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Response> UpdateAsync(MessageUpdateDTO user)
+    {
+        throw new NotImplementedException();
+    }
 }
