@@ -42,6 +42,7 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children, messages, get
 	if (!isLoading.isLoading && messages.length === 0) {
 		return (
 			<>
+				<Typography variant='h4' sx={{marginBottom: '25px'}}>{title}</Typography>
 				<Typography variant="h5">No messages</Typography>
 			</>
 		);

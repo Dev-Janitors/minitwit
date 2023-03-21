@@ -82,13 +82,30 @@ public class MessageRepository : IMessageRepository
         throw new NotImplementedException();
     }
 
-    public async Task<IReadOnlyCollection<MessageDTO>> ReadAllByAuthorIDListAsync(IEnumerable<int> authorIDList)
+    public async Task<IReadOnlyCollection<AllMessages>> ReadAllByAuthorIDListAsync(IEnumerable<int> authorIDList, int? startIndex, int? endIndex)
     {
         var messages = await _context.messages
-          .Where(m => authorIDList.Contains(m.AuthorId))
-          .OrderByDescending(m => m.Id)
-          .Select(m => new MessageDTO(m.Id, m.AuthorId, m.Text, m.PubDate, m.Flagged))
+          .Join(_context.users, m => m.AuthorId, u => u.Id, (m, u) => new
+          {
+              authorId = u.Id,
+              username = u.Username,
+              messageId = m.Id,
+              content = m.Text,
+              pubDate = m.PubDate
+          })
+          .Where(m => authorIDList.Contains(m.authorId))
+          .OrderByDescending(m => m.messageId)
+          .Select(m => new AllMessages
+          {
+              content = m.content,
+              user = m.username,
+              pubDate = m.pubDate
+          })
           .ToListAsync();
+
+        if (startIndex != null) messages = messages.Skip(startIndex.Value).ToList();
+        if (endIndex != null && startIndex != null) messages = messages.Take(endIndex.Value - startIndex.Value).ToList();
+        if (endIndex != null) messages = messages.Take(endIndex.Value).ToList();
 
         return messages;
     }

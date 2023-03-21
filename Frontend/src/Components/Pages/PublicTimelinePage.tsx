@@ -29,6 +29,8 @@ const PublicTimelinePage: FC = () => {
 		error: null,
 	} as IsLoading);
 
+	const [user] = useState(isLoggedIn());
+
 	const getTimeline = async (startIndex?: number, endIndex?: number) => {
 		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`;
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
@@ -101,7 +103,7 @@ const PublicTimelinePage: FC = () => {
 	return (
 			<Box sx={style.container}>
 				<Header/>
-				<Tweet updateTweetsCallback={getTimeline} />
+				{!isLoading.isLoading && user.isLoggedIn && <Tweet updateTweetsCallback={getTimeline} />}
 				<TimeLineContainer title="Public Timeline" messages={timeline} getNextMessages={fetchMoreData} hasMore={hasMore} isLoading={isLoading}/>
 			</Box>
 	);

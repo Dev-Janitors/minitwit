@@ -95,18 +95,13 @@ public class MinitwitController : ControllerBase
     }
 
     [HttpGet("my-timeline/{username}")]
-    public async Task<IActionResult> GetMyTimeline(string username)
+    public async Task<IActionResult> GetMyTimeline(string username, [FromQuery(Name = "startIndex")] int? start, [FromQuery(Name = "endIndex")] int? end)
     {
         try
         {
             var userId = (await _userRepo.ReadByUsernameAsync(username)).Value.Id;
             var usersFollowed = (await _followerRepo.ReadAllWhomIdByWhoId(userId)).ToList().Append(userId);
-            var messages = (await _messageRepo.ReadAllByAuthorIDListAsync(usersFollowed))
-            .Select(m => new
-            {
-                content = m.Text,
-                user = username
-            });
+            var messages = (await _messageRepo.ReadAllByAuthorIDListAsync(usersFollowed, start, end)).ToList();
             return Ok(messages);
         }
         catch (Exception e)
