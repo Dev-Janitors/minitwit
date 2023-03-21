@@ -159,16 +159,7 @@ public class MinitwitController : ControllerBase
     [HttpGet("user")]
     public async Task<IActionResult> GetUser(int? id, string? userName)
     {
-        if(id != null && userName != null){
-            //get both -- currently just id
-            try {
-                var user = await _userRepo.ReadByIDAsync((int)id);
-                return Ok(user);
-            } catch (Exception e) {
-                _logger.LogError(e, e.Message);
-                return StatusCode(504); //504 = Gateway timeout
-            }
-        } else if (id != null){
+        if (id != null){
             try {
                 var user = await _userRepo.ReadByIDAsync((int)id);
                 return Ok(user);
