@@ -5,7 +5,6 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 // Cors
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 

@@ -39,7 +39,7 @@ jobs:
             - name: Build and push frontend
               uses: docker/build-push-action@v2
               with:
-                  context: .
+                  context: '{{defaultContext}}:Frontend'
                   file: ./Frontend/Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKER_USERNAME }}/minitwitfrontend:latest
@@ -57,7 +57,7 @@ jobs:
             - name: Build and push minitwitdb
               uses: docker/build-push-action@v2
               with:
-                  context: .
+                  context: '{{defaultContext}}:Backend'
                   file: ./Database/Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKER_USERNAME }}/minitwitdb:latest
