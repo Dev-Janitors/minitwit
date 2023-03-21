@@ -12,23 +12,23 @@ public record UserDTO(
 public record UserCreateDTO {
     [Required]
     [EmailAddress]
-    public string Email {get; set;}
+    public string? Email {get; set;}
 
-    public string Username {get; set;}
+    public string? Username {get; set;}
 }
 
 public record UserLoginDTO {
     [Required]
     [EmailAddress]
-    public string Email {get; set;}
+    public string? Email {get; set;}
 
     [Required]
-    public string Username {get; set;}
+    public string? Username {get; set;}
 }
 
 public record UserJSON {
-    public string email {get; set;}
-    public string username {get; set;}
+    public string? email {get; set;}
+    public string? username {get; set;}
     //TODO: Add password
 }
 

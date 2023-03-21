@@ -148,6 +148,8 @@ public class MinitwitController : ControllerBase
         updateLatest(latest);
         var username = body.username;
 
+        if (username == null) return BadRequest();
+
         var user = await _userRepo.ReadByUsernameAsync(username);
         if (user.IsNone) return NotFound($"Could not find the user with username {username}");
 
@@ -260,14 +262,15 @@ public class MinitwitController : ControllerBase
             {
                 var followUser = await _userRepo.ReadByUsernameAsync(body.follow);
                 if(followUser.IsNone){
+                    _logger.LogWarning($"Could not find the user: {body.follow}");
                     return StatusCode(400, "The user you are trying to follow was not found");
                 }
                 var user = followUser.Value;
                 var followCreate = new FollowerCreateDTO
-                    {
-                        WhoId = userId,
-                        WhomId = user.Id
-                    };
+                {
+                    WhoId = userId,
+                    WhomId = user.Id
+                };
                 
                 var result = await _followerRepo.CreateAsync(followCreate);
                 if (result.Item1 == Core.Response.NotFound) return NotFound();
