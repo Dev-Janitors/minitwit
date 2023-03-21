@@ -13,14 +13,11 @@ public interface IMessageRepository {
 
     //Delete
     Task<Response> RemoveAsync(int id);
+
     //Read
-    Task<IReadOnlyCollection<MessageDTO>> ReadAllByAuthorIDAsync(int userID);
-
     Task<IReadOnlyCollection<MessageDTO>> ReadAllByUsernameAsync(string Username, int? startIndex, int? endIndex);
-
     Task<int> Seed();
-
-    Task<IReadOnlyCollection<AllMessages>> ReadAllAsync(int? start, int? end);
+    Task<IReadOnlyCollection<AllMessages>> ReadAllAsync(int? n, int? start, int? end);
 
 
 
