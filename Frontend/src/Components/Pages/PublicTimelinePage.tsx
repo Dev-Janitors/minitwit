@@ -100,9 +100,9 @@ const PublicTimelinePage: FC = () => {
 	
 	return (
 			<Box sx={style.container}>
-				<Header title="Public Timeline"/>
+				<Header/>
 				<Tweet updateTweetsCallback={getTimeline} />
-				<TimeLineContainer messages={timeline} getNextMessages={fetchMoreData} hasMore={hasMore} isLoading={isLoading}/>
+				<TimeLineContainer title="Public Timeline" messages={timeline} getNextMessages={fetchMoreData} hasMore={hasMore} isLoading={isLoading}/>
 			</Box>
 	);
 };

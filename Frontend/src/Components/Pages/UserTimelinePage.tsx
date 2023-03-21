@@ -147,6 +147,8 @@ const UserTimelinePage = () => {
 	};
 
     useEffect(() => {
+        // Todo: If username === user.username go to my-timeline page
+
         getMessages(0, 40)
         if (user.isLoggedIn) {
 			axios
@@ -170,18 +172,18 @@ const UserTimelinePage = () => {
 
   return (
         <Box sx={style.container}>
-			<Header title={username + "'s Messages"}/>
-			<Box>
-                {user.isLoggedIn && user.username !== username && userIsFollowed ? (
+			<Header/>
+			<Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                {user.isLoggedIn && userIsFollowed ? (
                     <>
                         <Typography variant="h5">You are following this user</Typography>
                         <Button onClick={handleUnfollow}>Unfollow</Button>
                     </>
-                ) : (
+                ) : user.username !== username ? (
                     <Button onClick={handleFollow}>Follow {username}</Button>
-                )}
+                ): <></>}
 		    </Box>
-			<TimeLineContainer messages={timeline} getNextMessages={fetchMoreData} hasMore={hasMore} isLoading={isLoading}/>
+			<TimeLineContainer messages={timeline} getNextMessages={fetchMoreData} hasMore={hasMore} isLoading={isLoading} title={username + "'s Tweets"}/>
 		</Box>
   )
 }

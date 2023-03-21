@@ -83,7 +83,7 @@ const Tweet: FC<TweetProps> = ({ updateTweetsCallback }) => {
 		<Box sx={style.container}>
 			<TextField className="textField" label="Tweet" multiline maxRows={4} placeholder="What's on your mind?" variant="filled" onChange={handleChange} value={tweet} />
 			<Button className="submit" onClick={handleSubmit} variant="contained" endIcon={<SendIcon/>}>
-				Tweet
+				publish
 			</Button>
 		</Box>
 	);

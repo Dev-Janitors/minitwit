@@ -3,7 +3,7 @@ import Header from '../Global/Header/Header'
 
 const MyTimelinePage = () => {
   return (
-    <Header title="My Timeline"/>
+    <Header/>
   )
 }
 

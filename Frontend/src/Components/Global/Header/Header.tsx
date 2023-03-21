@@ -1,11 +1,7 @@
 import React, { useState, MouseEvent, useContext, FC } from 'react';
-import { styled, alpha } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { AppBar, Box, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import MoreIcon from '@mui/icons-material/MoreVert';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link } from 'react-router-dom';
 import SelfAuthentication from '../../Authentication/SelfAuthentication';
@@ -26,11 +22,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 	},
 }));
 
-interface HeaderProps {
-	title?: string;
-}
-
-const Header: FC<HeaderProps> = ({title}) => {
+const Header: FC = () => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	// const { isLoading, isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
@@ -211,10 +203,6 @@ const Header: FC<HeaderProps> = ({title}) => {
 							MiniTwit
 						</Typography>
 					</Link>
-					<Box sx={{flexGrow: 0.75}}/>
-					{title && 
-						<Typography variant="h5" noWrap sx={{mx:4}}>{title}</Typography>
-					}
 					<Box sx={{flexGrow: 1}}/>
 					<IconButton size="large" edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
 						<AccountCircle />

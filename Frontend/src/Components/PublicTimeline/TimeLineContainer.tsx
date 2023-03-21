@@ -10,9 +10,10 @@ interface TimeLineContainerProps {
 	getNextMessages: () => void;
 	isLoading: any;
 	hasMore: boolean;
+	title?: string;
 }
 
-const TimeLineContainer: FC<TimeLineContainerProps> = ({ children, messages, getNextMessages, isLoading, hasMore }) => {
+const TimeLineContainer: FC<TimeLineContainerProps> = ({ children, messages, getNextMessages, isLoading, hasMore, title }) => {
 
 	if (isLoading.isLoading && isLoading.error === null) {
 		new Array(10).map((message, i) => {
@@ -48,6 +49,7 @@ const TimeLineContainer: FC<TimeLineContainerProps> = ({ children, messages, get
 
 	return (
 		<>
+			<Typography variant='h4' sx={{marginBottom: '25px'}}>{title}</Typography>
 			<InfiniteScroll
 				dataLength={messages.length} //This is important field to render the next data
 				next={getNextMessages}
