@@ -267,10 +267,10 @@ public class MinitwitController : ControllerBase
                 }
                 var user = followUser.Value;
                 var followCreate = new FollowerCreateDTO
-                    {
-                        WhoId = userId,
-                        WhomId = user.Id
-                    };
+                {
+                    WhoId = userId,
+                    WhomId = user.Id
+                };
                 
                 var result = await _followerRepo.CreateAsync(followCreate);
                 if (result.Item1 == Core.Response.NotFound) return NotFound();
