@@ -168,17 +168,14 @@ const UserTimelinePage = () => {
 					console.log(e);
 				});
 		}
-    })
+    }, [])
 
   return (
         <Box sx={style.container}>
 			<Header/>
 			<Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                 {user.isLoggedIn && userIsFollowed ? (
-                    <>
-                        <Typography variant="h5">You are following this user</Typography>
-                        <Button onClick={handleUnfollow}>Unfollow</Button>
-                    </>
+                    <Button onClick={handleUnfollow}>Unfollow</Button>
                 ) : user.username !== username ? (
                     <Button onClick={handleFollow}>Follow {username}</Button>
                 ): <></>}

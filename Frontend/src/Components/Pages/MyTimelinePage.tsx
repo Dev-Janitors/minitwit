@@ -83,16 +83,17 @@ const MyTimelinePage = () => {
 		axios
 			.get(fullUrl, options)
 			.then((res) => {
-				setTimeline(res.data);
-				setIsLoading({ isLoading: false, error: null });
+				console.log(res.data);
+				if (res.data.length === 0) {
+					setHasMore(false);
+				}
+				setTimeline([...timeline, ...res.data]);
 			})
 			.catch((e) => {
 				if (e instanceof AxiosError) {
 					console.log(e);
-					setIsLoading({ isLoading: false, error: e.message });
 				} else {
 					console.log(e);
-					setIsLoading({ isLoading: false, error: 'Something went wrong!' });
 				}
 			});
 	};
