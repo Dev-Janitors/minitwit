@@ -148,6 +148,8 @@ public class MinitwitController : ControllerBase
         updateLatest(latest);
         var username = body.username;
 
+        if (username == null) return BadRequest();
+
         var user = await _userRepo.ReadByUsernameAsync(username);
         if (user.IsNone) return NotFound($"Could not find the user with username {username}");
 
