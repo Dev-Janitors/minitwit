@@ -262,6 +262,7 @@ public class MinitwitController : ControllerBase
             {
                 var followUser = await _userRepo.ReadByUsernameAsync(body.follow);
                 if(followUser.IsNone){
+                    _logger.LogWarning($"Could not find the user: {body.follow}");
                     return StatusCode(400, "The user you are trying to follow was not found");
                 }
                 var user = followUser.Value;
