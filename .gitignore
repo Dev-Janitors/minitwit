@@ -747,6 +747,11 @@ FodyWeavers.xsd
 *.vagrant/
 vagrantSettings.yaml
 
+
+# Grafana Data
+
+grafana-data/*
+
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 
