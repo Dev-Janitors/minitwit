@@ -72,11 +72,11 @@ public class MinitwitController : ControllerBase
     }
 
 	[HttpGet("msgs")]
-    public async Task<IActionResult> GetTimeline([FromQuery(Name = "latest")] int? latest, [FromQuery(Name = "startIndex")] int? start, [FromQuery(Name = "endIndex")] int? end)
+    public async Task<IActionResult> GetTimeline([FromQuery(Name = "latest")] int? latest, [FromQuery(Name = "n")] int? n, [FromQuery(Name = "startIndex")] int? start, [FromQuery(Name = "endIndex")] int? end)
     {
         updateLatest(latest);
         try {
-            var messages = (await _messageRepo.ReadAllAsync(start, end)).ToList();
+            var messages = (await _messageRepo.ReadAllAsync(n, start, end)).ToList();
             return Ok(messages);
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
