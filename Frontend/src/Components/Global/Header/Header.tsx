@@ -87,7 +87,7 @@ const Header: FC<HeaderProps> = ({title}) => {
 			onClose={handleMenuClose}
 		>
 
-			<Link reloadDocument={true} to={user.username + '/my-timeline'} style={{ textDecoration: 'none', color: 'black' }}>
+			<Link reloadDocument={true} to={'/' + user.username + '/my-timeline'} style={{ textDecoration: 'none', color: 'black' }}>
 				<MenuItem onClick={handleMenuClose}>My Timeline</MenuItem>
 			</Link>
 			<MenuItem onClick={handleLogout}>Logout</MenuItem>

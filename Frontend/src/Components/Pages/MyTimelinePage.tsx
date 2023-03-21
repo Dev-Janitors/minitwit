@@ -1,10 +1,10 @@
 import React from 'react'
 import Header from '../Global/Header/Header'
 
-const MyTimeline = () => {
+const MyTimelinePage = () => {
   return (
     <Header title="My Timeline"/>
   )
 }
 
-export default MyTimeline
+export default MyTimelinePage
