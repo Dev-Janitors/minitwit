@@ -174,11 +174,11 @@ const UserTimelinePage = () => {
         <Box sx={style.container}>
 			<Header/>
 			<Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                {user.isLoggedIn && userIsFollowed ? (
-                    <Button onClick={handleUnfollow}>Unfollow</Button>
+                {user.isLoggedIn ? userIsFollowed ? (
+                    <Button onClick={handleUnfollow}>Unfollow {username}</Button>
                 ) : user.username !== username ? (
                     <Button onClick={handleFollow}>Follow {username}</Button>
-                ): <></>}
+                ): <></> : <></>}
 		    </Box>
 			<TimeLineContainer messages={timeline} getNextMessages={fetchMoreData} hasMore={hasMore} isLoading={isLoading} title={username + "'s Tweets"}/>
 		</Box>
