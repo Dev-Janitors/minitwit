@@ -48,10 +48,11 @@ services:
         depends_on:
             - prometheus
         volumes:
-            - ./grafana-data/data:/var/lib/grafana
+            - grafvolume:/var/lib/grafana
         ports:
             - '3333:3000'
 
 volumes:
     dbvolume:
     promvolume:
+    grafvolume:
