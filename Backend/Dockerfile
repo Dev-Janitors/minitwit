@@ -3,7 +3,7 @@ WORKDIR /App
 
 # Copy everything
 # COPY ${backendCopySrc} ./Backend
-COPY ${backendCopySrc} ./Backend
+COPY ./Backend ./Backend
 
 WORKDIR ./Backend
 
