@@ -10,6 +10,7 @@ public interface IFollowerRepository
     public Task<Option<FollowerDTO>> ReadByWhoAndWhomId(int whoId, int whomId);
     public Task<IReadOnlyCollection<FollowerDTO>> ReadAllByWhomId(int whomId);
     public Task<IReadOnlyCollection<string>> ReadAllByWhoId(int whoId);
+    public Task<IReadOnlyCollection<int>> ReadAllWhomIdByWhoId(int whoId);
 
     public Task<IList<FollowerDTO>> ReadAll();
 }

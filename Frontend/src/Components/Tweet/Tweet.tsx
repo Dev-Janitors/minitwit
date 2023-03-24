@@ -1,8 +1,9 @@
 import { Box, Button, TextField } from '@mui/material';
-import React, { useState, ChangeEvent, FC, useContext } from 'react';
+import React, { useState, ChangeEvent, FC, useContext, KeyboardEvent } from 'react';
 import axios from 'axios';
 import { isLoggedIn } from '../Authentication/cookieHandler';
 import { SnackbarContext } from '../SnackBar/SnackbarContextProvider';
+import SendIcon from '@mui/icons-material/Send';
 
 interface TweetProps {
 	updateTweetsCallback?: () => void;
@@ -17,10 +18,17 @@ const Tweet: FC<TweetProps> = ({ updateTweetsCallback }) => {
 
 	const style = {
 		container: {
+			marginTop: '10px',
+			marginBottom: '20px',
+			width: '30vw',
+			height: '175px',
+			paddingLeft: '50px',
+			paddingRight: '50px',
+			border: '1px solid grey',
+			borderRadius: '5px',
 			display: 'flex',
-			flexDirection: 'row',
-			justifyContent: 'space-between',
-			width: '300px',
+			flexDirection: 'column',
+			justifyContent: 'center',
 		},
 	};
 
@@ -73,9 +81,9 @@ const Tweet: FC<TweetProps> = ({ updateTweetsCallback }) => {
 
 	return (
 		<Box sx={style.container}>
-			<TextField label="Tweet" multiline rows={4} placeholder="Default Value" variant="filled" onChange={handleChange} value={tweet} />
-			<Button onClick={handleSubmit} variant="contained">
-				Tweet
+			<TextField className="textField" label="Tweet" multiline maxRows={4} placeholder="What's on your mind?" variant="filled" onChange={handleChange} value={tweet} />
+			<Button className="submit" onClick={handleSubmit} variant="contained" endIcon={<SendIcon/>}>
+				publish
 			</Button>
 		</Box>
 	);
