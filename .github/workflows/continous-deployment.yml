@@ -39,8 +39,8 @@ jobs:
             - name: Build and push frontend
               uses: docker/build-push-action@v2
               with:
-                  context: .
-                  file: ./Frontend/Dockerfile
+                  context: '{{defaultContext}}:Frontend'
+                  file: ./Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKER_USERNAME }}/minitwitfrontend:latest
                   cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitfrontend:webbuildcache
@@ -57,8 +57,8 @@ jobs:
             - name: Build and push minitwitdb
               uses: docker/build-push-action@v2
               with:
-                  context: .
-                  file: ./Database/Dockerfile
+                  context: '{{defaultContext}}:Database'
+                  file: ./Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKER_USERNAME }}/minitwitdb:latest
                   cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitdb:minitwitdbbuildcache
@@ -67,8 +67,8 @@ jobs:
             - name: Build and push minitwitbackend
               uses: docker/build-push-action@v2
               with:
-                  context: .
-                  file: ./Backend/Dockerfile
+                  context: '{{defaultContext}}:Backend'
+                  file: ./Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKER_USERNAME }}/minitwitbackend:latest
                   cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitbackend:backendbuildcachce
@@ -89,7 +89,7 @@ jobs:
                   chmod 600 ~/.ssh/minitwit.key
               env:
                   SSH_KEY: ${{ secrets.SSH_KEY }}
-            
+
             - name: Deploy to server
               # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
               run: >
@@ -102,14 +102,11 @@ jobs:
             - name: Create release
               uses: actions/create-release@v1.0.0
               env:
-                GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+                  GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
               with:
-                tag_name: v1.0.${{ github.run_number }}
-                release_name: Release v1.0.${{ github.run_number }}
-                body: |
-                  Release Notes for v1.0.${{ github.run_number }}:
-                  - Commit 1
-                  - Commit 2
-
-            
-
+                  tag_name: v1.0.${{ github.run_number }}
+                  release_name: Release v1.0.${{ github.run_number }}
+                  body: |
+                      Release Notes for v1.0.${{ github.run_number }}:
+                      - Commit 1
+                      - Commit 2

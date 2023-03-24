@@ -28,10 +28,10 @@
 	},
 	"scripts": {
 		"start": "react-scripts start",
-		"build": "react-scripts build",
+		"build": "PORT=3001 react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
-		"serve": "serve -s build"
+		"serve": "serve -s build -l 3001"
 	},
 	"eslintConfig": {
 		"extends": [

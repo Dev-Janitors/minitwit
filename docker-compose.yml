@@ -17,30 +17,7 @@
 
 version: '3.3'
 
-networks:
-    main:
-
 services:
-    reverse-proxy:
-        # The official v2 Traefik docker image
-        image: traefik:v2.9
-        command:
-            - "--log.level=DEBUG"
-            - "--api.dashboard=true"
-            - "--metrics.prometheus=true"
-            - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
-            - "--providers.docker=true"
-            - "--providers.docker.watch"
-        container_name: 'traefik'
-        ports:
-            - 80:80
-            - 443:443
-            - 8080:8080
-        volumes:
-            - '/var/run/docker.sock:/var/run/docker.sock:ro'
-            - './etc/traefik/:/etc/traefik/:ro'
-            - './traefik-ssl-certs:/ssl-certs'
-
     minitwitfrontend:
         build: ./Frontend
         container_name: minitwitfrontend
@@ -48,19 +25,8 @@ services:
             - backend
             - prometheus
             - grafana
-
-        labels:
-            - traefik.enable=true
-            - traefik.http.routers.minitwitfrontend.rule=Host(`${BASEURL}`)
-            - traefik.http.routers.minitwitfrontend.entrypoints=websecure,web
-
-            - 'traefik.http.middlewares.testheader.headers.accesscontrolallowmethods=GET,OPTIONS,PUT'
-            - 'traefik.http.middlewares.testheader.headers.accesscontrolalloworiginlist=https://api.localhost,http://api.localhost, https://104.248.101.163/api, http://104.248.101.163/api'
-            - 'traefik.http.middlewares.testheader.headers.accesscontrolmaxage=100'
-            - 'traefik.http.middlewares.testheader.headers.addvaryheader=true'
-
-            - traefik.http.routers.minitwitfrontend.tls=true
-            - traefik.http.routers.minitwitfrontend.tls.certresolver=staging
+        ports:
+            - 3001:3001
 
     backend:
         build: ./Backend
@@ -72,29 +38,6 @@ services:
         ports:
             - '2222:80'
             - '2223:443'
-        labels:
-            - traefik.enable=true
-
-            # Define the router for HTTPS
-            - traefik.http.routers.minitwitbackend.rule=Host(`${BASEURL}`) && PathPrefix(`/api`)
-            - traefik.http.routers.minitwitbackend.entrypoints=websecure,web
-
-            # Create a middleware to strip the /api prefix
-            - 'traefik.http.middlewares.myservice-strip.stripprefix.prefixes=/api'
-            - 'traefik.http.middlewares.myservice-strip.stripprefix.forceslash=false'
-            # Add the middleware to the router (backend)
-            - 'traefik.http.routers.minitwitbackend.middlewares=myservice-strip'
-
-            - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto = https
-
-            - 'traefik.http.middlewares.minitwitbackend.headers.accesscontrolallowmethods=GET,OPTIONS,PUT'
-            - 'traefik.http.middlewares.minitwitbackend.headers.accesscontrolalloworiginlist=https://localhost,http://host.docker.internal, https://host.docker.internal, http://localhost, https://104.248.101.163,http://104.248.101.163/'
-            - 'traefik.http.middlewares.minitwitbackend.headers.accesscontrolmaxage=100'
-            - 'traefik.http.middlewares.minitwitbackend.headers.addvaryheader=true'
-
-            - traefik.http.routers.minitwitbackend.tls=true
-            - traefik.http.routers.minitwitbackend.tls.certresolver=staging
-        
 
     db:
         platform: 'linux/amd64'
@@ -107,36 +50,40 @@ services:
         image: prom/prometheus
         container_name: prometheus
         volumes:
-        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+            - ./prometheus.yml:/etc/prometheus/prometheus.yml
         ports:
-        - "9090:9090"
-        
-        labels:
-            - 'traefik.enable=true'
-            - 'traefik.http.routers.prometheus.rule=Host(`${BASEURL}`)'
-            - 'traefik.http.middlewares.prometheus-https.redirectscheme.scheme=https'
-            - 'traefik.http.routers.prometheus.middlewares=prometheus-https'
-            - 'traefik.http.routers.prometheus-https.rule=Host(`${BASEURL}`)'
-            - 'traefik.http.routers.prometheus-https.tls=true'
-            - 'traefik.http.routers.prometheus-https.tls.certresolver=myresolver'
-            - 'traefik.docker.network=minitwit_default'
-            - 'traefik.http.services.prometheus.loadbalancer.server.port=9090'
-            - 'traefik.http.services.prometheus.loadbalancer.passhostheader=true'
-            - 'traefik.http.services.prometheus.loadbalancer.server.scheme=http'
-            - 'traefik.http.routers.prometheus.service=prometheus'
-            - 'traefik.http.routers.prometheus.entrypoints=http'
+            - '9090:9090'
+
     grafana:
         image: grafana/grafana:latest
         container_name: grafana
         volumes:
             - ./grafana-data/data:/var/lib/grafana
-        labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.grafana.rule=Host(`${BASEURL}`)"
-        - "traefik.http.routers.grafana.tls=true"
-        - "traefik.http.routers.grafana.tls.certresolver=le"
-        - "traefik.http.services.grafana.loadbalancer.server.port=3000"
         ports:
-            - "3333:3000"
-        
-   
+            - '3000:3000'
+
+    elasticsearch:
+        container_name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+        ports:
+            - 9200:9200
+        volumes:
+            - elasticsearch-data:/usr/share/elasticsearch/data
+        environment:
+            - xpack.monitoring.enabled=true
+            - xpack.watcher.enabled=false
+            - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+            - discovery.type=single-node
+
+    kibana:
+        container_name: kibana
+        image: docker.elastic.co/kibana/kibana:7.17.1
+        ports:
+            - 5601:5601
+        depends_on:
+            - elasticsearch
+        environment:
+            - ELASTICSEARCH_URL=http://localhost:9200
+
+volumes: # add this section
+    elasticsearch-data:

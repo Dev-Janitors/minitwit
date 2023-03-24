@@ -4,7 +4,7 @@ WORKDIR /App
 
 
 # COPY ${frontendCopySrc} ./Frontend
-COPY ./Frontend ./Frontend
+COPY . ./Frontend
 
 WORKDIR /App/Frontend
 
@@ -28,7 +28,7 @@ RUN yarn set version 1.22.19
 
 RUN yarn
 
-EXPOSE 3000
+EXPOSE 3001
 
 RUN yarn build
 

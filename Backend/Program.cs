@@ -3,6 +3,13 @@ using Backend.Core.EF;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Prometheus;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
+using System;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,11 +19,37 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 builder.Services.AddCors(options => {
     options.AddPolicy(name: MyAllowSpecificOrigins, policy => {
-        policy.WithOrigins("http://localhost:3000", "https://localhost:3000", "http://104.248.101.163:3000", "https://146.190.206.71/", "http://146.190.206.71/", "https://104.248.101.163");
+        policy.WithOrigins("http://localhost:3000", "http://104.248.101.163:3001", "http://146.190.206.71:3001");
         policy.AllowAnyHeader();
         policy.AllowAnyMethod();
     });
 });
+
+// Logging
+
+ConfigureLogging();
+
+try
+	{
+		Host.CreateDefaultBuilder(args)
+		.ConfigureWebHostDefaults(webBuilder =>
+		{
+			webBuilder.UseStartup<Program>();
+		})
+		.ConfigureAppConfiguration(configuration =>
+		{
+			configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+			configuration.AddJsonFile(
+				$"appsettings.json",
+				optional: true);
+		})
+		.UseSerilog();
+	}
+	catch (System.Exception ex)
+	{
+		Log.Fatal($"Failed to start {Assembly.GetExecutingAssembly().GetName().Name}", ex);
+		throw;
+	}
 
 // Add services to the container.
 
@@ -102,3 +135,34 @@ app.MapControllers();
 app.MapMetrics();
 
 app.Run();
+
+
+void ConfigureLogging()
+{
+    var environment = "Development";
+	var configuration = new ConfigurationBuilder()
+		.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+		.AddJsonFile(
+			$"appsettings.json",
+			optional: true)
+		.Build();
+
+	Log.Logger = new LoggerConfiguration()
+		.Enrich.FromLogContext()
+		.Enrich.WithMachineName()
+		.WriteTo.Debug()
+		.WriteTo.Console()
+		.WriteTo.Elasticsearch(ConfigureElasticSink(configuration, environment))
+		.Enrich.WithProperty("Environment", environment)
+		.ReadFrom.Configuration(configuration)
+		.CreateLogger();
+}
+
+ElasticsearchSinkOptions ConfigureElasticSink(IConfigurationRoot configuration, string environment)
+{
+	return new ElasticsearchSinkOptions(new Uri(configuration["ElasticConfiguration:Uri"]))
+	{
+		AutoRegisterTemplate = true,
+		IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
+	};
+}

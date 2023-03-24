@@ -28,10 +28,10 @@ entryPoints:
         address: :80
         # (Optional) Redirect to HTTPS
         # ---
-        http:
-            redirections:
-                entryPoint:
-                    scheme: https
+        # http:
+        #     redirections:
+        #         entryPoint:
+        #             scheme: https
 
     websecure:
         address: :443
