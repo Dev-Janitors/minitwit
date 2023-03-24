@@ -38,7 +38,6 @@ public UserRepository(MinitwitContext context)
   }
   public async Task<(Response, UserDTO)> CreateAsync(UserCreateDTO user)
   {
-    {
     var conflict = await _context.users
         .Where(u => u.Email == user.Email || (u.Username != null && u.Username == user.Username))
         .Select(u => new UserDTO(u.Id, u.Email, u.Username))
@@ -49,6 +48,7 @@ public UserRepository(MinitwitContext context)
         return (Response.Conflict, conflict);
     }
     
+    if(user.Email == null || user.Username == null) return (Response.BadRequest, new UserDTO(-1, user.Email ?? "", user.Username ?? ""));
 
     var entity = new User(user.Email,user.Username);
 
@@ -57,17 +57,16 @@ public UserRepository(MinitwitContext context)
     await _context.SaveChangesAsync();
 
     return (Response.Created, new UserDTO(entity.Id, entity.Email, entity.Username));
-}
 
   }
 
   public async Task<IReadOnlyCollection<UserDTO>> ReadAllAsync()
   {
-    return(await _context.users
-                        .Select(u => new UserDTO(u.Id, u.Email, u.Username))
-                        .ToListAsync())
-                        .AsReadOnly();
-    
+    return (
+      await _context.users
+        .Select(u => new UserDTO(u.Id, u.Email, u.Username))
+        .ToListAsync()
+    ).AsReadOnly();
   }
 
   public async Task<Option<UserDTO>> ReadByEmailAsync(string Email)
@@ -76,7 +75,7 @@ public UserRepository(MinitwitContext context)
                         where u.Email == Email
                         select new UserDTO(u.Id, u.Email, u.Username);
         
-        return await users.FirstOrDefaultAsync();
+    return await users.FirstOrDefaultAsync();
   }
 
   public async Task<Option<UserDTO>> ReadByIDAsync(int userID)
@@ -85,7 +84,7 @@ public UserRepository(MinitwitContext context)
                         where u.Id == userID
                         select new UserDTO(u.Id, u.Email, u.Username);
 
-        return await users.FirstOrDefaultAsync();
+    return await users.FirstOrDefaultAsync();
   }
 
   public async Task<Option<UserDTO>> ReadByUsernameAsync(string Username)
@@ -94,7 +93,7 @@ public UserRepository(MinitwitContext context)
                         where u.Username == Username
                         select new UserDTO(u.Id, u.Email, u.Username);
                         
-        return await users.FirstOrDefaultAsync();
+    return await users.FirstOrDefaultAsync();
   }
 
   public Task<Response> RemoveAsync(int id)

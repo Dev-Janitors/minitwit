@@ -78,13 +78,12 @@ public class MinitwitController : ControllerBase
         return Ok(new { latest = GlobalVariables.Latest });
     }
 
-    [HttpGet("msgs")]
-    public async Task<IActionResult> GetTimeline([FromQuery(Name = "latest")] int? latest, [FromQuery(Name = "startIndex")] int? start, [FromQuery(Name = "endIndex")] int? end)
+	[HttpGet("msgs")]
+    public async Task<IActionResult> GetTimeline([FromQuery(Name = "latest")] int? latest, [FromQuery(Name = "n")] int? n, [FromQuery(Name = "startIndex")] int? start, [FromQuery(Name = "endIndex")] int? end)
     {
         updateLatest(latest);
-        try
-        {
-            var messages = (await _messageRepo.ReadAllAsync(start, end)).ToList();
+        try {
+            var messages = (await _messageRepo.ReadAllAsync(n, start, end)).ToList();
             return Ok(messages);
         }
         catch (Exception e)
@@ -182,6 +181,8 @@ public class MinitwitController : ControllerBase
         updateLatest(latest);
         var username = body.username;
 
+        if (username == null) return BadRequest();
+
         var user = await _userRepo.ReadByUsernameAsync(username);
         if (user.IsNone) return NotFound($"Could not find the user with username {username}");
 
@@ -191,24 +192,8 @@ public class MinitwitController : ControllerBase
     [HttpGet("user")]
     public async Task<IActionResult> GetUser(int? id, string? userName)
     {
-        if (id != null && userName != null)
-        {
-            //get both -- currently just id
-            try
-            {
-                var user = await _userRepo.ReadByIDAsync((int)id);
-                return Ok(user);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return StatusCode(504); //504 = Gateway timeout
-            }
-        }
-        else if (id != null)
-        {
-            try
-            {
+        if (id != null){
+            try {
                 var user = await _userRepo.ReadByIDAsync((int)id);
                 return Ok(user);
             }
@@ -324,8 +309,8 @@ public class MinitwitController : ControllerBase
             try
             {
                 var followUser = await _userRepo.ReadByUsernameAsync(body.follow);
-                if (followUser.IsNone)
-                {
+                if(followUser.IsNone){
+                    _logger.LogWarning($"Could not find the user: {body.follow}");
                     return StatusCode(400, "The user you are trying to follow was not found");
                 }
                 var user = followUser.Value;
@@ -383,5 +368,5 @@ public class MinitwitController : ControllerBase
             return ((IDictionary<string, object>)obj).ContainsKey(propertyName);
 
         return obj.GetType().GetProperty(propertyName) != null;
-    }
+  }
 }
