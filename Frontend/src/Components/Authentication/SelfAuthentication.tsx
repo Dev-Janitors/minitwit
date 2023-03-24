@@ -62,7 +62,7 @@ const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenu
 		},
 		disabledButton: {
 			margin: '10px',
-			backgroundColor: 'lightgreen',
+			backgroundColor: 'orange',
 		},
 	};
 
