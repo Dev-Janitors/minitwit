@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import Header from '../Global/Header/Header';
 import { Message } from '../../Types/Timeline';
 import TimeLineContainer from '../PublicTimeline/TimeLineContainer';
-import { isLoggedIn } from '../Authentication/cookieHandler';
+import { isLoggedIn, setCookie } from '../Authentication/cookieHandler';
 import { IsLoading } from '../../Types/Global';
 import axios, { AxiosError } from 'axios';
 import Tweet from '../Tweet/Tweet';
@@ -29,7 +29,7 @@ const PublicTimelinePage: FC = () => {
 		error: null,
 	} as IsLoading);
 
-	const [user] = useState(isLoggedIn());
+	const [user, setUser] = useState(isLoggedIn());
 
 	const getTimeline = async (startIndex?: number, endIndex?: number) => {
 		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`;
@@ -99,10 +99,11 @@ const PublicTimelinePage: FC = () => {
 	useEffect(() => {
 		getTimeline(0, 40);
 	}, []);
-	
+
+
 	return (
 			<Box sx={style.container}>
-				<Header/>
+				<Header setPageUser={setUser}/>
 				{!isLoading.isLoading && user.isLoggedIn && <Tweet updateTweetsCallback={getTimeline} />}
 				<TimeLineContainer title="Public Timeline" messages={timeline} getNextMessages={fetchMoreData} hasMore={hasMore} isLoading={isLoading}/>
 			</Box>

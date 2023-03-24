@@ -22,7 +22,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 	},
 }));
 
-const Header: FC = () => {
+interface user {
+	isLoggedIn: boolean;
+	username: string;
+}
+
+interface headerProps {
+	setPageUser?: (user: user) => void;
+}
+
+const Header: FC<headerProps> = ({setPageUser}) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	// const { isLoading, isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
@@ -58,6 +67,7 @@ const Header: FC = () => {
 		if (isMenuOpen) handleMenuClose();
 		if (isMobileMenuOpen) handleMobileMenuClose();
 		setUser({ isLoggedIn: false, username: '' });
+		setPageUser && setPageUser({ isLoggedIn: false, username: '' } as user);
 		openSnackbar('success', 'You have been logged out');
 	};
 
@@ -117,7 +127,7 @@ const Header: FC = () => {
 	// 	</Menu>
 	// );
 
-	const renderNoAuthMenu = <SelfAuthentication modalOpen={isMenuOpen} handleMenuClose={handleMenuClose} loginCallback={setUser} />;
+	const renderNoAuthMenu = <SelfAuthentication setPageUser={setPageUser} modalOpen={isMenuOpen} handleMenuClose={handleMenuClose} loginCallback={setUser} />;
 
 	const mobileMenuId = 'primary-search-account-menu-mobile';
 	const renderMobileAuthMenu = (

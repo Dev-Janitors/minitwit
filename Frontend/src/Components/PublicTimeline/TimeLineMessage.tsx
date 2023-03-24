@@ -1,7 +1,8 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useState } from 'react';
 import { Message } from '../../Types/Timeline';
 import { Typography, ListItem, ListItemAvatar, Avatar, ListItemText, Skeleton } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { isLoggedIn } from '../Authentication/cookieHandler';
 
 interface props {
 	message: Message;
@@ -9,6 +10,8 @@ interface props {
 }
 
 const TimeLineMessage: FC<props> = ({ message, isSkeleton }) => {
+	const [user] = useState(isLoggedIn());
+
 	const style = {
 		container: {
 			border: '1px solid grey',
@@ -58,16 +61,21 @@ const TimeLineMessage: FC<props> = ({ message, isSkeleton }) => {
 		);
 	}
 
+	const linkPath = (
+		(user.username === message.user) ?
+		message.user + '/my-timeline/' : '/user/'+message.user);
+	
+
 	return (
 		<ListItem alignItems="flex-start" sx={style.container}>
-			<Link to={'/user/' + message.user} reloadDocument={true}>
+			<Link to={linkPath} reloadDocument={true}>
 				<ListItemAvatar>
 					<Avatar alt="Kusmar00" src="" />
 				</ListItemAvatar>
 			</Link>
 			<ListItemText
 				primary={
-					<Link reloadDocument={true} to={'/user/' + message.user} style={{ textDecoration: 'none', color: 'black' }}>
+					<Link reloadDocument={true} to={linkPath} style={{ textDecoration: 'none', color: 'black' }}>
 						<Typography variant="h6">{message.user}</Typography>
 					</Link>
 				}
