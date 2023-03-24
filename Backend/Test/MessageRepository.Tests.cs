@@ -100,7 +100,7 @@ public class MessageRepositoryTests
     public async void ReadAll_returns_all()
     {
         //Act
-        var res = await _repo.ReadAllAsync(null, null);
+        var res = await _repo.ReadAllAsync(null, null, null);
 
         //Assert
         Assert.NotNull(res);

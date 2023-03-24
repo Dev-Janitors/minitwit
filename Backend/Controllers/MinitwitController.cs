@@ -72,11 +72,11 @@ public class MinitwitController : ControllerBase
     }
 
 	[HttpGet("msgs")]
-    public async Task<IActionResult> GetTimeline([FromQuery(Name = "latest")] int? latest, [FromQuery(Name = "startIndex")] int? start, [FromQuery(Name = "endIndex")] int? end)
+    public async Task<IActionResult> GetTimeline([FromQuery(Name = "latest")] int? latest, [FromQuery(Name = "n")] int? n, [FromQuery(Name = "startIndex")] int? start, [FromQuery(Name = "endIndex")] int? end)
     {
         updateLatest(latest);
         try {
-            var messages = (await _messageRepo.ReadAllAsync(start, end)).ToList();
+            var messages = (await _messageRepo.ReadAllAsync(n, start, end)).ToList();
             return Ok(messages);
         } catch (Exception e) {
             _logger.LogError(e, e.Message);
@@ -148,6 +148,8 @@ public class MinitwitController : ControllerBase
         updateLatest(latest);
         var username = body.username;
 
+        if (username == null) return BadRequest();
+
         var user = await _userRepo.ReadByUsernameAsync(username);
         if (user.IsNone) return NotFound($"Could not find the user with username {username}");
 
@@ -157,16 +159,7 @@ public class MinitwitController : ControllerBase
     [HttpGet("user")]
     public async Task<IActionResult> GetUser(int? id, string? userName)
     {
-        if(id != null && userName != null){
-            //get both -- currently just id
-            try {
-                var user = await _userRepo.ReadByIDAsync((int)id);
-                return Ok(user);
-            } catch (Exception e) {
-                _logger.LogError(e, e.Message);
-                return StatusCode(504); //504 = Gateway timeout
-            }
-        } else if (id != null){
+        if (id != null){
             try {
                 var user = await _userRepo.ReadByIDAsync((int)id);
                 return Ok(user);
@@ -260,14 +253,15 @@ public class MinitwitController : ControllerBase
             {
                 var followUser = await _userRepo.ReadByUsernameAsync(body.follow);
                 if(followUser.IsNone){
+                    _logger.LogWarning($"Could not find the user: {body.follow}");
                     return StatusCode(400, "The user you are trying to follow was not found");
                 }
                 var user = followUser.Value;
                 var followCreate = new FollowerCreateDTO
-                    {
-                        WhoId = userId,
-                        WhomId = user.Id
-                    };
+                {
+                    WhoId = userId,
+                    WhomId = user.Id
+                };
                 
                 var result = await _followerRepo.CreateAsync(followCreate);
                 if (result.Item1 == Core.Response.NotFound) return NotFound();

@@ -6,7 +6,7 @@ public static class DatabaseManagementService
   {
     using (var serviceScope = app.ApplicationServices.CreateScope())
     {
-      var context = serviceScope.ServiceProvider.GetService<MinitwitContext>().Database;
+      var context = serviceScope.ServiceProvider.GetService<MinitwitContext>()!.Database;
       if(context.GetPendingMigrations().Any()){
         // Takes all of our migrations files and apply them against the database in case they are not implemented
         context.Migrate();
