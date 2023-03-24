@@ -14,7 +14,7 @@ interface SelfAuthenticationProps {
 	modalOpen: boolean;
 	handleMenuClose: () => void;
 	loginCallback?: (userData: UserData) => void;
-	setPageUser?: (user: user) => void; 
+	setPageUser?: (user: user) => void;
 }
 
 const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenuClose, loginCallback, setPageUser }) => {
@@ -62,7 +62,7 @@ const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenu
 		},
 		disabledButton: {
 			margin: '10px',
-			backgroundColor: 'secondary.main',
+			backgroundColor: 'lightgreen',
 		},
 	};
 
@@ -98,7 +98,7 @@ const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenu
 				console.log(err);
 			});
 
-		setPageUser && setPageUser({isLoggedIn: true, username: username})
+		setPageUser && setPageUser({ isLoggedIn: true, username: username });
 	};
 
 	const handleRegister = () => {
@@ -127,8 +127,8 @@ const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenu
 				openSnackbar('error', 'Registration failed!');
 				console.log(err);
 			});
-		
-		setPageUser && setPageUser({isLoggedIn: true, username: username})
+
+		setPageUser && setPageUser({ isLoggedIn: true, username: username });
 	};
 
 	return (
