@@ -1,26 +1,12 @@
 import React, { useState, MouseEvent, useContext, FC } from 'react';
 import { styled } from '@mui/material/styles';
-import { AppBar, Box, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu } from '@mui/material';
+import { AppBar, Box, Toolbar, IconButton, Typography, InputBase, MenuItem, Menu } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link } from 'react-router-dom';
 import SelfAuthentication from '../../Authentication/SelfAuthentication';
 import { isLoggedIn, logout } from '../../Authentication/cookieHandler';
 import { SnackbarContext } from '../../SnackBar/SnackbarContextProvider';
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-	color: 'inherit',
-	'& .MuiInputBase-input': {
-		padding: theme.spacing(1, 1, 1, 0),
-		// vertical padding + font size from searchIcon
-		paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-		transition: theme.transitions.create('width'),
-		width: '100%',
-		[theme.breakpoints.up('md')]: {
-			width: '20ch',
-		},
-	},
-}));
 
 interface user {
 	isLoggedIn: boolean;
@@ -31,7 +17,7 @@ interface headerProps {
 	setPageUser?: (user: user) => void;
 }
 
-const Header: FC<headerProps> = ({setPageUser}) => {
+const Header: FC<headerProps> = ({ setPageUser }) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	// const { isLoading, isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
@@ -88,7 +74,6 @@ const Header: FC<headerProps> = ({setPageUser}) => {
 			open={isMenuOpen}
 			onClose={handleMenuClose}
 		>
-
 			<Link reloadDocument={true} to={'/' + user.username + '/my-timeline'} style={{ textDecoration: 'none', color: 'black' }}>
 				<MenuItem onClick={handleMenuClose}>My Timeline</MenuItem>
 			</Link>
@@ -209,11 +194,11 @@ const Header: FC<headerProps> = ({setPageUser}) => {
 			<AppBar position="static">
 				<Toolbar>
 					<Link to="/" style={{ textDecoration: 'none', color: 'white' }} reloadDocument={true}>
-						<Typography variant="h4" noWrap component="div" sx={{display: { xs: 'none', sm: 'block' } }}>
+						<Typography variant="h4" noWrap component="div" sx={{ display: { xs: 'none', sm: 'block' } }}>
 							MiniTwit
 						</Typography>
 					</Link>
-					<Box sx={{flexGrow: 1}}/>
+					<Box sx={{ flexGrow: 1 }} />
 					<IconButton size="large" edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
 						<AccountCircle />
 					</IconButton>

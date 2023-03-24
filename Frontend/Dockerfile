@@ -28,7 +28,7 @@ RUN yarn set version 1.22.19
 
 RUN yarn
 
-EXPOSE 3001
+EXPOSE 3000
 
 RUN yarn build
 
