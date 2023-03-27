@@ -35,7 +35,7 @@ public class MessageRepository : IMessageRepository
           new Message(2, "Ingenting", 1676552130),
           new Message(1, "John", 1676552180),
         };
-        
+
         foreach (var message in messages)
         {
             await _context.messages.AddAsync(message);
@@ -55,7 +55,13 @@ public class MessageRepository : IMessageRepository
     return (Response.Created, new MessageDTO(entity.Id, entity.AuthorId, entity.Text, entity.PubDate, entity.Flagged));
   }
 
-  public async Task<IReadOnlyCollection<AllMessages>> ReadAllAsync(int? start, int? end)
+  public async Task<IReadOnlyCollection<AllMessages>> ReadAllAsync(int? n, int? start, int? end)
+  {
+    if (start != null || end != null) return await ReadRange(start, end);
+    else return await ReadN(n);
+  }
+
+  private async Task<IReadOnlyCollection<AllMessages>> ReadRange(int? start, int? end)
   {
     var query = from message in _context.messages
     join user in _context.users on message.AuthorId equals user.Id
@@ -74,12 +80,20 @@ public class MessageRepository : IMessageRepository
     return await query.ToListAsync();
   }
 
-  public Task<IReadOnlyCollection<MessageDTO>> ReadAllByAuthorIDAsync(int userID)
+  private async Task<IReadOnlyCollection<AllMessages>> ReadN(int? n)
   {
-    // var messages = from m in _context.messages
-    //                   where m.AuthorId == userID
-    //                   select m.ToDto()
-    throw new NotImplementedException();
+    var N = n ?? 100;
+
+    var query = from message in _context.messages
+    join user in _context.users on message.AuthorId equals user.Id
+    orderby message.Id descending
+    select new AllMessages
+    {
+        content = message.Text,
+        user = user.Username,
+        pubDate = message.PubDate
+    };
+    return await query.Take(N).ToListAsync();
   }
 
   public async Task<IReadOnlyCollection<MessageDTO>> ReadAllByUsernameAsync(string username, int? startIndex, int? endIndex)
@@ -101,6 +115,34 @@ public class MessageRepository : IMessageRepository
 
     return messages;
   }
+  
+  public async Task<IReadOnlyCollection<AllMessages>> ReadAllByAuthorIDListAsync(IEnumerable<int> authorIDList, int? startIndex, int? endIndex)
+    {
+        var messages = await _context.messages
+          .Join(_context.users, m => m.AuthorId, u => u.Id, (m, u) => new
+          {
+              authorId = u.Id,
+              username = u.Username,
+              messageId = m.Id,
+              content = m.Text,
+              pubDate = m.PubDate
+          })
+          .Where(m => authorIDList.Contains(m.authorId))
+          .OrderByDescending(m => m.messageId)
+          .Select(m => new AllMessages
+          {
+              content = m.content,
+              user = m.username,
+              pubDate = m.pubDate
+          })
+          .ToListAsync();
+
+        if (startIndex != null) messages = messages.Skip(startIndex.Value).ToList();
+        if (endIndex != null && startIndex != null) messages = messages.Take(endIndex.Value - startIndex.Value).ToList();
+        if (endIndex != null) messages = messages.Take(endIndex.Value).ToList();
+
+        return messages;
+    }
 
   public Task<Response> RemoveAsync(int id)
   {

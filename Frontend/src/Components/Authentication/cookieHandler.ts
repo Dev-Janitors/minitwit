@@ -9,7 +9,7 @@ export function setCookie(name: string, value: string, expiration: number = 24) 
 	document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
 }
 
-export function isLoggedIn() {
+export function isLoggedIn(callback?: () => void) {
 	const cookies = document.cookie.split(';');
 	let username = '';
 	cookies.forEach((cookie) => {
@@ -17,6 +17,10 @@ export function isLoggedIn() {
 			username = cookie.split('=')[1];
 		}
 	});
+
+	if (callback) {
+		callback();
+	}
 
 	if (username === '') {
 		return { isLoggedIn: false, username: '' };

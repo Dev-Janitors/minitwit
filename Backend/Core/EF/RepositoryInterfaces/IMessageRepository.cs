@@ -1,6 +1,7 @@
 namespace Backend.Core.EF;
 
-public interface IMessageRepository {
+public interface IMessageRepository
+{
 
     //Create
     Task<(Response, MessageDTO)> CreateAsync(MessageCreateDTO user);
@@ -13,16 +14,10 @@ public interface IMessageRepository {
 
     //Delete
     Task<Response> RemoveAsync(int id);
+
     //Read
-    Task<IReadOnlyCollection<MessageDTO>> ReadAllByAuthorIDAsync(int userID);
-
+    Task<IReadOnlyCollection<AllMessages>> ReadAllByAuthorIDListAsync(IEnumerable<int> authorIDList, int? startIndex, int? endIndex);
     Task<IReadOnlyCollection<MessageDTO>> ReadAllByUsernameAsync(string Username, int? startIndex, int? endIndex);
-
     Task<int> Seed();
-
-    Task<IReadOnlyCollection<AllMessages>> ReadAllAsync(int? start, int? end);
-
-
-
-
+    Task<IReadOnlyCollection<AllMessages>> ReadAllAsync(int? n, int? start, int? end);
 }

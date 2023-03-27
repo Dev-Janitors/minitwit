@@ -5,13 +5,19 @@ import { UserData, isLoggedIn, setCookie } from './cookieHandler';
 import CloseIcon from '@mui/icons-material/Close';
 import { SnackbarContext } from '../SnackBar/SnackbarContextProvider';
 
+interface user {
+	isLoggedIn: boolean;
+	username: string;
+}
+
 interface SelfAuthenticationProps {
 	modalOpen: boolean;
 	handleMenuClose: () => void;
 	loginCallback?: (userData: UserData) => void;
+	setPageUser?: (user: user) => void;
 }
 
-const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenuClose, loginCallback }) => {
+const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenuClose, loginCallback, setPageUser }) => {
 	const [login, setLogin] = useState('login');
 
 	const [username, setUsername] = useState('');
@@ -56,7 +62,7 @@ const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenu
 		},
 		disabledButton: {
 			margin: '10px',
-			backgroundColor: 'secondary.main',
+			backgroundColor: 'orange',
 		},
 	};
 
@@ -91,6 +97,8 @@ const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenu
 				openSnackbar('error', 'Login failed!');
 				console.log(err);
 			});
+
+		setPageUser && setPageUser({ isLoggedIn: true, username: username });
 	};
 
 	const handleRegister = () => {
@@ -119,6 +127,8 @@ const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenu
 				openSnackbar('error', 'Registration failed!');
 				console.log(err);
 			});
+
+		setPageUser && setPageUser({ isLoggedIn: true, username: username });
 	};
 
 	return (
