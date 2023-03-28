@@ -1,8 +1,5 @@
 version: '3.3'
 
-networks:
-    main:
-
 services:
     minitwitfrontend:
         image: ${DOCKER_USERNAME}/minitwitfrontendstaging
@@ -51,6 +48,37 @@ services:
             - grafvolume:/var/lib/grafana
         ports:
             - '3333:3000'
+
+    elasticsearch:
+        container_name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+        ports:
+            - 9200:9200
+        volumes:
+            - elasticsearch-data:/usr/share/elasticsearch/data
+        environment:
+            - xpack.monitoring.enabled=true
+            - xpack.watcher.enabled=false
+            - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+            - discovery.type=single-node
+        networks:
+            - elasticnetwork
+
+    kibana:
+        container_name: kibana
+        image: docker.elastic.co/kibana/kibana:7.17.9
+        ports:
+            - 5601:5601
+        depends_on:
+            - elasticsearch
+        environment:
+            - ELASTICSEARCH_URL=http://104.248.101.163:9200
+        networks:
+            - elasticnetwork
+
+networks:
+    elasticnetwork:
+        driver: bridge
 
 volumes:
     dbvolume:
