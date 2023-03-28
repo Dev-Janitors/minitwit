@@ -85,7 +85,7 @@ services:
         depends_on:
             - elasticsearch
         environment:
-            - ELASTICSEARCH_URL=http://localhost:9200
+            - ELASTICSEARCH_URL=http://104.248.101.163:9200
         networks:
             - elasticnetwork
 
