@@ -72,7 +72,7 @@ services:
         depends_on:
             - elasticsearch
         environment:
-            - ELASTICSEARCH_URL=http://104.248.101.163:9200
+            - ELASTICSEARCH_URL=http://146.190.206.71:9200
         networks:
             - elasticnetwork
 
