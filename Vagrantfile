@@ -89,7 +89,6 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "droplet2", primary: true do |server|
-
     server.vm.provider :digital_ocean do |provider|
       provider.ssh_key_name = "devops"
       provider.token = settings["provider_token"]
