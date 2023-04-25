@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import Header from '../Global/Header/Header';
 import { Message } from '../../Types/Timeline';
 import TimeLineContainer from '../PublicTimeline/TimeLineContainer';
@@ -7,8 +7,6 @@ import { isLoggedIn, setCookie } from '../Authentication/cookieHandler';
 import { IsLoading } from '../../Types/Global';
 import axios, { AxiosError } from 'axios';
 import Tweet from '../Tweet/Tweet';
-
-
 
 const PublicTimelinePage: FC = () => {
 	const style = {
@@ -35,12 +33,11 @@ const PublicTimelinePage: FC = () => {
 		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`;
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 
-		const options =
-			{
-				headers: {
-					'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
-				},
-			};
+		const options = {
+			headers: {
+				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+			},
+		};
 
 		const fullUrl = baseUrl + queryParams;
 
@@ -71,12 +68,11 @@ const PublicTimelinePage: FC = () => {
 
 		const fullUrl = baseUrl + queryParams;
 
-		const options =
-			{
-				headers: {
-					'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
-				},
-			}
+		const options = {
+			headers: {
+				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+			},
+		};
 
 		axios
 			.get(fullUrl, options)
@@ -100,13 +96,13 @@ const PublicTimelinePage: FC = () => {
 		getTimeline(0, 40);
 	}, []);
 
-
 	return (
-			<Box sx={style.container}>
-				<Header setPageUser={setUser}/>
-				{!isLoading.isLoading && user.isLoggedIn && <Tweet updateTweetsCallback={getTimeline} />}
-				<TimeLineContainer title="Public Timeline" messages={timeline} getNextMessages={fetchMoreData} hasMore={hasMore} isLoading={isLoading}/>
-			</Box>
+		<Box sx={style.container}>
+			<Header setPageUser={setUser} />
+			<Typography variant="h4">Public Timeline</Typography>
+			{!isLoading.isLoading && user.isLoggedIn && <Tweet updateTweetsCallback={getTimeline} />}
+			<TimeLineContainer title="Public Timeline" messages={timeline} getNextMessages={fetchMoreData} hasMore={hasMore} isLoading={isLoading} />
+		</Box>
 	);
 };
 
