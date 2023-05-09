@@ -37,10 +37,10 @@ const UserTimelinePage = () => {
 		if (!user.isLoggedIn) {
 			return;
 		}
-		const baseUrl = `${window.location.origin}:2222/fllws/${user.username}`;
+		const baseUrl = `${window.location.hostname}:2222/fllws/${user.username}`;
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.origin}:2222`,
+				'access-control-allow-origin': `${window.location.hostname}:2222`,
 			},
 		};
 		axios
@@ -61,10 +61,10 @@ const UserTimelinePage = () => {
 		if (!user.isLoggedIn) {
 			return;
 		}
-		const baseUrl = `${window.location.origin}:2222/fllws/${user.username}`;
+		const baseUrl = `${window.location.hostname}:2222/fllws/${user.username}`;
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.origin}:2222`,
+				'access-control-allow-origin': `${window.location.hostname}:2222`,
 			},
 		};
 		axios
@@ -82,13 +82,13 @@ const UserTimelinePage = () => {
 	};
 
 	const getMessages = async (startIndex?: number, endIndex?: number) => {
-		const baseUrl = `${window.location.origin}:2222/msgs/${username}`;
+		const baseUrl = `${window.location.hostname}:2222/msgs/${username}`;
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 		const fullUrl = baseUrl + queryParams;
 
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.origin}:2222`,
+				'access-control-allow-origin': `${window.location.hostname}:2222`,
 			},
 		};
 
@@ -113,7 +113,7 @@ const UserTimelinePage = () => {
 		const startIndex = timeline.length;
 		const endIndex = startIndex + 40;
 
-		const baseUrl = `${window.location.origin}:2222/msgs/${username}`;
+		const baseUrl = `${window.location.hostname}:2222/msgs/${username}`;
 
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 
@@ -121,7 +121,7 @@ const UserTimelinePage = () => {
 
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.origin}:2222`,
+				'access-control-allow-origin': `${window.location.hostname}:2222`,
 			},
 		};
 
@@ -149,9 +149,9 @@ const UserTimelinePage = () => {
 		getMessages(0, 40);
 		if (user.isLoggedIn) {
 			axios
-				.get(`${window.location.origin}:2222/fllws/${user.username}`, {
+				.get(`${window.location.hostname}:2222/fllws/${user.username}`, {
 					headers: {
-						'access-control-allow-origin': `${window.location.origin}:2222`,
+						'access-control-allow-origin': `${window.location.hostname}:2222`,
 					},
 				})
 				.then((res) => {

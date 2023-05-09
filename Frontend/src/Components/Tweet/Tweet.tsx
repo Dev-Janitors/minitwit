@@ -55,10 +55,10 @@ const Tweet: FC<TweetProps> = ({ updateTweetsCallback }) => {
 			return;
 		}
 
-		const baseUrl = `${window.location.origin}:2222/msgs/${user.username}?latest=101`;
+		const baseUrl = `${window.location.hostname}:2222/msgs/${user.username}?latest=101`;
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.origin}:2222`,
+				'access-control-allow-origin': `${window.location.hostname}:2222`,
 			},
 			method: 'POST',
 		};

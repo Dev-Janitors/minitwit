@@ -30,7 +30,7 @@ const MyTimelinePage = () => {
 	} as IsLoading);
 
 	const getTimeline = async (startIndex?: number, endIndex?: number) => {
-		const baseUrl = `${window.location.origin}:2222/my-timeline/${user.username}`;
+		const baseUrl = `${window.location.hostname}:2222/my-timeline/${user.username}`;
 
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 
@@ -38,7 +38,7 @@ const MyTimelinePage = () => {
 
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.origin}:2222`,
+				'access-control-allow-origin': `${window.location.hostname}:2222`,
 			},
 		};
 
@@ -64,7 +64,7 @@ const MyTimelinePage = () => {
 		const startIndex = timeline.length;
 		const endIndex = startIndex + 40;
 
-		const baseUrl = `${window.location.origin}:2222/my-timeline/${user.username}`;
+		const baseUrl = `${window.location.hostname}:2222/my-timeline/${user.username}`;
 
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 
@@ -72,7 +72,7 @@ const MyTimelinePage = () => {
 
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.origin}:2222`,
+				'access-control-allow-origin': `${window.location.hostname}:2222`,
 			},
 		};
 
