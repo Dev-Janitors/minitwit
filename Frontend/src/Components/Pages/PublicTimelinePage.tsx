@@ -30,12 +30,12 @@ const PublicTimelinePage: FC = () => {
 	const [user, setUser] = useState(isLoggedIn());
 
 	const getTimeline = async (startIndex?: number, endIndex?: number) => {
-		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`;
+		const baseUrl = `${window.location.origin}:2222/msgs`;
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+				'access-control-allow-origin': `${window.location.origin}:2222`,
 			},
 		};
 
@@ -62,7 +62,7 @@ const PublicTimelinePage: FC = () => {
 		const startIndex = timeline.length;
 		const endIndex = startIndex + 40;
 
-		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs`;
+		const baseUrl = `${window.location.origin}:2222/msgs`;
 
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 
@@ -70,7 +70,7 @@ const PublicTimelinePage: FC = () => {
 
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+				'access-control-allow-origin': `${window.location.origin}:2222`,
 			},
 		};
 

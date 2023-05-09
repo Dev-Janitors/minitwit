@@ -73,10 +73,10 @@ const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenu
 	};
 
 	const handleLogin = () => {
-		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/login`;
+		const baseUrl = `${window.location.origin}:2222/login`;
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+				'access-control-allow-origin': `${window.location.origin}:2222`,
 			},
 			method: 'POST',
 		};
@@ -102,10 +102,10 @@ const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenu
 	};
 
 	const handleRegister = () => {
-		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/register`;
+		const baseUrl = `${window.location.origin}:2222/register`;
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+				'access-control-allow-origin': `${window.location.origin}:2222`,
 			},
 			method: 'POST',
 		};
