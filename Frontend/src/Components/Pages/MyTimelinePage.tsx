@@ -30,7 +30,7 @@ const MyTimelinePage = () => {
 	} as IsLoading);
 
 	const getTimeline = async (startIndex?: number, endIndex?: number) => {
-		const baseUrl = `${window.location.hostname}:2222/my-timeline/${user.username}`;
+		const baseUrl = `http://${window.location.hostname}:2222/my-timeline/${user.username}`;
 
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 
@@ -64,7 +64,7 @@ const MyTimelinePage = () => {
 		const startIndex = timeline.length;
 		const endIndex = startIndex + 40;
 
-		const baseUrl = `${window.location.hostname}:2222/my-timeline/${user.username}`;
+		const baseUrl = `http://${window.location.hostname}:2222/my-timeline/${user.username}`;
 
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 

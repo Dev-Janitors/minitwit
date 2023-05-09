@@ -73,7 +73,7 @@ const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenu
 	};
 
 	const handleLogin = () => {
-		const baseUrl = `${window.location.hostname}:2222/login`;
+		const baseUrl = `http://${window.location.hostname}:2222/login`;
 		const options = {
 			headers: {
 				'access-control-allow-origin': `${window.location.hostname}:2222`,
@@ -102,7 +102,7 @@ const SelfAuthentication: FC<SelfAuthenticationProps> = ({ modalOpen, handleMenu
 	};
 
 	const handleRegister = () => {
-		const baseUrl = `${window.location.hostname}:2222/register`;
+		const baseUrl = `http://${window.location.hostname}:2222/register`;
 		const options = {
 			headers: {
 				'access-control-allow-origin': `${window.location.hostname}:2222`,

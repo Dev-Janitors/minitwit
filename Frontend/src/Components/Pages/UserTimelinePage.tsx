@@ -37,7 +37,7 @@ const UserTimelinePage = () => {
 		if (!user.isLoggedIn) {
 			return;
 		}
-		const baseUrl = `${window.location.hostname}:2222/fllws/${user.username}`;
+		const baseUrl = `http://${window.location.hostname}:2222/fllws/${user.username}`;
 		const options = {
 			headers: {
 				'access-control-allow-origin': `${window.location.hostname}:2222`,
@@ -61,7 +61,7 @@ const UserTimelinePage = () => {
 		if (!user.isLoggedIn) {
 			return;
 		}
-		const baseUrl = `${window.location.hostname}:2222/fllws/${user.username}`;
+		const baseUrl = `http://${window.location.hostname}:2222/fllws/${user.username}`;
 		const options = {
 			headers: {
 				'access-control-allow-origin': `${window.location.hostname}:2222`,
@@ -82,7 +82,7 @@ const UserTimelinePage = () => {
 	};
 
 	const getMessages = async (startIndex?: number, endIndex?: number) => {
-		const baseUrl = `${window.location.hostname}:2222/msgs/${username}`;
+		const baseUrl = `http://${window.location.hostname}:2222/msgs/${username}`;
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 		const fullUrl = baseUrl + queryParams;
 
@@ -113,7 +113,7 @@ const UserTimelinePage = () => {
 		const startIndex = timeline.length;
 		const endIndex = startIndex + 40;
 
-		const baseUrl = `${window.location.hostname}:2222/msgs/${username}`;
+		const baseUrl = `http://${window.location.hostname}:2222/msgs/${username}`;
 
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 
@@ -149,7 +149,7 @@ const UserTimelinePage = () => {
 		getMessages(0, 40);
 		if (user.isLoggedIn) {
 			axios
-				.get(`${window.location.hostname}:2222/fllws/${user.username}`, {
+				.get(`http://${window.location.hostname}:2222/fllws/${user.username}`, {
 					headers: {
 						'access-control-allow-origin': `${window.location.hostname}:2222`,
 					},
