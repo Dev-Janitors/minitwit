@@ -40,7 +40,7 @@ const UserTimelinePage = () => {
 		const baseUrl = `http://${window.location.hostname}:2222/fllws/${user.username}`;
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.hostname}:2222`,
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 			},
 		};
 		axios
@@ -64,7 +64,7 @@ const UserTimelinePage = () => {
 		const baseUrl = `http://${window.location.hostname}:2222/fllws/${user.username}`;
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.hostname}:2222`,
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 			},
 		};
 		axios
@@ -88,7 +88,7 @@ const UserTimelinePage = () => {
 
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.hostname}:2222`,
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 			},
 		};
 
@@ -121,7 +121,7 @@ const UserTimelinePage = () => {
 
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.hostname}:2222`,
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 			},
 		};
 
@@ -151,7 +151,7 @@ const UserTimelinePage = () => {
 			axios
 				.get(`http://${window.location.hostname}:2222/fllws/${user.username}`, {
 					headers: {
-						'access-control-allow-origin': `${window.location.hostname}:2222`,
+						'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 					},
 				})
 				.then((res) => {

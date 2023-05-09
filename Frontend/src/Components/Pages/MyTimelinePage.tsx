@@ -38,7 +38,7 @@ const MyTimelinePage = () => {
 
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.hostname}:2222`,
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 			},
 		};
 
@@ -72,7 +72,7 @@ const MyTimelinePage = () => {
 
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${window.location.hostname}:2222`,
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 			},
 		};
 
