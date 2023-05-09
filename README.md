@@ -18,4 +18,4 @@ Go to `localhost:2222/swagger`, to see and test the endpoints.
 -   [x] Follow/Unfollow user
 
 ## Production Url
-https://104.248.101.163
+http://104.248.101.163:3001
