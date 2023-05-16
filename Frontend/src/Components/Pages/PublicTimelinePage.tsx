@@ -99,7 +99,7 @@ const PublicTimelinePage: FC = () => {
 	return (
 		<Box sx={style.container}>
 			<Header setPageUser={setUser} />
-			<Typography variant="h4">Public Timelinesdkajfdæsaj</Typography>
+			<Typography variant="h4">Public Timeline</Typography>
 			{!isLoading.isLoading && user.isLoggedIn && <Tweet updateTweetsCallback={getTimeline} />}
 			<TimeLineContainer title="Public Timeline" messages={timeline} getNextMessages={fetchMoreData} hasMore={hasMore} isLoading={isLoading} />
 		</Box>
