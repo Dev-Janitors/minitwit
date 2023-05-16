@@ -55,10 +55,10 @@ const Tweet: FC<TweetProps> = ({ updateTweetsCallback }) => {
 			return;
 		}
 
-		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs/${user.username}?latest=101`;
+		const baseUrl = `http://${window.location.hostname}:2222/msgs/${user.username}?latest=101`;
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 			},
 			method: 'POST',
 		};
@@ -82,7 +82,7 @@ const Tweet: FC<TweetProps> = ({ updateTweetsCallback }) => {
 	return (
 		<Box sx={style.container}>
 			<TextField className="textField" label="Tweet" multiline maxRows={4} placeholder="What's on your mind?" variant="filled" onChange={handleChange} value={tweet} />
-			<Button className="submit" onClick={handleSubmit} variant="contained" endIcon={<SendIcon/>}>
+			<Button className="submit" onClick={handleSubmit} variant="contained" endIcon={<SendIcon />}>
 				publish
 			</Button>
 		</Box>

@@ -30,7 +30,7 @@ const MyTimelinePage = () => {
 	} as IsLoading);
 
 	const getTimeline = async (startIndex?: number, endIndex?: number) => {
-		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/my-timeline/${user.username}`;
+		const baseUrl = `http://${window.location.hostname}:2222/my-timeline/${user.username}`;
 
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 
@@ -38,7 +38,7 @@ const MyTimelinePage = () => {
 
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 			},
 		};
 
@@ -64,7 +64,7 @@ const MyTimelinePage = () => {
 		const startIndex = timeline.length;
 		const endIndex = startIndex + 40;
 
-		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/my-timeline/${user.username}`;
+		const baseUrl = `http://${window.location.hostname}:2222/my-timeline/${user.username}`;
 
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 
@@ -72,7 +72,7 @@ const MyTimelinePage = () => {
 
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 			},
 		};
 

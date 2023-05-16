@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
 import { Box, Button, Typography } from '@mui/material';
@@ -9,7 +9,7 @@ import TimeLineContainer from '../PublicTimeline/TimeLineContainer';
 import Header from '../Global/Header/Header';
 
 const UserTimelinePage = () => {
-    const style = {
+	const style = {
 		container: {
 			display: 'flex',
 			flexDirection: 'column',
@@ -18,7 +18,7 @@ const UserTimelinePage = () => {
 		},
 	};
 
-    const [timeline, setTimeline] = useState([] as Message[]);
+	const [timeline, setTimeline] = useState([] as Message[]);
 
 	const [hasMore, setHasMore] = useState(true);
 
@@ -27,20 +27,20 @@ const UserTimelinePage = () => {
 		error: null,
 	} as IsLoading);
 
-    const [userIsFollowed, setUserIsFollowed] = useState(false);
+	const [userIsFollowed, setUserIsFollowed] = useState(false);
 
-    const [user] = useState(isLoggedIn());
+	const [user] = useState(isLoggedIn());
 
 	const { username } = useParams();
 
-    	const handleFollow = () => {
+	const handleFollow = () => {
 		if (!user.isLoggedIn) {
 			return;
 		}
-		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/fllws/${user.username}`;
+		const baseUrl = `http://${window.location.hostname}:2222/fllws/${user.username}`;
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 			},
 		};
 		axios
@@ -57,14 +57,14 @@ const UserTimelinePage = () => {
 			});
 	};
 
-    const handleUnfollow = () => {
+	const handleUnfollow = () => {
 		if (!user.isLoggedIn) {
 			return;
 		}
-		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/fllws/${user.username}`;
+		const baseUrl = `http://${window.location.hostname}:2222/fllws/${user.username}`;
 		const options = {
 			headers: {
-				'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 			},
 		};
 		axios
@@ -81,18 +81,16 @@ const UserTimelinePage = () => {
 			});
 	};
 
-    const getMessages = async (startIndex?: number, endIndex?: number) => {
-		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs/${username}`;
+	const getMessages = async (startIndex?: number, endIndex?: number) => {
+		const baseUrl = `http://${window.location.hostname}:2222/msgs/${username}`;
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
-        const fullUrl = baseUrl + queryParams;
+		const fullUrl = baseUrl + queryParams;
 
-
-		const options =
-			{
-				headers: {
-					'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
-				},
-			};
+		const options = {
+			headers: {
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
+			},
+		};
 
 		axios
 			.get(fullUrl, options)
@@ -110,23 +108,22 @@ const UserTimelinePage = () => {
 				}
 			});
 	};
-    
-    const fetchMoreData = () => {
+
+	const fetchMoreData = () => {
 		const startIndex = timeline.length;
 		const endIndex = startIndex + 40;
 
-		const baseUrl = `${process.env.REACT_APP_API_SERVER_URL}/msgs/${username}`;
+		const baseUrl = `http://${window.location.hostname}:2222/msgs/${username}`;
 
 		const queryParams = startIndex !== undefined && endIndex !== undefined ? `?startIndex=${startIndex}&endIndex=${endIndex}` : '';
 
-        const fullUrl = baseUrl + queryParams;
+		const fullUrl = baseUrl + queryParams;
 
-		const options =
-			{
-				headers: {
-					'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
-				},
-			}
+		const options = {
+			headers: {
+				'access-control-allow-origin': `http://${window.location.hostname}:2222`,
+			},
+		};
 
 		axios
 			.get(fullUrl, options)
@@ -146,15 +143,15 @@ const UserTimelinePage = () => {
 			});
 	};
 
-    useEffect(() => {
-        // Todo: If username === user.username go to my-timeline page
+	useEffect(() => {
+		// Todo: If username === user.username go to my-timeline page
 
-        getMessages(0, 40)
-        if (user.isLoggedIn) {
+		getMessages(0, 40);
+		if (user.isLoggedIn) {
 			axios
-				.get(`${process.env.REACT_APP_API_SERVER_URL}/fllws/${user.username}`, {
+				.get(`http://${window.location.hostname}:2222/fllws/${user.username}`, {
 					headers: {
-						'access-control-allow-origin': `${process.env.REACT_APP_API_SERVER_URL}`,
+						'access-control-allow-origin': `http://${window.location.hostname}:2222`,
 					},
 				})
 				.then((res) => {
@@ -168,21 +165,27 @@ const UserTimelinePage = () => {
 					console.log(e);
 				});
 		}
-    }, [])
+	}, []);
 
-  return (
-        <Box sx={style.container}>
-			<Header/>
-			<Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                {user.isLoggedIn ? userIsFollowed ? (
-                    <Button onClick={handleUnfollow}>Unfollow {username}</Button>
-                ) : user.username !== username ? (
-                    <Button onClick={handleFollow}>Follow {username}</Button>
-                ): <></> : <></>}
-		    </Box>
-			<TimeLineContainer messages={timeline} getNextMessages={fetchMoreData} hasMore={hasMore} isLoading={isLoading} title={username + "'s Tweets"}/>
+	return (
+		<Box sx={style.container}>
+			<Header />
+			<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+				{user.isLoggedIn ? (
+					userIsFollowed ? (
+						<Button onClick={handleUnfollow}>Unfollow {username}</Button>
+					) : user.username !== username ? (
+						<Button onClick={handleFollow}>Follow {username}</Button>
+					) : (
+						<></>
+					)
+				) : (
+					<></>
+				)}
+			</Box>
+			<TimeLineContainer messages={timeline} getNextMessages={fetchMoreData} hasMore={hasMore} isLoading={isLoading} title={username + "'s Tweets"} />
 		</Box>
-  )
-}
+	);
+};
 
-export default UserTimelinePage
+export default UserTimelinePage;
