@@ -34,13 +34,13 @@ jobs:
 
             - name: Compile LaTeX to PDF
               run: |
-                pdflatex -interaction=nonstopmode -halt-on-error Report/main.tex
+                pdflatex -interaction=nonstopmode -halt-on-error report/source/main.tex
 
             - name: Upload PDF artifact
               uses: actions/upload-artifact@v2
               with:
                 name: BSc_group_g
-                path: BSc_group_g.pdf
+                path: report/build/BSc_group_g.pdf
 
             - name: Login to Docker Hub
               uses: docker/login-action@v1
