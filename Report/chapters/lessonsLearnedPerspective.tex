@@ -1,0 +1,23 @@
+\chapter{Lessons Learned Perspective}
+
+\section{Evolution and Refactoring}
+%Describe the biggest issues, how you solved them and which are major lessons learned with regard to Evolution and Refactoring
+
+Early in the project we decided to develop our frontend from scratch instead of using the static html templates provided with the base minitwit project. This meant that we had to spent a lot of time writing frontend code, while also integrating the new technologies each week. Because of this we were a little behind in the beginning and when the simulator started there were some issues with our API. Throughout the course, and especially in the part where we were refactoring, there was an emphasis on taking micro steps. Regarding the frontend, we failed to do this and we bit over more than we could chew. Ideally we had started by making sure that our system worked with the frontend template, and then slowly worked towards implementing a different frontend.
+
+% Biting over more than we could chew with regards to developing a completely new frontend
+
+\section{Operation \& Maintenance}
+%Adrian && Anton
+%Describe the biggest issues, how you solved them and which are major lessons learned with regard to Operation and Maintenance
+
+The biggest issue, and a major lesson we have learned, is that we were faced with the loss of our production database at the start of the project. This happened because we didn't use volumes in Docker at the time and upon a \code{docker-compose down} and \code{docker-compose up} command in our \gls{CI}/\gls{CD} pipeline, the database was thrown away and a new one would be created. We realized that we needed to have a way of rebooting the entire system in our pipeline that would use the same database as before. Therefore we started to use Docker volumes. In future projects, we would also use a backup system for ensuring data recoverability if something unintended were to happen which results in the loss of a production database.
+
+\section{DevOps Approach}
+%Also reflect and describe what was the "DevOps" style of your work. For example, what did you do differently to previous development projects and how did it work?
+
+The requirement to release each week made us work on the project much more consistently. In previous development projects during our bachelor in software development, we have been more inclined to work slowly throughout the semester and then do a large chunk of the development before the hand-in deadline. This way of working is not very sustainable and doesn't reflect how a "real world" development project would function. In this course, we have taken a much more agile and sustainable approach, by developing new features each week at a steady pace.\\
+
+The same goes for the maintenance part. Because the project is live and running with simulated users accessing our service, we needed to be able to fix errors as soon as they were detected. This means that have had to communicate closely within the team and coordinate which team members are available to fix issues.\\
+
+We have worked in a way in which we are constantly learning about new technologies and then actually implementing them in our system. By working this way we can make sure that we are always using the technologies that fit our scenario the best, and that we are making our lives as developers as easy as possible.
