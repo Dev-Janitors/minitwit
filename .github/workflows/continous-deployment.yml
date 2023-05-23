@@ -34,7 +34,7 @@ jobs:
 
             - name: Compile LaTeX to PDF
               run: |
-                sudo pdflatex -interaction=nonstopmode -halt-on-error -output-directory=report/build report/source/main.tex
+                sudo pdflatex -interaction=nonstopmode -halt-on-error -output-directory=report/build --jobname=compilereport report/source/main.tex
 
             - name: Upload PDF artifact
               uses: actions/upload-artifact@v2
