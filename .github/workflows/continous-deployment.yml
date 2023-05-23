@@ -26,7 +26,8 @@ jobs:
         steps:
             - name: Set up LaTeX environment
               run: |
-                sudo apt-get install -y texlive-full
+                sudo apt-get update
+                sudo apt-get install -y texlive-base
 
             - name: Checkout
               uses: actions/checkout@v2
