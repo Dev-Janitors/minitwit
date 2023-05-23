@@ -31,6 +31,9 @@ jobs:
 
             - name: Checkout
               uses: actions/checkout@v2
+          
+            - name: Set permissions for report/build directory
+              run: chmod -R 777 report/build
 
             - name: Compile LaTeX to PDF
               run: |
