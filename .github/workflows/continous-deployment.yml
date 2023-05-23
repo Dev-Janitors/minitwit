@@ -27,7 +27,7 @@ jobs:
             - name: Set up LaTeX environment
               run: |
                 sudo apt-get update
-                sudo apt-get install -y texlive-base
+                sudo apt-get install -y texlive-latex-base texlive-fonts-recommended texlive-latex-extra
 
             - name: Checkout
               uses: actions/checkout@v2
