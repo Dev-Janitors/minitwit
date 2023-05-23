@@ -1,0 +1,36 @@
+\documentclass[11pt]{report}
+\usepackage{import}
+\usepackage[table]{xcolor}
+\usepackage{multirow}
+\import{./report/source/}{definitions.tex}
+\usepackage{glossaries}
+\makeglossaries
+% Define acronyms
+\newacronym{CRUD}{CRUD}{Create, Read, Update, Delete}
+\newacronym{DTO}{DTO}{Data Transfer Object}
+\newacronym{MSSQL}{MSSQL}{Microsoft SQL Server}
+\newacronym{CI}{CI}{Continuous Integration}
+\newacronym{CD}{CD}{Continuous Deployment}
+\newacronym{PR}{PR}{Pull Request}
+\newacronym{EF}{EF}{Entity Framework}
+
+\newcommand{\charactercount}[1]{
+    \immediate\write18{
+        expr `texcount -1 -sum -merge #1.tex` + `texcount -1 -sum -merge -char #1.tex` - 1 
+        > chars.txt
+    }\input{chars.txt}}
+
+\begin{document}
+
+\input{report/source/frontpage}
+
+\tableofcontents
+
+\include{report/source/chapters/systemsPerspective}
+\include{report/source/chapters/processPerspective}
+\include{report/source/chapters/lessonsLearnedPerspective}
+\printglossary[type=\acronymtype,title=Abbreviations]
+\bibliographystyle{IEEEtran}
+\bibliography{report/source/sources.bib}
+
+\end{document}

@@ -26,20 +26,21 @@ jobs:
         steps:
             - name: Set up LaTeX environment
               run: |
-                sudo apt-get install -y texlive-full
+                sudo apt-get update
+                sudo apt-get install -y texlive-latex-base texlive-fonts-recommended texlive-latex-extra
 
             - name: Checkout
               uses: actions/checkout@v2
 
             - name: Compile LaTeX to PDF
               run: |
-                pdflatex -interaction=nonstopmode -halt-on-error Report/main.tex
+                pdflatex -interaction=nonstopmode -halt-on-error -output-directory=report/build report/source/main.tex
 
             - name: Upload PDF artifact
               uses: actions/upload-artifact@v2
               with:
                 name: BSc_group_g
-                path: BSc_group_g.pdf
+                path: report/build/BSc_group_g.pdf
 
             - name: Login to Docker Hub
               uses: docker/login-action@v1
