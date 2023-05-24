@@ -32,8 +32,8 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v2
           
-            - name: Set permissions for report/build directory
-              run: chmod 777 .
+            - name: Set permissions
+              run: sudo chmod 777 .
 
             - name: Compile LaTeX to PDF
               run: |
