@@ -1,0 +1,102 @@
+\chapter{System's Perspective}
+%Adrian & Anton
+
+\section{Design and Architecture of our ITU-MiniTwit Systems}
+%Backend, Database, Frontend: Anton & Adrian
+The system consists of a backend api written in C\# with ASP.NET framework, a GUI frontend written in TypeScript with React.js, and a \gls{MSSQL} as the database.
+%DOCKER
+Every component of the system(backend, frontend, database, logging, monitoring) is isolated into docker containers and is run with a docker-compose file.
+
+
+\subsubsection{Frontend}
+The frontend has used the \code{npx create-react-app} template to start the project and build on. As React applications are single-page applications we have used the \code{useRoute} hook to create the different pages needed. 
+In the frontend, multiple instances of reusable components are utilized within various pages to prevent the repetition of code.
+
+\subsubsection{Backend}
+Our backend follows the onion architecture consisting of the core, infrastructure layer, and presentation layer. The core layer consists of \gls{DTO} classes and repository interfaces. The infrastructure layer uses the repository pattern with \gls{CRUD} operations.
+The presentation layer consists of the controllers with endpoints and some simple application logic. We didn't find it necessary to have an application layer because the logic in the system is quite simple. Therefore there is some application logic in the controllers instead.
+
+
+\subsubsection{Database}
+For the database, we use a relational \gls{MSSQL} with \gls{EF} Core to couple the database with the backend.
+The database consists of 3 tables: A 'users', a 'messages', and a 'followers' table.
+Messages have a many-to-one relationship with Users and Users have a two-to-many relationship with Followers, meaning that a user can have many followers but one follower entity only has two users; the user that is following and the user that is being followed.
+
+\section{All dependencies of our ITU-MiniTwit system}
+%That is, list and briefly describe all technologies and tools you applied and depend on
+%Alt det andet som vi har integreret, som fx logging, monitoring (måske docker her eller ovenover?) or alt det der. Adrian & Anton
+
+\gls{CI}/\gls{CD} Tools \& Technologies
+\begin{itemize}
+    \item GitGuardian Security Check - Used in our \gls{CI} pipeline to check for secrets in the code.
+    \item Codeclimate - Used in our \gls{CI} pipeline to check code quality.
+    \item SonarCloud - Used in our \gls{CI} pipeline to check code quality.
+    \item GitHub - Used to manage the project.
+    \item Docker - Used to run the system.
+    \item yaml - Used in our \gls{CI}/\gls{CD} pipeline for docker and other technologies
+    \item Snyk - Used in our \gls{CI} pipeline to check for security vulnerabilities in outdated components. Also does a weekly scan of the repository and creates \gls{PR}'s for any outdated dependencies.
+    \item Vagrant - Used in our \gls{CI}/\gls{CD} pipeline to deploy the system to digital ocean droplets.
+\end{itemize}
+
+System Tools \& Technologies
+\begin{itemize}
+    \item C\#/ASP.NET - Used to construct the backend.
+    \item React/Typescript - Utilized to build the frontend.
+    \item \gls{EF} Core - Utilized for communicating with the database.
+    \item GitHub - Used to manage the project.
+    \item Prometheus - For metrics scraping/monitoring.
+    \item ElasticSearch - For storing logging data.
+    \item Grafana - For displaying metrics from Prometheus.
+    \item Serilog - Used to log system data which it sends to Elasticsearch.
+    \item Kibana - For displaying logging data from ElasticSearch.
+\end{itemize}
+
+
+
+
+\section{Important interactions of subsystems}
+%Adrian & Anton
+
+%Frontend to backend to database
+The frontend relies on interaction with the backend to get the information needed to show the user. The backend also relies on the database for data to process and pass to the frontend.\newline
+
+%Monitoring
+\noindent The monitoring subsystem consists of Prometheus and Grafana containers. Prometheus relies on the backend for data scraping. Grafana needs a data source in Prometheus, to display information. \newline
+
+%Logging
+\noindent The logging setup is composed of ElasticSearch and Kibana containers, as well as our logging provider in Serilog. Serilog relies on the backend for logging data which it sends to the ElasticSearch sink, which feeds that data to Kibana.
+
+
+
+\section{Current state of our system}
+
+\subsection{Features implemented}
+In terms of features, everything from the assignments is implemented, except for load balancing. This is due to us having an issue with CORS errors, as it was otherwise completely set up and ready to be utilized.
+%TODO: Har vi andre features? Login?
+%TODO: Andre features vi ikke har implementeret? Frontend testing?
+
+%Describe the current state of your systems, for example using results of static analysis and quality assessments.
+\subsection{Code Quality}
+When looking at SonarCloud we can see that there are no Bugs or Security vulnerabilities, however, we have marked some Security issues as safe because they were from the Python simulator test code. There are issues with Maintainability and code smells in our code. Particularly unused import statements, commented-out code, unused variables, etc. There are also duplication issues, where parts of the code could be refactored as a solution. \newline
+
+\noindent When looking at Codeclimate, we can see that the code maintainability rating is B, but there were a bunch of issues regarding parts of the code that we did not write ourselves e.g. python code that is a part of the simulator and simulator tests, and auto-generated database migration files. These issues have therefore been marked as invalid or won't fix. There are also a few other issues that we marked with invalid or won't fix if we didn't think it was a problem, for example, if a method exceeded the 25-line limit with one line.
+
+\section{License Compatibility}
+%Is the project license compatible with the dependency licenses
+In our project we use the MIT license and our dependencies use the following licenses:
+\begin{itemize}
+    \item MIT
+    \item ISC
+    \item Apache-2.0
+    \item NOASSERTION
+    \item CC0-1.0
+    \item CC-BY-4.0
+    \item 0BSD
+    \item BSD-2-Clause
+    \item BSD-3-Clause
+    \item Python-2.0
+    \item MPL-2.0
+    \item Unlicense
+\end{itemize}
+
+All of these licenses that our dependencies use are compatible with the MIT license that our project uses.
