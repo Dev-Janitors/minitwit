@@ -1,21 +1,20 @@
 \chapter{Process' Perspective}
 
-%How do we interact as developers?
+
 \section{Developer Interaction}
 Beyond the exercise sessions, we had a work session together every Friday. Most Fridays we met in person, but sometimes we met online using Discord. Discord is also the place we used to communicate daily with meeting times, when tasks would be done, file sharing, and so on. We also used certain GitHub features to communicate, for instance comments on pull requests.
 
-%How is the team organized?
+
 \section{Team Organization}
 We have an organization set up on GitHub that contains our repository. We could however have used more of the organization features, for instance creating teams. Otherwise, we planned from meeting to meeting what needed to be worked on in between. At the beginning of meetings, we did a little catch-up on the progress that had been made on the tasks.
-% Laurits
 
-%A complete description of stages and tools included in the CI/CD chains. That is including the deployment and release of your systems
-\section{Stages and tools included in the CI/CD chains}
-Most of our CI/CD chain is handled by GitHub Actions. The first thing that happens in our CI/CD chain is a workflow that runs to build and test the newly added code, before it is merged to master. This workflow exists in the file \code{dotnet.yml}. Currently, it only builds our .NET project for the backend part of our system. Ideally, the workflow would also test our frontend, however, at the time of implementation we had no way to test the frontend. The \code{dotnet.yml} workflow does the following things: Checks out the newly added code sets up .NET and installs dependencies, builds our project, and tests against our unit tests. This workflow ensures that code integrates seamlessly with the production branch, allowing us to practice continuous integration.\\
 
-Additionally we use a range of static analysis tools. 
+\section{Stages and tools included in the \gls{CI}/\gls{CD} chains}
+Most of our \gls{CI}/\gls{CD} chain is handled by GitHub Actions. The first thing that happens in our \gls{CI}/\gls{CD} chain is a workflow that runs to build and test the newly added code, before it is merged to master. This workflow exists in the file \code{dotnet.yml}. Currently, it only builds our .NET project for the backend part of our system. Ideally, the workflow would also test our frontend, however, at the time of implementation we had no way to test the frontend. The \code{dotnet.yml} workflow does the following things: Checks out the newly added code sets up .NET and installs dependencies, builds our project, and tests against our unit tests. This workflow ensures that code integrates seamlessly with the production branch, allowing us to practice continuous integration.\\
 
-When new code additions are merged into the master branch of our repository, a GH action workflow \code{continuous-deployment.yml} is triggered. The workflow uses Github Secrets, which allows us to hide our credentials from the plaintext in the .yml file. They are used to log in to Docker Hub and ssh to our Digital Ocean droplet, and they must be set up in the repository for the workflow to function correctly. The secrets that must be set are: \code{DOCKER\_USERNAME}, \code{DOCKER\_PASSWORD}, \code{SSH\_USER}, \code{SSH\_KEY}, and \code{SSH\_HOST}. The workflow then does the following things in order:
+Additionally we use a range of static analysis tools. GitGuardian helps us to detect secrets, such as login credentials, that have been pushed to GitHub by mistake. Snyk checks through the code and our dependencies to uncover any security vulnerabilities. It also proposes changes to fix detected vulnerabilities through a \gls{PR}. CodeClimate checks our code for code quality, which includes duplication, lines of code, and code complexity. SonarCloud also checks on code quality, security vulnerabilities and bugs and provides a quality gate feature. We have not used these tools as an automated part of our CI/CD chain, but more as an added check to make us aware of issues in the code and help us fix it fast.\\
+
+When new code additions are merged into the master branch of our repository, a GitHub action workflow \code{continuous-deployment.yml} is triggered. The workflow uses GitHub Secrets, which allows us to hide our credentials from the plaintext in the .yml file. They are used to log in to Docker Hub and ssh to our Digital Ocean droplet, and they must be set up in the repository for the workflow to function correctly. The secrets that must be set are: \code{DOCKER\_USERNAME}, \code{DOCKER\_PASSWORD}, \code{SSH\_USER}, \code{SSH\_KEY}, and \code{SSH\_HOST}. The workflow then does the following things in order:
 
 \begin{enumerate}
     \item Checkout the master branch with the newly merged code.
@@ -26,12 +25,11 @@ When new code additions are merged into the master branch of our repository, a G
     \item Configure SSH information.
     \item Open a shell to the droplet via SSH, and execute a script \code{deploy.sh} (can be seen in the remote\_files directory in our repository).
     \item The shell uses a \code{docker-compose.yml} file that first pulls our images from Docker Hub, and then starts the containers with specified ports and volumes.
-    \item Create a release on our GitHub Repository, that uses the next available release version (currently \code{v1.0.x}), and has the commit messages from the merge as release notes.
+    \item Create a release on our GitHub repository, that uses the next available release version (currently \code{v1.0.x}), and has the commit messages from the merge as release notes.
 \end{enumerate}
 
 We have a similar workflow called \code{continuous-deployment-staging.yml}. This has been used in a loose way to test out code on a staging droplet. It does the same things as the other \gls{CD} workflow, except it pushes staging images to Docker Hub, and does not release. The workflow is not part of our automated \gls{CI}/\gls{CD} chain however this could be implemented by having a staging branch, as a step before the production branch. Here we could for example run end-to-end tests.
 
-%Organization of your repository. It has to be clear what is stored where and why.
 \section{Repository Organization}
 All of our code is located in a single repository \code{\href{https://github.com/Dev-Janitors/minitwit}{Dev-Janitors/minitwit}}. The repository is owned by our Github organization DevJanitors. The reason for having an organization is that it provides a sense of equal ownership and control over the repo. However, practically this is the same as one person owning the repo and giving admin rights to team members.\\
 
@@ -51,7 +49,6 @@ Additionally, the master directory of our repository contains some important fil
 Having a single-repository setup saves time when we as developers want to quickly shift from working on the frontend to the backend to testing to infrastructure. It does however make the codebase more complex and confusing for new developers looking at the system for the first time. Another approach would be to separate the different parts of the system into more repositories or branches.
 
 
-%Applied development process and tools supporting it.  For example, how did you use issues, Kanban boards, etc. to organize open tasks?
 \section{Applied development process and supporting tools}
 
 \subsection{Git \& GitHub}
@@ -65,16 +62,15 @@ In our branching strategy, we have set restrictions for merging and committing t
 Pair Programming was used in the development process. It involved multiple team members working together via LiveShare, collaborating in real-time, sharing knowledge, and producing code together.
 
 
-%How did we monitor our systems and what precisely do we monitor?
+
 \section{System Monitoring}
-%Adrian & Anton
 
 \subsection{Prometheus and Grafana}
 Prometheus is a monitoring system that collects and stores metrics from configurable sources.
 
 Grafana is a platform for data visualization and analysis that integrates with Prometheus. It provides an interface for creating dashboards where queries can be executed and illustrated to provide an overview of the health and performance of the system.
 
-\subsection{Our usage of Prometheus and Grafana} %Ready for review
+\subsection{Our usage of Prometheus and Grafana}
 We have configured Prometheus to scrape metrics from our backend at http://104.248.101.163:2222/metrics. \newline
 
 \noindent We have used Grafana to build queries utilizing the metrics gathered by Prometheus. The queries are visualized in Diagrams, and the Diagrams are all located in our Minitwit dashboard. \newline
@@ -88,26 +84,20 @@ Our first metric shows endpoint hits per 5 minutes for all endpoints combined in
 \noindent The third metric shows endpoint hits for the msgs/username endpoint. In this graph, we both show the number of responses with code 200 and the responses with code 404. With this comparison of how many successful endpoint hits there are compared to errors, we can detect if there is a problem with this specific endpoint.
 The fourth metric is the same as the third but with the fllws/username instead. We have set up this metric for the same reasons. \newline
 
-Lastly, we have an endpoint hit counter for all endpoints. With this graph, we can see how much each endpoint is used over the entire up-time of the system.
-
-The first four graphs can be seen in Figure \ref{fig:grafana}
+Lastly, we have an endpoint hit counter for all endpoints. With this graph, we can see how much each endpoint is used over the entire up-time of the system. The first four graphs can be seen in Figure \ref{fig:grafana}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=1\textwidth]{report/source/images/grafana.png}
+    \includegraphics[width=1\textwidth]{images/grafana.png}
     \caption{Monitoring dashboard in Grafana.}
     \label{fig:grafana}
 \end{figure}
 
 
-%What do we log in our systems and how do we aggregate logs?
 \newpage
 \section{System Logging}
 
 \subsection{ElasticSearch, Serilog, and Kibana}
-
-ElasticSearch is a search and analytics engine. Kibana is a data visualization platform that enables users to explore, visualize, and analyze data from ElasticSearch. Together, they provide a powerful toolset for logging.
-Serilog is a flexible logging library for .NET applications. It simplifies logging by allowing structured log messages and easy integration with various sinks.
 
 For our system logging, we use ElasticSearch, Kibana, and Serilog. We send Serilog data to ElasticSearch with an ElasticSearch sink in our Program.cs file. We use Kibana to visualize the ElasticSearch data.
 
@@ -121,24 +111,12 @@ To aggregate the logs we simply use the Discover tab in our ElasticSearch config
 
 \newpage
 
-%Brief results of the security assessment
+
 \section{Results of Security Assessment}
 
 \subsection{Risk Identification}
 
-During our security assessment, we identified several significant threat sources from the OWASP Top Ten \cite{owasp} that are compromising the security of our system. These include:
-
-\begin{itemize}
-\item R1: Broken Access Control: The system allows anyone to log in to an account if they know the associated username and email.
-\item R2: Cryptographic Failures: Our system does not utilize HTTPS, exposing transmitted data to potential eavesdropping.
-\item R3: Insecure Design: By default, the system returns all tweets, which poses a security risk in terms of data exposure.
-\item R4: Security Misconfiguration: Our ElasticSearch configuration is publicly available, enabling adversaries to potentially steal sensitive system logs or even delete them. Additionally, our apsettings.json file, which contains critical secrets, is publicly accessible on GitHub.
-\item R5: Outdated Components: The Snyk static analysis tool identified an outdated component, specifically the Node.js version (node:16.19.1-alpine), with known vulnerabilities.
-\item R6: Identification and Authentication Failures: The system does not require users to enter a password during the authentication process.
-\item R7: Security Logging and Monitoring Failures: The application cannot detect and alert on attacks in real-time or near real-time.
-\end{itemize}
-
-Based on the identified threat sources, we developed the risk scenarios for each Risk Identification item
+Based on identified threat sources (omitted due to brevity), we developed risk scenarios.
 
 \begin{itemize}
 \item Risk Scenario 1 (RS1): An attacker gains unauthorized access to Bob's account using his username and email address, allowing them to impersonate Bob and post tweets.
@@ -155,7 +133,7 @@ Next, we created a Risk Matrix to visualize the severity of the risks. (Figure \
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=1\textwidth]{report/source/images/riskmatrix.png}
+\includegraphics[width=1\textwidth]{images/riskmatrix.png}
 \caption{Risk matrix for our risk scenarios. RS refers to Risk Scenario.}
 \label{fig:riskmatrix}
 \end{figure}
@@ -185,14 +163,10 @@ Due to time constraints, we were only able to address RS5 by setting the default
 In addition to our security assessment, we conducted a penetration test using Nmap to identify potential vulnerabilities in our system. From the test, we discovered that running SSH on port 22 exposes our system to known exploits, which could compromise its security. Furthermore, we identified that our ElasticSearch instance lacks built-in security features, leaving it vulnerable to unauthorized access.
 
 \section{Applied strategy for load balancing}
-%det her har vi ikke endnu
-% Laurits
+
 Currently on our deployed system we do not have a load balancing strategy. We struggled a lot with Docker Swarm and connecting it to the the database. However we managed to get Docker Swarm working, except for CORS issues between backend and frontend. So in a development branch we use Docker swarm with a swarm Manager node and we run replicas of our frontend and backend and only single instances of the other services. Since we only have a single swarm manger there is still potential for single point of failure. In the future it could be worth discussing implementing dedicated load balancers. 
 
-%In case we use AI for report or code explain which systems we used and reflect how they supported/hindered the process
 \section{Our usage of AI}
-In our project, we have used two different AI's, GitHub Copilot and ChatGPT. Copilot has been used as an advanced linter just to support development and sometimes give inspiration, but no full function has been written using copilot. ChatGPT has been used to gather information and set up examples of the different technologies we use, especially for monitoring and logging setup. Text generated with ChatGPT has also been used as a starting point for some of the chapters in this report. \\
+In our project, we have used two different AI's, GitHub Copilot and ChatGPT. Copilot has been used as an advanced linter just to support development and sometimes give inspiration, but no full function has been written using Copilot. ChatGPT has been used to gather information and setup examples of the different technologies we use, especially for monitoring and logging. Text generated with ChatGPT has also been used as a starting point for some of the chapters in this report. \\
 
-Both AIs have been useful to us when used in moderation. A big codeblock from Copilot can have bugs that you would have to go through the code and find, which could be slower than just writing the function yourself. The same goes for ChatGPT, when you use it as a part of your information gathering and not the only source it can be very helpful.
-
-%In essence it has to be clear how code or other artefacts come from ideas into the running system and everything that happens on the way.
+Both AIs have been useful to us when used in moderation. A big codeblock from Copilot can have bugs that you would have to go through the code and find, which could be slower than just writing the function yourself. The same goes for ChatGPT, but when you use it as a part of your information gathering, and not the only source, it can be very helpful.

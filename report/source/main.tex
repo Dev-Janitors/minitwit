@@ -2,7 +2,7 @@
 \usepackage{import}
 \usepackage[table]{xcolor}
 \usepackage{multirow}
-\import{./report/source/}{definitions.tex}
+\import{./}{definitions.tex}
 \usepackage{glossaries}
 \makeglossaries
 % Define acronyms
@@ -22,15 +22,12 @@
 
 \begin{document}
 
-\input{report/source/frontpage}
+\input{frontpage}
 
 \tableofcontents
-
-\include{report/source/chapters/systemsPerspective}
-\include{report/source/chapters/processPerspective}
-\include{report/source/chapters/lessonsLearnedPerspective}
+\include{chapters/systemsPerspective}
+\include{chapters/processPerspective}
+\include{chapters/lessonsLearnedPerspective}
 \printglossary[type=\acronymtype,title=Abbreviations]
-\bibliographystyle{IEEEtran}
-\bibliography{report/source/sources.bib}
 
 \end{document}
