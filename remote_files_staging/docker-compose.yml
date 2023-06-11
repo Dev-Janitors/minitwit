@@ -84,3 +84,4 @@ volumes:
     dbvolume:
     promvolume:
     grafvolume:
+    elasticsearch-data:
